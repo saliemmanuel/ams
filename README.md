@@ -1,16 +1,40 @@
 # ams
 
-A new Flutter project.
+Est une applicaiton de gestion financière et de contrôle de Stock 
+clé en main créer pour une structure que je ne divulgerait pas le nom
 
 ## Getting Started
+### Executer la commence suivante
+```
+flutter pub get 
+```
+### les plugin que j'ai utilisé
+``
+  panara_dialogs: ^0.1.4
+  animated_login: ^1.7.2
+  shimmer_pro: ^0.0.6
+  firebase_auth: ^4.8.0
+  firebase_core: ^2.15.1
+  firebase_storage: ^11.2.6
+  firebase_messaging: ^14.6.7
+  awesome_notifications: ^0.7.4+1
+  pdf: ^3.10.4
+  flutter_quill: ^7.3.2
+  url_launcher: ^6.1.12
+  get_it: ^7.6.0
+  provider: ^6.0.5
+  external_path: ^1.0.3
+  path_provider: ^2.1.0
+  dotted_decoration: ^2.0.0
+  get: ^4.6.5
+  smooth_page_indicator: ^1.1.0
+  google_fonts: ^5.1.0
+  iconly: ^1.0.1
+  shared_preferences: ^2.2.0
+  cloud_firestore: ^4.9.0
+  http: ^1.1.0
+  flutter_dotenv: ^5.1.0
+``
+  
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
