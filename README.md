@@ -1,7 +1,6 @@
 # ams
 
-Est une applicaiton de gestion financière et de contrôle de Stock 
-clé en main créer pour une structure que je ne divulgerait pas le nom
+Is a turnkey financial management and stock control application created for a structure that I will not disclose the name
 
 ## Getting Started
 ### Executer la commence suivante
@@ -9,7 +8,7 @@ clé en main créer pour une structure que je ne divulgerait pas le nom
 flutter pub get 
 ```
 ### les plugin que j'ai utilisé
-``
+
   panara_dialogs: ^0.1.4
   animated_login: ^1.7.2
   shimmer_pro: ^0.0.6
@@ -34,7 +33,7 @@ flutter pub get
   cloud_firestore: ^4.9.0
   http: ^1.1.0
   flutter_dotenv: ^5.1.0
-``
+
   
 
 
