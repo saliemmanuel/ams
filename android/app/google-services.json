@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "601882385577",
+    "project_id": "gsayubams123",
+    "storage_bucket": "gsayubams123.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:601882385577:android:d73cd5d5fe60d2edef5db8",
+        "android_client_info": {
+          "package_name": "com.dotdev.inc.ams"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "601882385577-jqlba98p93q5v40v32m2i7co74gvet5d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9zLfUVpgNSXX0C0BDwtn8LSV0dlMz7F4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "601882385577-jqlba98p93q5v40v32m2i7co74gvet5d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
