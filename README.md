@@ -3,14 +3,13 @@
 Is a turnkey financial management and stock control application created for a structure that I will not disclose the name
 
 ## Getting Started
-### Executer la commande suivante
 ```
 flutter pub get 
 ```
 ## Firebase structure
-
+### users
 ```
-user 
+users 
     | - email
     | - grade
     | - id
@@ -21,6 +20,18 @@ user
     | - status
     | - telephone
     | - CreateAt
+```
+### boutique
+```
+boutique 
+    | - dateCreation
+    | - id
+    | - idAdmin
+    | - nomBoutique
+    | - quartierBoutique
+    | - vendeur: []
+    | - villeBoutique
+  
 ```
 
 
