@@ -9,6 +9,7 @@ flutter pub get
 ```
 ## Firebase structure
 
+```
 user 
     | - email
     | - grade
@@ -20,6 +21,7 @@ user
     | - status
     | - telephone
     | - CreateAt
+```
 
 
   
