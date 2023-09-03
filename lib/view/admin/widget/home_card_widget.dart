@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 
 import '../../widgets/custom_text.dart';
 
-// ce widget est pourlà  permettre l'ajout d'une nouvelle boutique d'un administrateur
-class AjoutBoutiqueCard extends StatelessWidget {
+// ce widget est pour afficher le nombre de boutique d'un administrateur
+class HomeCardWidget extends StatelessWidget {
+  final Widget child;
+  final String label;
   final void Function()? onTap;
-  const AjoutBoutiqueCard({super.key, this.onTap});
+  const HomeCardWidget(
+      {super.key,
+      required this.child,
+      required this.onTap,
+      required this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -19,25 +25,19 @@ class AjoutBoutiqueCard extends StatelessWidget {
           color: Colors.grey.shade300,
           borderRadius: BorderRadius.circular(20.0),
         ),
-        child: const Column(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
             Expanded(
-              child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Icon(
-                  Icons.add,
-                  size: 75.0,
-                ),
-              ),
+              child: Padding(padding: const EdgeInsets.all(8.0), child: child),
             ),
             CustomText(
-              data: "Boutique",
+              data: label,
               fontSize: 18.0,
               fontWeight: FontWeight.bold,
             ),
-            SizedBox(height: 10.0)
+            const SizedBox(height: 10.0)
           ],
         ),
       ),

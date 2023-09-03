@@ -9,6 +9,7 @@ class Users {
   final String? email;
   final String status;
   final String? grade;
+  final String? createAt;
   String? messagingToken;
   Users({
     this.id,
@@ -18,6 +19,7 @@ class Users {
     this.email,
     required this.status,
     this.grade,
+    required this.createAt,
     this.messagingToken,
   });
   set messagingsToken(String? token) {
@@ -32,6 +34,7 @@ class Users {
     String? email,
     String? status,
     String? grade,
+    String? createAt,
     String? messagingToken,
   }) {
     return Users(
@@ -41,6 +44,7 @@ class Users {
       telephone: telephone ?? this.telephone,
       email: email ?? this.email,
       status: status ?? this.status,
+      createAt: createAt ?? this.createAt,
       grade: grade ?? this.grade,
       messagingToken: messagingToken ?? this.messagingToken,
     );
@@ -55,6 +59,7 @@ class Users {
       'email': email,
       'status': status,
       'grade': grade,
+      'createAt': createAt,
       'messagingToken': messagingToken,
     };
   }
@@ -68,6 +73,7 @@ class Users {
       email: map['email'] != null ? map['email'] as String : null,
       status: map['status'] as String,
       grade: map['grade'] != null ? map['grade'] as String : null,
+      createAt: map['createAt'] != null ? map['createAt'] as String : null,
       messagingToken: map['messagingToken'] != null
           ? map['messagingToken'] as String
           : null,
@@ -81,7 +87,7 @@ class Users {
 
   @override
   String toString() {
-    return 'Users(id: $id, nom: $nom, prenom: $prenom, telephone: $telephone, email: $email, status: $status, grade: $grade, messagingToken: $messagingToken)';
+    return 'Users(id: $id, nom: $nom, prenom: $prenom, telephone: $telephone, email: $email, status: $status, grade: $grade,  createAt: $createAt, messagingToken: $messagingToken)';
   }
 
   @override
@@ -94,6 +100,7 @@ class Users {
         other.telephone == telephone &&
         other.email == email &&
         other.status == status &&
+        other.createAt == createAt &&
         other.grade == grade &&
         other.messagingToken == messagingToken;
   }
@@ -107,6 +114,7 @@ class Users {
         email.hashCode ^
         status.hashCode ^
         grade.hashCode ^
+        createAt.hashCode ^
         messagingToken.hashCode;
   }
 }

@@ -22,6 +22,26 @@ dialogue(
   );
 }
 
+confirmDialogue(
+    {required PanaraDialogType panaraDialogType,
+    BuildContext? context,
+    String? message,
+    String? title,
+    required void Function() onTapConfirm}) {
+  PanaraConfirmDialog.show(
+    context!,
+    title: title,
+    message: message!,
+    confirmButtonText: "Supprimer",
+    cancelButtonText: "Annuler",
+    onTapCancel: () {
+      Get.back();
+    },
+    onTapConfirm: onTapConfirm,
+    panaraDialogType: panaraDialogType,
+  );
+}
+
 Future simpleDialogueCard(String title, String msg, BuildContext context) {
   return showDialog(
       barrierDismissible: false,

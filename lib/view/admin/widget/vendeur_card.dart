@@ -1,0 +1,93 @@
+import 'package:ams/models/boutique_model.dart';
+import 'package:ams/models/vendeur_model.dart';
+import 'package:ams/services/service_locator.dart';
+import 'package:ams/services/services_auth.dart';
+import 'package:ams/view/widgets/custom_dialogue_card.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:iconly/iconly.dart';
+import 'package:panara_dialogs/panara_dialogs.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../widgets/custom_text.dart';
+
+class VendeurCard extends StatelessWidget {
+  final Vendeur? vendeur;
+  final BoutiqueModels boutiqueModels;
+  final void Function()? onTap;
+  const VendeurCard(
+      {super.key, this.vendeur, this.onTap, required this.boutiqueModels});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.all(6.0),
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade300,
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        child: ListTile(
+          onTap: onTap,
+          leading: Image.asset('assets/images/vendeur.png'),
+          title: CustomText(
+            data: "${vendeur!.nom!} ${vendeur!.prenom!}",
+            overflow: TextOverflow.ellipsis,
+            fontWeight: FontWeight.bold,
+          ),
+          trailing: IconButton(
+            icon: const Icon(IconlyBold.delete, color: Colors.red),
+            onPressed: () {
+              confirmDialogue(
+                  panaraDialogType: PanaraDialogType.error,
+                  title: "Suppression",
+                  message: "Voulez-vous vraiment supprimer ce vendeur?",
+                  context: context,
+                  onTapConfirm: () {
+                    Get.back();
+                    locator.get<ServiceAuth>().deleteVendeur(
+                        context: context, vendeurId: vendeur!.id);
+                  });
+            },
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomText(data: vendeur!.grade!, fontWeight: FontWeight.bold),
+              InkWell(
+                  onTap: () {
+                    _launchUrl(
+                        url:
+                            "mailto:${vendeur!.email!}?subject=AMS&body=Ecrivez le corps ici");
+                  },
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: CustomText(
+                            overflow: TextOverflow.ellipsis,
+                            data: vendeur!.email!,
+                            color: Colors.blue),
+                      ),
+                    ],
+                  )),
+              InkWell(
+                  onTap: () {
+                    _launchUrl(url: "tel:${vendeur!.telephone!}");
+                  },
+                  child: CustomText(
+                      data: vendeur!.telephone!, color: Colors.blue)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _launchUrl({String? url}) async {
+    if (!await launchUrl(Uri.parse(url!))) {
+      throw Exception('Could not launch $url');
+    }
+  }
+}

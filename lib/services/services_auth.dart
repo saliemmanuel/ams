@@ -42,12 +42,17 @@ class ServiceAuth {
         dynamic docs = await locator
             .get<FirebasesAuth>()
             .getUserData(id: locator.get<FirebasesAuth>().curentUser!.uid);
-        Map<String, dynamic>? data = docs.data();
+        Map<String, dynamic>? data = docs?.data();
         // je verifie si l'utilisateur est déjà enregistré dans la bd
         redirectionUtil(context: context, data: data);
       }
     } on FirebaseAuthException catch (e) {
-      errorDialogueCard("Erreur", e.message!, context!);
+      Get.back();
+      dialogue(
+          panaraDialogType: PanaraDialogType.error,
+          context: context,
+          title: "Erreur",
+          message: e.message!);
     }
   }
 
@@ -71,6 +76,7 @@ class ServiceAuth {
                   context)
               .then((value) {
             var userUi = Users(
+                createAt: DateTime.now().toIso8601String(),
                 status: user!.status,
                 email: user.email,
                 grade: user.grade,
@@ -108,6 +114,7 @@ class ServiceAuth {
         Get.back();
         // Création du vendeur
         var vendeurs = Vendeur(
+          createAt: DateTime.now().toIso8601String(),
           idAdmin: vendeur.idAdmin,
           id: val.user!.uid,
           status: vendeur.status,
@@ -121,9 +128,10 @@ class ServiceAuth {
 
         // Créatioin de la boutique
         var boutique = BoutiqueModels(
-            vendeurBoutique: vendeurs,
+            id: boutiqueModels!.id,
+            vendeur: [vendeurs.id!],
             dateCreation: DateTime.now().toIso8601String(),
-            nomBoutique: boutiqueModels!.nomBoutique,
+            nomBoutique: boutiqueModels.nomBoutique,
             idAdmin: boutiqueModels.idAdmin,
             quartierBoutique: boutiqueModels.quartierBoutique,
             villeBoutique: boutiqueModels.villeBoutique);
@@ -136,7 +144,6 @@ class ServiceAuth {
             .get<FirebasesAuth>()
             .resetPasswordVendeurByEmail(email: vendeurs.email)
             .then((values) {
-          print(locator.get<HomeProvider>().user.email);
           //
           succesTransaction(
                   "Un e-mail a été envoyer au ${locator.get<ServiceAuth>().maskEmail(vendeurs.email!)}",
@@ -186,6 +193,82 @@ class ServiceAuth {
     }
   }
 
+  addNewVendeurDataInBoutiques(
+      {Vendeur? vendeur,
+      BoutiqueModels? boutiqueModels,
+      BuildContext? context}) async {
+    try {
+      simpleDialogueCardSansTitle(
+          "Inscription du nouveau vendeur...", context!);
+      await locator
+          .get<FirebasesAuth>()
+          .createVendeurWithEmail(
+              email: vendeur!.email, password: "grade.trim()1234")
+          .then((val) {
+        Get.back();
+
+        // Création du vendeur
+        var vendeurs = Vendeur(
+          createAt: DateTime.now().toIso8601String(),
+          idAdmin: vendeur.idAdmin,
+          id: val.user!.uid,
+          status: vendeur.status,
+          email: vendeur.email,
+          grade: vendeur.grade,
+          messagingToken: vendeur.messagingToken,
+          nom: vendeur.nom,
+          prenom: vendeur.prenom,
+          telephone: vendeur.telephone,
+        );
+        // Update vendeur
+        saveVendeurData(context: context, vendeurs: vendeurs);
+        updateVendeurlistDatas(
+            vendeurs: vendeurs,
+            boutiqueModels: boutiqueModels,
+            context: context);
+        // Send reset password e-mail link
+        locator
+            .get<FirebasesAuth>()
+            .resetPasswordVendeurByEmail(email: vendeurs.email)
+            .then((values) {
+          //
+          succesTransaction(
+                  "Un e-mail a été envoyer au ${locator.get<ServiceAuth>().maskEmail(vendeurs.email!)}",
+                  context)
+              .then((value) {
+            Get.back();
+          });
+        });
+      });
+    } on FirebaseAuthException catch (e) {
+      Get.back();
+      dialogue(
+          panaraDialogType: PanaraDialogType.error,
+          context: context,
+          title: "Erreur",
+          message: e.message!);
+    }
+  }
+
+  updateVendeurlistDatas(
+      {Vendeur? vendeurs,
+      required BoutiqueModels? boutiqueModels,
+      BuildContext? context}) async {
+    try {
+      await locator.get<FirebasesAuth>().updateListVendeurBoutiques(
+          vendeur: vendeurs!.id!,
+          boutiqueModels: boutiqueModels,
+          collection: 'boutique');
+    } catch (e) {
+      Get.back();
+      dialogue(
+          panaraDialogType: PanaraDialogType.error,
+          context: context,
+          title: "Erreur",
+          message: e.toString());
+    }
+  }
+
   saveUserDataCollections({Users? user, BuildContext? context}) async {
     try {
       var response = await locator
@@ -197,6 +280,16 @@ class ServiceAuth {
     } catch (e) {
       debugPrint(e.toString());
     }
+  }
+
+  deleteVendeur({String? vendeurId, var context}) {
+    simpleDialogueCardSansTitle("Suppréssion...", context!);
+    locator
+        .get<FirebasesAuth>()
+        .removeVendeurBoutique(vendeurId: vendeurId)
+        .then((value) {
+      Get.back();
+    });
   }
 
   updateMessagingToken(
@@ -253,10 +346,10 @@ class ServiceAuth {
       // je fait les redirection
       if (data['grade'] == 'admin') {
         // Compte admin
-        Get.off(() => AdminHome(users: user));
+        Get.offAll(() => AdminHome(users: user));
       } else {
         // Compte vendeur
-        Get.off(() => VendeurHome(users: user));
+        Get.offAll(() => VendeurHome(users: user));
       }
     }
   }

@@ -9,7 +9,9 @@ class Vendeur {
   final String status;
   final String? grade;
   final String? messagingToken;
+  final String? createAt;
   final String? idAdmin;
+
   Vendeur({
     this.id,
     this.nom,
@@ -19,6 +21,7 @@ class Vendeur {
     required this.status,
     this.grade,
     this.messagingToken,
+    required this.createAt,
     this.idAdmin,
   });
 
@@ -31,6 +34,7 @@ class Vendeur {
     String? status,
     String? grade,
     String? messagingToken,
+    String? createAt,
     String? idAdmin,
   }) {
     return Vendeur(
@@ -42,6 +46,7 @@ class Vendeur {
       status: status ?? this.status,
       grade: grade ?? this.grade,
       messagingToken: messagingToken ?? this.messagingToken,
+      createAt: createAt ?? this.createAt,
       idAdmin: idAdmin ?? this.idAdmin,
     );
   }
@@ -56,6 +61,7 @@ class Vendeur {
       'status': status,
       'grade': grade,
       'messagingToken': messagingToken,
+      'createAt': createAt,
       'idAdmin': idAdmin,
     };
   }
@@ -72,6 +78,7 @@ class Vendeur {
       messagingToken: map['messagingToken'] != null
           ? map['messagingToken'] as String
           : null,
+      createAt: map['createAt'] != null ? map['createAt'] as String : null,
       idAdmin: map['idAdmin'] != null ? map['idAdmin'] as String : null,
     );
   }
@@ -83,7 +90,7 @@ class Vendeur {
 
   @override
   String toString() {
-    return 'Vendeur(id: $id, nom: $nom, prenom: $prenom, telephone: $telephone, email: $email, status: $status, grade: $grade, messagingToken: $messagingToken, idAdmin: $idAdmin)';
+    return 'Vendeur(id: $id, nom: $nom, prenom: $prenom, telephone: $telephone, email: $email, status: $status, grade: $grade, messagingToken: $messagingToken, idAdmin: $createAt, idAdmin: $createAt)';
   }
 
   @override
@@ -98,7 +105,8 @@ class Vendeur {
         other.status == status &&
         other.grade == grade &&
         other.messagingToken == messagingToken &&
-        other.idAdmin == idAdmin;
+        other.idAdmin == idAdmin &&
+        other.createAt == createAt;
   }
 
   @override
@@ -111,6 +119,7 @@ class Vendeur {
         status.hashCode ^
         grade.hashCode ^
         messagingToken.hashCode ^
+        createAt.hashCode ^
         idAdmin.hashCode;
   }
 }

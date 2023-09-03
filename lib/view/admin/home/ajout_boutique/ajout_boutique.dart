@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:ams/models/vendeur_model.dart';
 import 'package:ams/view/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,7 @@ import '../../../../provider/home_provider.dart';
 import '../../../../services/service_locator.dart';
 import '../../../../services/services_auth.dart';
 import '../../../widgets/check_email.dart';
+import '../../../widgets/check_number.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_dialogue_card.dart';
 import '../../../widgets/custum_text_field.dart';
@@ -33,6 +36,8 @@ class _AjoutBoutiqueState extends State<AjoutBoutique> {
   var controller = PageController();
   @override
   Widget build(BuildContext context) {
+    var idBoutique = "boutique${Random().nextInt(15500)}";
+
     return Scaffold(
         body: PageView(
       controller: controller,
@@ -199,9 +204,17 @@ class _AjoutBoutiqueState extends State<AjoutBoutique> {
                               message: "Entrez un e-mail valide",
                               title: "",
                               context: context);
+                        } else if (!CheckPhoneNumber.check(
+                            telephone.text.toString().trim())) {
+                          dialogue(
+                              panaraDialogType: PanaraDialogType.warning,
+                              message: "Entrez un numero de téléphone valide",
+                              title: "",
+                              context: context);
                         } else {
                           // information du vendeur
                           var vendeur = Vendeur(
+                            createAt: DateTime.now().toIso8601String(),
                             nom: nom.text.trim(),
                             prenom: prenom.text.trim(),
                             telephone: telephone.text.trim(),
@@ -210,10 +223,11 @@ class _AjoutBoutiqueState extends State<AjoutBoutique> {
                             status: "acif",
                             messagingToken: "vide",
                             idAdmin: locator.get<HomeProvider>().user.id,
-                            );
+                          );
                           // information de la boutique
                           var boutique = BoutiqueModels(
-                              vendeurBoutique: vendeur,
+                              id: "${nomBoutique.text}$idBoutique",
+                              vendeur: [],
                               dateCreation: DateTime.now().toIso8601String(),
                               nomBoutique: nomBoutique.text.trim(),
                               idAdmin: locator.get<HomeProvider>().user.id,
@@ -221,10 +235,11 @@ class _AjoutBoutiqueState extends State<AjoutBoutique> {
                               villeBoutique: villeBoutique.text);
                           //
                           locator.get<ServiceAuth>().inscriptionVendeur(
-                              vendeur: vendeur,
-                              context: context,
-                              pass: "grade.trim()12345",
-                              boutiqueModels: boutique);
+                                vendeur: vendeur,
+                                boutiqueModels: boutique,
+                                context: context,
+                                pass: "grade.trim()12345",
+                              );
                         }
                       },
                       color: Colors.white,

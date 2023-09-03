@@ -1,4 +1,6 @@
+import 'package:ams/models/boutique_model.dart';
 import 'package:ams/models/vendeur_model.dart';
+import 'package:ams/provider/home_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -82,12 +84,14 @@ class FirebasesAuth {
         .then((value) => value);
   }
 
-  saveBoutiqueDatas({var boutiqueModels, String? collection}) async {
+  saveBoutiqueDatas(
+      {BoutiqueModels? boutiqueModels, String? collection}) async {
     return await locator
         .get<ServiceAuth>()
         .firestore
         .collection(collection!)
-        .add(boutiqueModels!.toMap())
+        .doc(boutiqueModels!.id)
+        .set(boutiqueModels.toMap())
         .then((value) => value);
   }
 
@@ -119,6 +123,45 @@ class FirebasesAuth {
       }
     } catch (e) {
       debugPrint("error $e");
+    }
+  }
+
+  updateListVendeurBoutiques(
+      {String? vendeur,
+      BoutiqueModels? boutiqueModels,
+      String? collection}) async {
+    boutiqueModels!.addVendeur(vendeur!);
+
+    try {
+      return await locator
+          .get<ServiceAuth>()
+          .firestore
+          .collection(collection!)
+          .doc(boutiqueModels.id)
+          .update(boutiqueModels.toMap())
+          .then((value) => value);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
+
+  removeVendeurBoutique({String? vendeurId}) async {
+    locator.get<HomeProvider>().boutiqueModels.removeVendeur(vendeurId!);
+    try {
+      return await locator
+          .get<ServiceAuth>()
+          .firestore
+          .collection("boutique")
+          .doc(locator.get<HomeProvider>().boutiqueModels.id)
+          .update(locator.get<HomeProvider>().boutiqueModels.toMap())
+          .whenComplete(() async => await locator
+              .get<ServiceAuth>()
+              .firestore
+              .collection("users")
+              .doc(vendeurId)
+              .delete());
+    } catch (e) {
+      debugPrint(e.toString());
     }
   }
 }
