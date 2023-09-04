@@ -1,13 +1,14 @@
 import 'package:ams/models/vendeur_model.dart';
+import 'package:ams/themes/theme.dart';
 import 'package:ams/view/admin/widget/vendeur_card.dart';
 import 'package:flutter/material.dart';
 import 'package:ams/models/boutique_model.dart';
-import 'package:get/get.dart';
 
 import '../../../../../services/service_locator.dart';
 import '../../../../../services/services_auth.dart';
 import '../../../../widgets/custom_text.dart';
-import '../../../widget/home_card_widget.dart';
+import '../../../widget/dialogue_ajout.dart';
+import '../ajout_vendeur/ajout_vendeur.dart';
 
 class ListVendeur extends StatefulWidget {
   final BoutiqueModels boutique;
@@ -25,7 +26,16 @@ class _ListVendeurState extends State<ListVendeur> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const CustomText(data: "Liste vendeur Boutiques"),
+        title: const CustomText(data: "Vendeur boutiques"),
+        actions: [
+          IconButton.filled(
+              color: Palette.primary,
+              onPressed: () {
+                dialogueAjout(child: const AjoutVendeur(), context: context);
+              },
+              icon: const Icon(Icons.add, color: Colors.white)),
+          const SizedBox(width: 15.0)
+        ],
       ),
       body: StreamBuilder(
         stream: locator
@@ -54,22 +64,30 @@ class _ListVendeurState extends State<ListVendeur> {
                   // Comptage des vendeurs
                   if (snap.hasData) {
                     if (snap.data!.docs.isEmpty) {
-                      return const Text(
-                          "Vous avez aucun vendeur dans la boutique");
+                      return const  Padding(
+                        padding:  EdgeInsets.all(8.0),
+                        child: Center(
+                          child:  CustomText(
+                              fontSize: 22.0,
+                              data: "Vous avez aucun vendeur dans la boutique2"),
+                        ),
+                      );
                     }
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: ListView.builder(
-                        itemCount: snap.data!.docs.length,
-                        itemBuilder: (context, i) {
-                          var vendeur =
-                              Vendeur.fromMap(snap.data!.docs[i].data());
+                      child: Scrollbar(
+                        child: ListView.builder(
+                          itemCount: snap.data!.docs.length,
+                          itemBuilder: (context, i) {
+                            var vendeur =
+                                Vendeur.fromMap(snap.data!.docs[i].data());
 
-                          return VendeurCard(
-                              boutiqueModels: boutique,
-                              vendeur: vendeur,
-                              onTap: () {});
-                        },
+                            return VendeurCard(
+                                boutiqueModels: boutique,
+                                vendeur: vendeur,
+                                onTap: () {});
+                          },
+                        ),
                       ),
                     );
                   }

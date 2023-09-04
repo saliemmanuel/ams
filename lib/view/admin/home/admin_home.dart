@@ -33,112 +33,114 @@ class _AdminHomeState extends State<AdminHome> {
       appBar: AppBar(
         title: const CustomText(data: "Accueil"),
       ),
-      body: ListView(
-        children: [
-          CustomSearchBar(onTap: () {}),
-          Container(
-              padding: const EdgeInsets.all(12.0),
-              child: GridView.count(
-                shrinkWrap: true,
-                crossAxisCount: 2,
-                children: [
-                  HomeCardWidget(
-                    label: "Boutique",
-                    onTap: () {
-                      dialogueAjout(
-                          child: const AjoutBoutique(), context: context);
-                    },
-                    child: const Icon(Icons.add, size: 75.0),
-                  ),
-                  StreamBuilder(
-                    stream: locator
-                        .get<ServiceAuth>()
-                        .firestore
-                        .collection('boutique')
-                        .where("idAdmin",
-                            isEqualTo: locator.get<HomeProvider>().user.id)
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        if (snapshot.data!.docs.isEmpty) {
-                          // Comptage
+      body: Scrollbar(
+        child: ListView(
+          children: [
+            CustomSearchBar(onTap: () {}),
+            Container(
+                padding: const EdgeInsets.all(12.0),
+                child: GridView.count(
+                  shrinkWrap: true,
+                  crossAxisCount: 2,
+                  children: [
+                    HomeCardWidget(
+                      label: "Boutique",
+                      onTap: () {
+                        dialogueAjout(
+                            child: const AjoutBoutique(), context: context);
+                      },
+                      child: const Icon(Icons.add, size: 75.0),
+                    ),
+                    StreamBuilder(
+                      stream: locator
+                          .get<ServiceAuth>()
+                          .firestore
+                          .collection('boutique')
+                          .where("idAdmin",
+                              isEqualTo: locator.get<HomeProvider>().user.id)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          if (snapshot.data!.docs.isEmpty) {
+                            // Comptage
+                            return HomeCardWidget(
+                              label: "Boutique",
+                              onTap: () {},
+                              child: const CustomText(
+                                data: "0",
+                                overflow: TextOverflow.ellipsis,
+                                fontSize: 55.0,
+                              ),
+                            );
+                          }
                           return HomeCardWidget(
                             label: "Boutique",
-                            onTap: () {},
-                            child: const CustomText(
-                              data: "0",
+                            onTap: () => Get.to(() => const ListBoutique()),
+                            child: CustomText(
+                              data: snapshot.data!.docs.length.toString(),
                               overflow: TextOverflow.ellipsis,
                               fontSize: 55.0,
                             ),
                           );
                         }
-                        return HomeCardWidget(
-                          label: "Boutique",
-                          onTap: () => Get.to(() => const ListBoutique()),
+                        return const Center(child: CircularProgressIndicator());
+                      },
+                    ),
+                  ],
+                )),
+            const Divider(),
+            const ListTile(
+              title: CustomText(data: "Liste des Boutiques", fontSize: 18),
+            ),
+            StreamBuilder(
+              stream: locator
+                  .get<ServiceAuth>()
+                  .firestore
+                  .collection('boutique')
+                  .where("idAdmin",
+                      isEqualTo: locator.get<HomeProvider>().user.id)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data!.docs.isEmpty) {
+                    return const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Center(
                           child: CustomText(
-                            data: snapshot.data!.docs.length.toString(),
-                            overflow: TextOverflow.ellipsis,
-                            fontSize: 55.0,
-                          ),
-                        );
-                      }
-                      return const Center(child: CircularProgressIndicator());
-                    },
-                  ),
-                ],
-              )),
-          const Divider(),
-          const ListTile(
-            title: CustomText(data: "Liste des Boutiques", fontSize: 18),
-          ),
-          StreamBuilder(
-            stream: locator
-                .get<ServiceAuth>()
-                .firestore
-                .collection('boutique')
-                .where("idAdmin",
-                    isEqualTo: locator.get<HomeProvider>().user.id)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data!.docs.isEmpty) {
-                  return const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Center(
-                        child: CustomText(
-                      data: "Vous avez aucune boutique",
-                      fontSize: 18,
-                    )),
+                        data: "Vous avez aucune boutique",
+                        fontSize: 18,
+                      )),
+                    );
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (context, index) {
+                        var boutique = BoutiqueModels.fromMap(
+                            snapshot.data!.docs[index].data());
+                        if (boutique.toJson().isNotEmpty) {
+                          return BoutiqueCard(
+                            nomBoutique: boutique.nomBoutique,
+                            onTap: () {
+                              locator.get<HomeProvider>().setBoutiqueModels =
+                                  boutique;
+                              Get.to(() => const DetailBoutique());
+                            },
+                          );
+                        } else {
+                          return const Text("Une erreur s'est produite");
+                        }
+                      },
+                    ),
                   );
                 }
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: snapshot.data!.docs.length,
-                    itemBuilder: (context, index) {
-                      var boutique = BoutiqueModels.fromMap(
-                          snapshot.data!.docs[index].data());
-                      if (boutique.toJson().isNotEmpty) {
-                        return BoutiqueCard(
-                          nomBoutique: boutique.nomBoutique,
-                          onTap: () {
-                            locator.get<HomeProvider>().setBoutiqueModels =
-                                boutique;
-                            Get.to(() => const DetailBoutique());
-                          },
-                        );
-                      } else {
-                        return const Text("Une erreur s'est produite");
-                      }
-                    },
-                  ),
-                );
-              }
-              return const Center(child: CircularProgressIndicator());
-            },
-          ),
-        ],
+                return const Center(child: CircularProgressIndicator());
+              },
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: Consumer<HomeProvider>(
           builder: (contexte, values, child) => BottomNavigationBar(

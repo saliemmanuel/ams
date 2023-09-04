@@ -1,9 +1,11 @@
 import 'package:ams/models/boutique_model.dart';
 import 'package:ams/view/admin/home/detail_boutique/ajout_vendeur/ajout_vendeur.dart';
 import 'package:ams/view/admin/home/detail_boutique/liste_vendeur/liste_vendeur.dart';
+import 'package:ams/view/admin/home/detail_boutique/stock_article/stock_article.dart';
 import 'package:ams/view/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:iconly/iconly.dart';
 
 import '../../../../provider/home_provider.dart';
 import '../../../../services/service_locator.dart';
@@ -35,14 +37,6 @@ class _DetailBoutiqueState extends State<DetailBoutique> {
                 shrinkWrap: true,
                 crossAxisCount: 2,
                 children: [
-                  //Ajout vendeur
-                  HomeCardWidget(
-                      label: "Vendeur",
-                      onTap: () {
-                        dialogueAjout(
-                            child: const AjoutVendeur(), context: context);
-                      },
-                      child: const Icon(Icons.add, size: 75.0)),
                   StreamBuilder(
                     stream: locator
                         .get<ServiceAuth>()
@@ -82,6 +76,14 @@ class _DetailBoutiqueState extends State<DetailBoutique> {
                       return const Center(child: CircularProgressIndicator());
                     },
                   ),
+                  HomeCardWidget(
+                    label: "Stock",
+                    child: const Icon(Icons.storage_rounded, size: 60.0),
+                    onTap: () {
+                      Get.to(()=> const StockArticle());
+                    },
+                  ),
+                  
                 ],
               )),
         ],

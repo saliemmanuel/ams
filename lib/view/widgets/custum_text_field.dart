@@ -76,7 +76,8 @@ class CustumTextFieldState extends State<CustumTextField> {
           labelText: widget.child!,
           hintText: widget.child,
           prefixIconColor: widget.prefixIconColor!,
-          prefixIcon: Icon(widget.prefixIcon),
+          prefixIcon:
+              widget.prefixIcon == null ? null : Icon(widget.prefixIcon),
           suffixIcon: widget.obscureText == true
               ? IconButton(
                   icon: obscure

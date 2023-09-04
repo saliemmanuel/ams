@@ -37,25 +37,27 @@ class _ListBoutiqueState extends State<ListBoutique> {
             }
             return Padding(
               padding: const EdgeInsets.all(8.0),
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: snapshot.data!.docs.length,
-                itemBuilder: (context, index) {
-                  var boutique =
-                      BoutiqueModels.fromMap(snapshot.data!.docs[index].data());
-                  if (boutique.toJson().isNotEmpty) {
-                    return BoutiqueCard(
-                      nomBoutique: boutique.nomBoutique,
-                      onTap: () {
-                        locator.get<HomeProvider>().setBoutiqueModels =
-                            boutique;
-                        Get.to(() => const DetailBoutique());
-                      },
-                    );
-                  } else {
-                    return const Text("Une erreur s'est produite");
-                  }
-                },
+              child: Scrollbar(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: snapshot.data!.docs.length,
+                  itemBuilder: (context, index) {
+                    var boutique =
+                        BoutiqueModels.fromMap(snapshot.data!.docs[index].data());
+                    if (boutique.toJson().isNotEmpty) {
+                      return BoutiqueCard(
+                        nomBoutique: boutique.nomBoutique,
+                        onTap: () {
+                          locator.get<HomeProvider>().setBoutiqueModels =
+                              boutique;
+                          Get.to(() => const DetailBoutique());
+                        },
+                      );
+                    } else {
+                      return const Text("Une erreur s'est produite");
+                    }
+                  },
+                ),
               ),
             );
           }
