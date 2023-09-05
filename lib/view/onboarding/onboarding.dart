@@ -23,7 +23,6 @@ class  Onboarding extends StatelessWidget {
     return AppBody(
       body: Column(
         children: [
-          const SizedBox(height: 45),
           Expanded(
               flex: 5,
               child: Stack(
@@ -76,7 +75,6 @@ class  Onboarding extends StatelessWidget {
                     },
                     color: Colors.white,
                   ),
-                  const Spacer(flex: 1),
                 ],
               ),
             ),

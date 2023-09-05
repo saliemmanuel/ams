@@ -22,6 +22,21 @@ dialogue(
   );
 }
 
+dialogueAndonTapDismiss(
+    {required PanaraDialogType panaraDialogType,
+    BuildContext? context,
+    String? message,
+    String? title,
+    required void Function() onTapDismiss}) {
+  PanaraInfoDialog.show(
+      panaraDialogType: panaraDialogType,
+      context!,
+      title: title,
+      message: message!,
+      buttonText: "Okay",
+      onTapDismiss: onTapDismiss);
+}
+
 confirmDialogue(
     {required PanaraDialogType panaraDialogType,
     BuildContext? context,

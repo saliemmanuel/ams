@@ -42,15 +42,15 @@ class _ListBoutiqueState extends State<ListBoutique> {
                   shrinkWrap: true,
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (context, index) {
-                    var boutique =
-                        BoutiqueModels.fromMap(snapshot.data!.docs[index].data());
+                    var boutique = BoutiqueModels.fromMap(
+                        snapshot.data!.docs[index].data());
                     if (boutique.toJson().isNotEmpty) {
                       return BoutiqueCard(
                         nomBoutique: boutique.nomBoutique,
                         onTap: () {
                           locator.get<HomeProvider>().setBoutiqueModels =
                               boutique;
-                          Get.to(() => const DetailBoutique());
+                          Get.to(() => DetailBoutique(boutique: boutique));
                         },
                       );
                     } else {

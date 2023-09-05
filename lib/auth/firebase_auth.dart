@@ -1,3 +1,4 @@
+import 'package:ams/models/article_modes.dart';
 import 'package:ams/models/boutique_model.dart';
 import 'package:ams/models/vendeur_model.dart';
 import 'package:ams/provider/home_provider.dart';
@@ -82,6 +83,24 @@ class FirebasesAuth {
         .doc(vendeur!.id)
         .set(vendeur.toMap())
         .then((value) => value);
+  }
+
+  saveArticleDatas({ArticleModels? article}) async {
+    return await locator
+        .get<ServiceAuth>()
+        .firestore
+        .collection("article")
+        .doc(article!.id)
+        .set(article.toMap());
+  }
+
+  updateArticleDatas({ArticleModels? article, String? key, value}) async {
+    return await locator
+        .get<ServiceAuth>()
+        .firestore
+        .collection("article")
+        .doc(article!.id)
+        .update({key!: value!});
   }
 
   saveBoutiqueDatas(

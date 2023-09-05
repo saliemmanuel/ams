@@ -1,9 +1,11 @@
 import 'package:ams/auth/firebase_auth.dart';
 import 'package:ams/models/boutique_model.dart';
 import 'package:ams/services/service_locator.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../models/user.dart';
+import '../services/services_auth.dart';
 
 class HomeProvider extends ChangeNotifier {
   Users? _user;
@@ -11,9 +13,13 @@ class HomeProvider extends ChangeNotifier {
 
   String messagingToken = '';
   int? _topIndex = 0;
+  int? _nomProduit = 0;
+  double _valeurStock = 0;
 
   Users get user => _user!;
   BoutiqueModels get boutiqueModels => _boutiqueModels!;
+  int? get nomProduit => _nomProduit!;
+  double? get valeurStock => _valeurStock;
 
   setUserData(Users? user) {
     _user = Users.fromMap(user!.toMap());
@@ -22,6 +28,18 @@ class HomeProvider extends ChangeNotifier {
 
   set setBoutiqueModels(BoutiqueModels boutique) {
     _boutiqueModels = boutique;
+    notifyListeners();
+  }
+
+  setNombreBoutique(String? idBoutique) async {
+    var myRef = locator
+        .get<ServiceAuth>()
+        .firestore
+        .collection('article')
+        .where("idBoutique", isEqualTo: idBoutique);
+    var snapshot = await myRef.count().get();
+    _nomProduit = snapshot.count;
+
     notifyListeners();
   }
 

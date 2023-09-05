@@ -5,12 +5,14 @@ import 'package:ams/services/services_auth.dart';
 import 'package:ams/storage/local_storage/local_storage.dart';
 import 'package:ams/view/login/login.dart';
 import 'package:ams/view/onboarding/onboarding.dart';
+import 'package:ams/view/widgets/custom_text.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:panara_dialogs/panara_dialogs.dart';
 
 import '../../auth/firebase_auth.dart';
 import '../../messaging/messaging.dart';
@@ -26,27 +28,39 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
-  late StreamSubscription subscription;
+   StreamSubscription? subscription;
   bool isDeviceConnected = false;
   bool isAlertSet = false;
-
   @override
   void initState() {
-    init();
-    getConnectivity();
+    checkConnexoion();
     super.initState();
   }
 
-  getConnectivity() =>
-      subscription = Connectivity().onConnectivityChanged.listen(
-        (ConnectivityResult result) async {
-          isDeviceConnected = await InternetConnectionChecker().hasConnection;
-          if (!isDeviceConnected && isAlertSet == false) {
+  checkConnexoion() {
+    print(subscription);
+    subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+          print(result);
+
+      if (result == ConnectivityResult.none) {
+        subscription =
+            InternetConnectionChecker().onStatusChange.listen((event) {
+          isDeviceConnected = event == InternetConnectionStatus.connected;
+          print(isDeviceConnected);
+          if (isDeviceConnected) {
+            init();
+            initNextPage();
+          } else {
             showDialogBox();
-            setState(() => isAlertSet = true);
           }
-        },
-      );
+        });
+      } else {
+        showDialogBox();
+      }
+    });
+  }
 
   init() async {
     try {
@@ -58,13 +72,12 @@ class _SplashState extends State<Splash> {
     } catch (e) {
       debugPrint(e.toString());
     }
-    initNextPage();
   }
 
   // initialiation de la page suivante
   initNextPage() async {
     // Initialisation le temps d'attente à 2s
-    Timer(const Duration(seconds: 2), () async {
+    Timer(const Duration(seconds: 1), () async {
       try {
         // je verifie si l'user est authentifier
         if (locator.get<FirebasesAuth>().curentUser != null) {
@@ -91,45 +104,34 @@ class _SplashState extends State<Splash> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Image.asset("assets/images/logo.png"),
-            const CircularProgressIndicator()
-          ],
-        ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 25.0, bottom: 30.0),
+            child: Image.asset("assets/images/logo.png"),
+          ),
+          const CircularProgressIndicator()
+        ],
       ),
     );
   }
 
   @override
   void dispose() {
-    subscription.cancel();
+    subscription?.cancel();
     super.dispose();
   }
 
-  showDialogBox() => showCupertinoDialog<String>(
+  showDialogBox() => dialogueAndonTapDismiss(
+        panaraDialogType: PanaraDialogType.warning,
         context: context,
-        builder: (BuildContext context) => CupertinoAlertDialog(
-          title: const Text('No Connection'),
-          content: const Text('Please check your internet connectivity'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () async {
-                Navigator.pop(context, 'Cancel');
-                setState(() => isAlertSet = false);
-                isDeviceConnected =
-                    await InternetConnectionChecker().hasConnection;
-                if (!isDeviceConnected && isAlertSet == false) {
-                  showDialogBox();
-                  setState(() => isAlertSet = true);
-                }
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        ),
+        title: "Pas de connection",
+        message: "Veuillez vérifier votre connectivité Internet",
+        onTapDismiss: () {
+          Get.back();
+          checkConnexoion();
+        },
       );
 }

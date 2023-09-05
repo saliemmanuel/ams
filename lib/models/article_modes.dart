@@ -1,7 +1,8 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 class ArticleModels {
-  final String? identifiant;
+  final String? id;
   final String? designation;
   final int? stockActuel;
   final int? stockNormal;
@@ -11,9 +12,11 @@ class ArticleModels {
   final String? nomBoutique;
   final String? idBoutique;
   final String? codeEnregistrement;
+  final String? idAdmin;
+  final double? prixNonAuto;
   final String? createAt;
   ArticleModels({
-    this.identifiant,
+    this.id,
     this.designation,
     this.stockActuel,
     this.stockNormal,
@@ -23,11 +26,13 @@ class ArticleModels {
     this.nomBoutique,
     this.idBoutique,
     this.codeEnregistrement,
+    this.idAdmin,
+    this.prixNonAuto,
     this.createAt,
   });
 
   ArticleModels copyWith({
-    String? identifiant,
+    String? id,
     String? designation,
     int? stockActuel,
     int? stockNormal,
@@ -37,10 +42,12 @@ class ArticleModels {
     String? nomBoutique,
     String? idBoutique,
     String? codeEnregistrement,
+    String? idAdmin,
+    double? prixNonAuto,
     String? createAt,
   }) {
     return ArticleModels(
-      identifiant: identifiant ?? this.identifiant,
+      id: id ?? this.id,
       designation: designation ?? this.designation,
       stockActuel: stockActuel ?? this.stockActuel,
       stockNormal: stockNormal ?? this.stockNormal,
@@ -50,13 +57,15 @@ class ArticleModels {
       nomBoutique: nomBoutique ?? this.nomBoutique,
       idBoutique: idBoutique ?? this.idBoutique,
       codeEnregistrement: codeEnregistrement ?? this.codeEnregistrement,
+      idAdmin: idAdmin ?? this.idAdmin,
+      prixNonAuto: prixNonAuto ?? this.prixNonAuto,
       createAt: createAt ?? this.createAt,
     );
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'identifiant': identifiant,
+      'id': id,
       'designation': designation,
       'stockActuel': stockActuel,
       'stockNormal': stockNormal,
@@ -66,14 +75,15 @@ class ArticleModels {
       'nomBoutique': nomBoutique,
       'idBoutique': idBoutique,
       'codeEnregistrement': codeEnregistrement,
+      'idAdmin': idAdmin,
+      'prixNonAuto': prixNonAuto,
       'createAt': createAt,
     };
   }
 
   factory ArticleModels.fromMap(Map<String, dynamic> map) {
     return ArticleModels(
-      identifiant:
-          map['identifiant'] != null ? map['identifiant'] as String : null,
+      id: map['id'] != null ? map['id'] as String : null,
       designation:
           map['designation'] != null ? map['designation'] as String : null,
       stockActuel:
@@ -91,6 +101,9 @@ class ArticleModels {
       codeEnregistrement: map['codeEnregistrement'] != null
           ? map['codeEnregistrement'] as String
           : null,
+      idAdmin: map['idAdmin'] != null ? map['idAdmin'] as String : null,
+      prixNonAuto:
+          map['prixNonAuto'] != null ? map['prixNonAuto'] as double : null,
       createAt: map['createAt'] != null ? map['createAt'] as String : null,
     );
   }
@@ -102,14 +115,14 @@ class ArticleModels {
 
   @override
   String toString() {
-    return 'ArticleModels(identifiant: $identifiant, designation: $designation, stockActuel: $stockActuel, stockNormal: $stockNormal, stockCritique: $stockCritique, prixAchat: $prixAchat, prixVente: $prixVente, nomBoutique: $nomBoutique, idBoutique: $idBoutique, codeEnregistrement: $codeEnregistrement, createAt: $createAt)';
+    return 'ArticleModels(id: $id, designation: $designation, stockActuel: $stockActuel, stockNormal: $stockNormal, stockCritique: $stockCritique, prixAchat: $prixAchat, prixVente: $prixVente, nomBoutique: $nomBoutique, idBoutique: $idBoutique, codeEnregistrement: $codeEnregistrement, idAdmin: $idAdmin, prixNonAuto: $prixNonAuto, createAt: $createAt)';
   }
 
   @override
   bool operator ==(covariant ArticleModels other) {
     if (identical(this, other)) return true;
 
-    return other.identifiant == identifiant &&
+    return other.id == id &&
         other.designation == designation &&
         other.stockActuel == stockActuel &&
         other.stockNormal == stockNormal &&
@@ -119,12 +132,14 @@ class ArticleModels {
         other.nomBoutique == nomBoutique &&
         other.idBoutique == idBoutique &&
         other.codeEnregistrement == codeEnregistrement &&
+        other.idAdmin == idAdmin &&
+        other.prixNonAuto == prixNonAuto &&
         other.createAt == createAt;
   }
 
   @override
   int get hashCode {
-    return identifiant.hashCode ^
+    return id.hashCode ^
         designation.hashCode ^
         stockActuel.hashCode ^
         stockNormal.hashCode ^
@@ -134,6 +149,8 @@ class ArticleModels {
         nomBoutique.hashCode ^
         idBoutique.hashCode ^
         codeEnregistrement.hashCode ^
+        idAdmin.hashCode ^
+        prixNonAuto.hashCode ^
         createAt.hashCode;
   }
 }

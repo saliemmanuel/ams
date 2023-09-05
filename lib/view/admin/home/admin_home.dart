@@ -126,7 +126,7 @@ class _AdminHomeState extends State<AdminHome> {
                             onTap: () {
                               locator.get<HomeProvider>().setBoutiqueModels =
                                   boutique;
-                              Get.to(() => const DetailBoutique());
+                              Get.to(() => DetailBoutique(boutique: boutique));
                             },
                           );
                         } else {

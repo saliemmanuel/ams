@@ -119,6 +119,7 @@ class _AjoutBoutiqueState extends State<AjoutBoutique> {
                     ],
                   ),
                 ),
+                const SizedBox(height: 30.0)
               ],
             ),
           ),
@@ -246,6 +247,7 @@ class _AjoutBoutiqueState extends State<AjoutBoutique> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 30.0)
               ],
             ),
           ),

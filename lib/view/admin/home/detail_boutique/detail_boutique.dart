@@ -15,7 +15,8 @@ import '../../widget/home_card_widget.dart';
 import '../ajout_boutique/ajout_boutique.dart';
 
 class DetailBoutique extends StatefulWidget {
-  const DetailBoutique({super.key});
+  final BoutiqueModels boutique;
+  const DetailBoutique({super.key, required this.boutique});
 
   @override
   State<DetailBoutique> createState() => _DetailBoutiqueState();
@@ -60,11 +61,12 @@ class _DetailBoutiqueState extends State<DetailBoutique> {
                             ),
                           );
                         }
+                        var boutique = BoutiqueModels.fromMap(
+                            snapshot.data!.docs[0].data());
                         return HomeCardWidget(
                           label: "Vendeur",
-                          onTap: () => Get.to(() => ListVendeur(
-                              boutique: BoutiqueModels.fromMap(
-                                  snapshot.data!.docs[0].data()))),
+                          onTap: () =>
+                              Get.to(() => ListVendeur(boutique: boutique)),
                           child: CustomText(
                             data: snapshot.data!.docs[0]['vendeur'].length
                                 .toString(),
@@ -80,10 +82,11 @@ class _DetailBoutiqueState extends State<DetailBoutique> {
                     label: "Stock",
                     child: const Icon(Icons.storage_rounded, size: 60.0),
                     onTap: () {
-                      Get.to(()=> const StockArticle());
+                      Get.to(() => StockArticle(
+                            boutique: widget.boutique,
+                          ));
                     },
                   ),
-                  
                 ],
               )),
         ],

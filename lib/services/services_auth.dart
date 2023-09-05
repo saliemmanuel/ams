@@ -2,6 +2,7 @@
 
 import 'dart:math';
 
+import 'package:ams/models/article_modes.dart';
 import 'package:ams/models/boutique_model.dart';
 import 'package:ams/models/vendeur_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:panara_dialogs/panara_dialogs.dart';
+import 'package:provider/provider.dart';
 import '../auth/firebase_auth.dart';
 import '../models/user.dart';
 import '../provider/home_provider.dart';
@@ -183,6 +185,69 @@ class ServiceAuth {
       await locator
           .get<FirebasesAuth>()
           .saveVendeurDatas(vendeur: vendeurs, collection: 'users');
+    } catch (e) {
+      Get.back();
+      dialogue(
+          panaraDialogType: PanaraDialogType.error,
+          context: context,
+          title: "Erreur",
+          message: e.toString());
+    }
+  }
+
+  saveArticleData({ArticleModels? article, BuildContext? context}) async {
+    try {
+      simpleDialogueCardSansTitle("Enregistrement...", context!);
+      await locator
+          .get<FirebasesAuth>()
+          .saveArticleDatas(article: article)
+          .then((value) {
+        Get.back();
+        dialogueAndonTapDismiss(
+            onTapDismiss: () {
+              Get.back();
+              Get.back();
+              Provider.of<HomeProvider>(context, listen: false)
+                  .setNombreBoutique(article!.idBoutique);
+            },
+            panaraDialogType: PanaraDialogType.success,
+            context: context,
+            title: "Succès",
+            message: "L'article a été ajouter avec succès");
+      });
+    } catch (e) {
+      Get.back();
+      dialogue(
+          panaraDialogType: PanaraDialogType.error,
+          context: context,
+          title: "Erreur",
+          message: e.toString());
+    }
+  }
+
+  editStock({
+    ArticleModels? article,
+    BuildContext? context,
+    String? key,
+    dynamic value,
+  }) async {
+    try {
+      simpleDialogueCardSansTitle("Enregistrement...", context!);
+      await locator
+          .get<FirebasesAuth>()
+          .updateArticleDatas(article: article, key: key, value: value)
+          .then((value) {
+        Get.back();
+        dialogueAndonTapDismiss(
+            onTapDismiss: () {
+              Get.back();
+              Get.back();
+            },
+            panaraDialogType: PanaraDialogType.success,
+            context: context,
+            title: "Succès",
+            message: "L'article a été modifier avec succès");
+      });
     } catch (e) {
       Get.back();
       dialogue(

@@ -19,11 +19,10 @@ void main() async {
   LocalStorage.init();
   ServiceLocator.initServiceLocator();
   await dotenv.load(fileName: ".env");
-  await FirebaseMessaging.instance.getInitialMessage();
-  await FireMessageging().getTokenDeviceToken();
-  await FireMessageging.initializeLocalNotifications();
-  FireMessageging().onMessageListen();
-  FireMessageging().requestPermission();
+  // await FirebaseMessaging.instance.getInitialMessage();
+  // await FireMessageging.initializeLocalNotifications();
+  // FireMessageging().onMessageListen();
+  // FireMessageging().requestPermission();
 
   runApp(MultiProvider(
       providers: [ChangeNotifierProvider(create: (context) => HomeProvider())],
