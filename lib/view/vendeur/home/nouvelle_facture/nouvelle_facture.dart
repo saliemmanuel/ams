@@ -1,5 +1,7 @@
 import 'package:ams/provider/home_provider.dart';
 import 'package:ams/services/services_auth.dart';
+import 'package:ams/view/admin/widget/dialogue_ajout.dart';
+import 'package:ams/view/widgets/check_number.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:get/get.dart';
@@ -12,6 +14,7 @@ import '../../../widgets/custom_dialogue_card.dart';
 import '../../../widgets/custom_text.dart';
 import '../../../widgets/custum_text_field.dart';
 import '../../widget/article_card.dart';
+import 'recapitulatif_facture/recapitulatif_facture.dart';
 
 class NouvelleFacture extends StatefulWidget {
   const NouvelleFacture({
@@ -122,19 +125,44 @@ class NouvelleFactureState extends State<NouvelleFacture> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FilledButton.tonalIcon(
+        icon: const Icon(Icons.save_outlined),
         label: const CustomText(data: "Termier"),
         onPressed: () {
+          // je verifie si la liste globale des facture est vide
           if (!Provider.of<HomeProvider>(context, listen: false)
-              .listArticleVente!
+              .echoVal
               .isNotEmpty) {
+            // si elle est vide je renvoi un message aux vendeur
             locator.get<ServiceAuth>().showToast(
                 context: context,
                 "Aucun article dans la facture",
                 position: FlutterToastr.bottom);
+          } else {
+            // Je renvoi un récapitulatif de la facture du client
+            if (nom.text.isEmpty || telephone.text.isEmpty) {
+              // si le vendeur ne renseigne pas le nom du client
+              // si le vendeur ne renseigne pas le telephone du client
+              dialogue(
+                  panaraDialogType: PanaraDialogType.error,
+                  context: context,
+                  title: "Erreur",
+                  message: "Entrez le nom du client et son téléphone svp");
+            } else if (!CheckPhoneNumber.check(telephone.text)) {
+              dialogue(
+                  panaraDialogType: PanaraDialogType.error,
+                  context: context,
+                  title: "Erreur",
+                  message: "Entrez un numéro de téléphone valide");
+            } else {
+              dialogueAjout(
+                  child: RecapitulatifFacture(
+                    nom: nom.text,
+                    telephone: telephone.text,
+                  ),
+                  context: context);
+            }
           }
-          print(Provider.of<HomeProvider>(context, listen: false).echoVal.first.quantite);
         },
-        icon: const Icon(Icons.save_outlined),
       ),
     );
   }

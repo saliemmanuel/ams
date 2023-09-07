@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:ams/auth/firebase_auth.dart';
 import 'package:ams/models/article_modes.dart';
 import 'package:ams/models/boutique_model.dart';
@@ -46,14 +44,18 @@ class HomeProvider extends ChangeNotifier {
   }
 
   setNombreBoutique(String? idBoutique) async {
-    var myRef = locator
-        .get<ServiceAuth>()
-        .firestore
-        .collection('article')
-        .where("idBoutique", isEqualTo: idBoutique);
-    var snapshot = await myRef.count().get();
-    _nomProduit = snapshot.count;
-    notifyListeners();
+    try {
+      var myRef = locator
+          .get<ServiceAuth>()
+          .firestore
+          .collection('article')
+          .where("idBoutique", isEqualTo: idBoutique);
+      var snapshot = await myRef.count().get();
+      _nomProduit = snapshot.count;
+      notifyListeners();
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 
   setValeurStockBoutique(double? value) async {
@@ -76,6 +78,7 @@ class HomeProvider extends ChangeNotifier {
 
   remoceAllValeurArticleVente() {
     _listArticleVente!.clear();
+    echoVal.clear();
     notifyListeners();
   }
 

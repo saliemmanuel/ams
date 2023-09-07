@@ -27,6 +27,8 @@ class VendeurHome extends StatefulWidget {
 }
 
 class _VendeurHomeState extends State<VendeurHome> {
+  String search = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,7 +63,10 @@ class _VendeurHomeState extends State<VendeurHome> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              CustomSearchBar(onTap: () {}),
+              CustomSearchBar(onChanged: (value) {
+                search = value;
+                setState(() {});
+              }),
               StreamBuilder(
                 stream: getStream(),
                 builder: (context, snapshot) {

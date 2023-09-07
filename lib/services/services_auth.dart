@@ -14,6 +14,7 @@ import 'package:get/get.dart';
 import 'package:panara_dialogs/panara_dialogs.dart';
 import 'package:provider/provider.dart';
 import '../auth/firebase_auth.dart';
+import '../models/facture_client_model.dart';
 import '../models/user.dart';
 import '../provider/home_provider.dart';
 import '../view/vendeur/vendeur.dart';
@@ -224,6 +225,47 @@ class ServiceAuth {
           title: "Erreur",
           message: e.toString());
     }
+  }
+
+  // enregistre la facture du client
+  saveFactureClientData(
+      {
+      required List<FactureClient>? facture,
+      required String nom,
+      required String telephone,
+      required double? netPayer,
+      BuildContext? context}) async {
+    // try {
+      simpleDialogueCardSansTitle("Enregistrement...", context!);
+      await locator
+          .get<FirebasesAuth>()
+          .saveFactureClientDatas(
+              facture: facture,
+              nom: nom,
+              telephone: telephone,
+              netPayer: netPayer)
+          .then((value) {
+        Get.back();
+        dialogueAndonTapDismiss(
+            onTapDismiss: () {
+              Get.back();
+              Get.back();
+              Provider.of<HomeProvider>(context, listen: false)
+                  .remoceAllValeurArticleVente();
+            },
+            panaraDialogType: PanaraDialogType.success,
+            context: context,
+            title: "Succès",
+            message: "Facture enregistré avec succès");
+      });
+    // } catch (e) {
+    //   Get.back();
+    //   dialogue(
+    //       panaraDialogType: PanaraDialogType.error,
+    //       context: context,
+    //       title: "Erreur",
+    //       message: e.toString());
+    // }
   }
 
   editStock({

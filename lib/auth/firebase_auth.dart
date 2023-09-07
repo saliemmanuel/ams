@@ -1,5 +1,6 @@
 import 'package:ams/models/article_modes.dart';
 import 'package:ams/models/boutique_model.dart';
+import 'package:ams/models/facture_client_model.dart';
 import 'package:ams/models/vendeur_model.dart';
 import 'package:ams/provider/home_provider.dart';
 import 'package:ams/view/login/login.dart';
@@ -95,6 +96,33 @@ class FirebasesAuth {
         .collection("article")
         .doc(article!.id)
         .set(article.toMap());
+  }
+
+  saveFactureClientDatas(
+      {required List<FactureClient>? facture,
+      required String nom,
+      required String telephone,
+      required double? netPayer}) async {
+    int nouvelStock = 0;
+    for (var e in facture!) {
+      nouvelStock = e.articleModels!.stockActuel! - e.quantite!;
+      updateArticleDatas(
+        article: e.articleModels,
+        key: "stockActuel",
+        value: nouvelStock,
+      );
+    }
+
+    return await locator
+        .get<ServiceAuth>()
+        .firestore
+        .collection("facture")
+        .add({
+      "facture": facture.map((e) => e.toMap()),
+      'nom': nom,
+      "telephone": telephone,
+      "netPayer": netPayer
+    });
   }
 
   updateArticleDatas({ArticleModels? article, String? key, value}) async {

@@ -8,47 +8,28 @@ class FactureClient {
   final double? prixTotal;
   final ArticleModels? articleModels;
   final int? quantite;
+  final String? createAt;
   FactureClient({
     this.index,
     this.prixTotal,
     this.articleModels,
     this.quantite,
+    this.createAt,
   });
-
-  // FactureClient(
-  //     {this.index, this.prixTotal, this.articleModels, this.quantite});
-
-  // FactureClient.fromJson(Map<String, dynamic> json) {
-  //   index = json['index'];
-  //   prixTotal = json['prixTotal'];
-  //   articleModels = json['articleModels'] != null
-  //       ? ArticleModels.fromJson(json['articleModels'])
-  //       : null;
-  //   quantite = json['quantite'];
-  // }
-
-  // Map<String, dynamic> toJson() {
-  //   final Map<String, dynamic> data = {};
-  //   data['index'] = index;
-  //   data['prixTotal'] = prixTotal;
-  //   if (articleModels != null) {
-  //     data['articleModels'] = articleModels!.toJson();
-  //   }
-  //   data['quantite'] = quantite;
-  //   return data;
-  // }
 
   FactureClient copyWith({
     int? index,
     double? prixTotal,
     ArticleModels? articleModels,
     int? quantite,
+    String? createAt,
   }) {
     return FactureClient(
       index: index ?? this.index,
       prixTotal: prixTotal ?? this.prixTotal,
       articleModels: articleModels ?? this.articleModels,
       quantite: quantite ?? this.quantite,
+      createAt: createAt ?? this.createAt,
     );
   }
 
@@ -58,6 +39,7 @@ class FactureClient {
       'prixTotal': prixTotal,
       'articleModels': articleModels?.toMap(),
       'quantite': quantite,
+      'createAt': createAt,
     };
   }
 
@@ -69,6 +51,7 @@ class FactureClient {
           ? ArticleModels.fromMap(map['articleModels'] as Map<String, dynamic>)
           : null,
       quantite: map['quantite'] != null ? map['quantite'] as int : null,
+      createAt: map['createAt'] != null ? map['createAt'] as String : null,
     );
   }
 
@@ -79,7 +62,7 @@ class FactureClient {
 
   @override
   String toString() {
-    return 'FactureClient(index: $index, prixTotal: $prixTotal, articleModels: $articleModels, quantite: $quantite)';
+    return 'FactureClient(index: $index, prixTotal: $prixTotal, articleModels: $articleModels, quantite: $quantite, createAt: $createAt)';
   }
 
   @override
@@ -89,7 +72,8 @@ class FactureClient {
     return other.index == index &&
         other.prixTotal == prixTotal &&
         other.articleModels == articleModels &&
-        other.quantite == quantite;
+        other.quantite == quantite &&
+        other.createAt == createAt;
   }
 
   @override
@@ -97,6 +81,7 @@ class FactureClient {
     return index.hashCode ^
         prixTotal.hashCode ^
         articleModels.hashCode ^
-        quantite.hashCode;
+        quantite.hashCode ^
+        createAt.hashCode;
   }
 }

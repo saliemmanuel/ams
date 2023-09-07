@@ -120,7 +120,7 @@ class _PrixEtQuantiteState extends State<PrixEtQuantite> {
         "prixTotal": prixTotal,
         "quantite": int.parse(controller.text),
         "articleModels": widget.listArticleVente![widget.index].toMap(),
-        "dateFacture": date
+        "createAt": date
       });
       // et je l'insère dans la liste globale de facture
       // echoVal dans HomeProvider est une List<FactureClient>
@@ -264,7 +264,7 @@ class _PrixEtQuantiteState extends State<PrixEtQuantite> {
       "prixTotal": prixTotal,
       "quantite": int.parse(controller.text),
       "articleModels": widget.listArticleVente![widget.index].toMap(),
-      "dateFacture": date
+      "createAt": date
     });
     // je la remove
     Provider.of<HomeProvider>(context, listen: false)

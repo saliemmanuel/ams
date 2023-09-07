@@ -26,7 +26,7 @@ class StockArticle extends StatefulWidget {
   State<StockArticle> createState() => _StockArticleState();
 }
 
-String selectedItem = 'Tous';
+String selectedItem = 'Disponible';
 
 class _StockArticleState extends State<StockArticle> {
   @override
@@ -37,6 +37,7 @@ class _StockArticleState extends State<StockArticle> {
 
   int nombrePiduit = 0;
   double valeurStock = 0.0;
+  String search = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,7 +80,10 @@ class _StockArticleState extends State<StockArticle> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              CustomSearchBar(onTap: () {}),
+              CustomSearchBar(onChanged: (value) {
+                search = value;
+                setState(() {});
+              }),
               StreamBuilder(
                 stream: getStream(),
                 builder: (context, snapshot) {
@@ -107,17 +111,34 @@ class _StockArticleState extends State<StockArticle> {
                                 var articleModels = ArticleModels.fromMap(
                                     snapshot.data!.docs[index].data());
                                 if (articleModels.toJson().isNotEmpty) {
-                                  return ArticleCard(
-                                    articleModels: articleModels,
-                                    onTap: () {
-                                      Get.to(() => DetailAticle(
-                                          isVendeur: false,
-                                          article: articleModels));
-                                    },
-                                  );
+                                  if (search.isEmpty) {
+                                    return ArticleCard(
+                                      articleModels: articleModels,
+                                      onTap: () {
+                                        Get.to(() => DetailAticle(
+                                            isVendeur: false,
+                                            article: articleModels));
+                                      },
+                                    );
+                                  }
+                                  if (articleModels.designation!
+                                      .toLowerCase()
+                                      .startsWith(search.toLowerCase())) {
+                                    return ArticleCard(
+                                      articleModels: articleModels,
+                                      onTap: () {
+                                        Get.to(() => DetailAticle(
+                                            isVendeur: false,
+                                            article: articleModels));
+                                      },
+                                    );
+                                  }
+                                  return const SizedBox();
                                 } else {
-                                  return const Text(
-                                      "Une erreur s'est produite");
+                                  return const Center(
+                                    child: CustomText(
+                                        data: "Une erreur s'est produite"),
+                                  );
                                 }
                               },
                             ),
@@ -242,7 +263,9 @@ class _StockArticleState extends State<StockArticle> {
         }
       });
     }
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> getStream() {

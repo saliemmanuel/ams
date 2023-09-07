@@ -25,6 +25,7 @@ class AdminHome extends StatefulWidget {
 
 class _AdminHomeState extends State<AdminHome> {
   int topIndex = 0;
+  String search = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,59 +36,66 @@ class _AdminHomeState extends State<AdminHome> {
         child: ListView(
           physics: const ScrollPhysics(),
           children: [
-            CustomSearchBar(onTap: () {}),
-            Container(
-                padding: const EdgeInsets.all(12.0),
-                child: GridView.count(
-                  physics: const ScrollPhysics(),
-                  shrinkWrap: true,
-                  crossAxisCount: 2,
-                  children: [
-                    HomeCardWidget(
-                      label: "Boutique",
-                      onTap: () {
-                        dialogueAjout(
-                            child: const AjoutBoutique(), context: context);
-                      },
-                      child: const Icon(Icons.add, size: 75.0),
-                    ),
-                    StreamBuilder(
-                      stream: locator
-                          .get<ServiceAuth>()
-                          .firestore
-                          .collection('boutique')
-                          .where("idAdmin",
-                              isEqualTo: locator.get<HomeProvider>().user.id)
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          if (snapshot.data!.docs.isEmpty) {
-                            // Comptage
+            CustomSearchBar(onChanged: (value) {
+              search = value;
+              setState(() {});
+            }),
+            Visibility(
+              visible: search.isEmpty,
+              child: Container(
+                  padding: const EdgeInsets.all(12.0),
+                  child: GridView.count(
+                    physics: const ScrollPhysics(),
+                    shrinkWrap: true,
+                    crossAxisCount: 2,
+                    children: [
+                      HomeCardWidget(
+                        label: "Boutique",
+                        onTap: () {
+                          dialogueAjout(
+                              child: const AjoutBoutique(), context: context);
+                        },
+                        child: const Icon(Icons.add, size: 75.0),
+                      ),
+                      StreamBuilder(
+                        stream: locator
+                            .get<ServiceAuth>()
+                            .firestore
+                            .collection('boutique')
+                            .where("idAdmin",
+                                isEqualTo: locator.get<HomeProvider>().user.id)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            if (snapshot.data!.docs.isEmpty) {
+                              // Comptage
+                              return HomeCardWidget(
+                                label: "Boutique",
+                                onTap: () {},
+                                child: const CustomText(
+                                  data: "0",
+                                  overflow: TextOverflow.ellipsis,
+                                  fontSize: 55.0,
+                                ),
+                              );
+                            }
                             return HomeCardWidget(
                               label: "Boutique",
-                              onTap: () {},
-                              child: const CustomText(
-                                data: "0",
+                              onTap: () => Get.to(() => const ListBoutique()),
+                              child: CustomText(
+                                data: snapshot.data!.docs.length.toString(),
                                 overflow: TextOverflow.ellipsis,
                                 fontSize: 55.0,
                               ),
                             );
                           }
-                          return HomeCardWidget(
-                            label: "Boutique",
-                            onTap: () => Get.to(() => const ListBoutique()),
-                            child: CustomText(
-                              data: snapshot.data!.docs.length.toString(),
-                              overflow: TextOverflow.ellipsis,
-                              fontSize: 55.0,
-                            ),
-                          );
-                        }
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                    ),
-                  ],
-                )),
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        },
+                      ),
+                    ],
+                  )),
+            ),
             const Divider(),
             const ListTile(
               title: CustomText(data: "Liste des Boutiques", fontSize: 18),
@@ -121,15 +129,33 @@ class _AdminHomeState extends State<AdminHome> {
                       itemBuilder: (context, index) {
                         var boutique = BoutiqueModels.fromMap(
                             snapshot.data!.docs[index].data());
+
                         if (boutique.toJson().isNotEmpty) {
-                          return BoutiqueCard(
-                            nomBoutique: boutique.nomBoutique,
-                            onTap: () {
-                              locator.get<HomeProvider>().setBoutiqueModels =
-                                  boutique;
-                              Get.to(() => DetailBoutique(boutique: boutique));
-                            },
-                          );
+                          if (search.isEmpty) {
+                            return BoutiqueCard(
+                              nomBoutique: boutique.nomBoutique,
+                              onTap: () {
+                                locator.get<HomeProvider>().setBoutiqueModels =
+                                    boutique;
+                                Get.to(
+                                    () => DetailBoutique(boutique: boutique));
+                              },
+                            );
+                          }
+                          if (boutique.nomBoutique!
+                              .toLowerCase()
+                              .startsWith(search.toLowerCase())) {
+                            return BoutiqueCard(
+                              nomBoutique: boutique.nomBoutique,
+                              onTap: () {
+                                locator.get<HomeProvider>().setBoutiqueModels =
+                                    boutique;
+                                Get.to(
+                                    () => DetailBoutique(boutique: boutique));
+                              },
+                            );
+                          }
+                          return const SizedBox();
                         } else {
                           return const Text("Une erreur s'est produite");
                         }
@@ -140,6 +166,7 @@ class _AdminHomeState extends State<AdminHome> {
                 return const Center(child: CircularProgressIndicator());
               },
             ),
+            const SizedBox(height: 200.0)
           ],
         ),
       ),
