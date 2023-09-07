@@ -1,13 +1,14 @@
 import 'package:ams/models/boutique_model.dart';
 import 'package:ams/models/user.dart';
 import 'package:ams/provider/home_provider.dart';
-import 'package:ams/view/vendeur/home/nouvelle_facture/nouvele_facture.dart';
+import 'package:ams/view/vendeur/home/nouvelle_facture/nouvelle_facture.dart';
 import 'package:ams/view/widgets/custom_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:data_table_plus/data_table_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 import '../../../models/article_modes.dart';
 import '../../../services/service_locator.dart';
@@ -117,19 +118,29 @@ class _VendeurHomeState extends State<VendeurHome> {
                                           articleModels.stockActuel == 0)
                                       ? null
                                       : () {
-                                          if (!locator
-                                              .get<HomeProvider>()
+                                          if (!Provider.of<HomeProvider>(
+                                                  context,
+                                                  listen: false)
                                               .listArticleVente!
                                               .contains(articleModels)) {
-                                            _showToast("Ajouté",
-                                                position: FlutterToastr.bottom);
                                             locator
-                                                .get<HomeProvider>()
-                                                .listArticleVente!
-                                                .add(articleModels);
+                                                .get<ServiceAuth>()
+                                                .showToast("Ajouté",
+                                                    context: context,
+                                                    position:
+                                                        FlutterToastr.bottom);
+                                            Provider.of<HomeProvider>(context,
+                                                    listen: false)
+                                                .setValeurListArticleVente(
+                                                    articleModels);
                                           } else {
-                                            _showToast("Déjà dans la facture",
-                                                position: FlutterToastr.bottom);
+                                            locator
+                                                .get<ServiceAuth>()
+                                                .showToast(
+                                                    context: context,
+                                                    "Déjà dans la facture",
+                                                    position:
+                                                        FlutterToastr.bottom);
                                           }
                                         },
                                   icon: Icon(Icons.add,
@@ -152,15 +163,10 @@ class _VendeurHomeState extends State<VendeurHome> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FilledButton.tonalIcon(
-          onPressed: () => Get.to(() => NouvelleFacture(
-              listArticleVente: locator.get<HomeProvider>().listArticleVente!)),
+          onPressed: () => Get.to(() => const NouvelleFacture()),
           icon: const Icon(Icons.assignment_outlined),
           label: const CustomText(data: "Facture")),
     );
-  }
-
-  _showToast(String msg, {int? duration, int? position}) {
-    FlutterToastr.show(msg, context, duration: duration, position: position);
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> getStream() {

@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:ams/auth/firebase_auth.dart';
 import 'package:ams/models/article_modes.dart';
 import 'package:ams/models/boutique_model.dart';
+import 'package:ams/models/facture_client_model.dart';
 import 'package:ams/services/service_locator.dart';
 import 'package:flutter/material.dart';
 
@@ -18,6 +21,8 @@ class HomeProvider extends ChangeNotifier {
   double _prixTotal = 0.0;
   List<ArticleModels>? _listArticleVente = [];
 
+  List<FactureClient> echoVal = [];
+
   Users get user => _user!;
   BoutiqueModels get boutiqueModels => _boutiqueModels!;
   int? get nomProduit => _nomProduit!;
@@ -30,9 +35,8 @@ class HomeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  calculPrixTotal(double value) {
-    _prixTotal += value;
-    print(_prixTotal);
+  setEchoVal(FactureClient map) {
+    echoVal.add(map);
     notifyListeners();
   }
 
@@ -58,6 +62,26 @@ class HomeProvider extends ChangeNotifier {
 
   setValeurStockBoutique2(double? value) async {
     _valeurStock = value!;
+  }
+
+  setValeurListArticleVente(ArticleModels? value) {
+    _listArticleVente!.add(value!);
+    notifyListeners();
+  }
+
+  remoceValeurArticleVente(ArticleModels? value) {
+    _listArticleVente!.remove(value!);
+    notifyListeners();
+  }
+
+  remoceAllValeurArticleVente() {
+    _listArticleVente!.clear();
+    notifyListeners();
+  }
+
+  removeWhereListArticleVente(bool Function(FactureClient) test) {
+    echoVal.removeWhere(test);
+    notifyListeners();
   }
 
   int? get topIndex => _topIndex;

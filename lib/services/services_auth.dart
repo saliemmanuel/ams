@@ -9,6 +9,7 @@ import 'package:ams/view/admin/admin.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:get/get.dart';
 import 'package:panara_dialogs/panara_dialogs.dart';
 import 'package:provider/provider.dart';
@@ -423,5 +424,10 @@ class ServiceAuth {
         Get.offAll(() => VendeursH(users: user, boutique: boutique));
       }
     }
+  }
+
+  showToast(String msg,
+      {int? duration, required BuildContext? context, int? position}) {
+    FlutterToastr.show(msg, context!, duration: duration, position: position);
   }
 }

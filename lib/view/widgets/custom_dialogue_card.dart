@@ -37,6 +37,25 @@ dialogueAndonTapDismiss(
       onTapDismiss: onTapDismiss);
 }
 
+dialogueAndonTapDismissCustomButtonText(
+    {required PanaraDialogType panaraDialogType,
+    BuildContext? context,
+    String? message,
+    required String cancelButtonText,
+    required String confirmButtonText,
+    required void Function() onTapCancel,
+    required void Function() onTapConfirm}) {
+  PanaraConfirmDialog.show(
+    panaraDialogType: panaraDialogType,
+    context!,
+    message: message!,
+    cancelButtonText: cancelButtonText,
+    confirmButtonText: confirmButtonText,
+    onTapCancel: onTapCancel,
+    onTapConfirm: onTapConfirm,
+  );
+}
+
 confirmDialogue(
     {required PanaraDialogType panaraDialogType,
     BuildContext? context,
@@ -47,6 +66,7 @@ confirmDialogue(
     context!,
     title: title,
     message: message!,
+    buttonTextColor: Colors.white,
     confirmButtonText: "Supprimer",
     cancelButtonText: "Annuler",
     onTapCancel: () {
