@@ -62,6 +62,8 @@ dependencies:
   connectivity_plus: ^4.0.2
   internet_connection_checker: ^1.0.0+1
   expandable_datatable: ^0.0.7
+  data_table_plus: ^0.0.1
+  flutter_toastr: ^1.0.3
 
 dev_dependencies:
   flutter_test:

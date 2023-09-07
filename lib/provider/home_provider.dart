@@ -1,7 +1,7 @@
 import 'package:ams/auth/firebase_auth.dart';
+import 'package:ams/models/article_modes.dart';
 import 'package:ams/models/boutique_model.dart';
 import 'package:ams/services/service_locator.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../models/user.dart';
@@ -15,14 +15,24 @@ class HomeProvider extends ChangeNotifier {
   int? _topIndex = 0;
   int? _nomProduit = 0;
   double _valeurStock = 0;
+  double _prixTotal = 0.0;
+  List<ArticleModels>? _listArticleVente = [];
 
   Users get user => _user!;
   BoutiqueModels get boutiqueModels => _boutiqueModels!;
   int? get nomProduit => _nomProduit!;
+  double get prixTotal => _prixTotal;
   double? get valeurStock => _valeurStock;
+  List<ArticleModels>? get listArticleVente => _listArticleVente;
 
   setUserData(Users? user) {
     _user = Users.fromMap(user!.toMap());
+    notifyListeners();
+  }
+
+  calculPrixTotal(double value) {
+    _prixTotal += value;
+    print(_prixTotal);
     notifyListeners();
   }
 
@@ -39,8 +49,15 @@ class HomeProvider extends ChangeNotifier {
         .where("idBoutique", isEqualTo: idBoutique);
     var snapshot = await myRef.count().get();
     _nomProduit = snapshot.count;
-
     notifyListeners();
+  }
+
+  setValeurStockBoutique(double? value) async {
+    _valeurStock += value!;
+  }
+
+  setValeurStockBoutique2(double? value) async {
+    _valeurStock = value!;
   }
 
   int? get topIndex => _topIndex;

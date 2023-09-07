@@ -1,6 +1,8 @@
 import 'package:ams/models/article_modes.dart';
+import 'package:ams/provider/home_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
+import 'package:provider/provider.dart';
 
 import '../../widgets/custom_text.dart';
 
@@ -11,7 +13,8 @@ class ArticleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(articleModels.prixVente);
+    Provider.of<HomeProvider>(context, listen: false)
+        .setValeurStockBoutique(articleModels.prixVente);
     return InkWell(
       onTap: onTap,
       child: Container(

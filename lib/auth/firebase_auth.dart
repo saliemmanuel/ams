@@ -2,9 +2,11 @@ import 'package:ams/models/article_modes.dart';
 import 'package:ams/models/boutique_model.dart';
 import 'package:ams/models/vendeur_model.dart';
 import 'package:ams/provider/home_provider.dart';
+import 'package:ams/view/login/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../models/user.dart';
 import '../services/service_locator.dart';
 import '../services/services_auth.dart';
@@ -63,6 +65,7 @@ class FirebasesAuth {
 
   signOut() async {
     await _firebaseAuth.signOut();
+    Get.offAll(() => const Login());
   }
 
   saveUserDatas({Users? user, String? collection}) async {
@@ -139,6 +142,20 @@ class FirebasesAuth {
       var docSnapshot = await collection.doc(id).get();
       if (docSnapshot.exists) {
         return docSnapshot;
+      }
+    } catch (e) {
+      debugPrint("error $e");
+    }
+  }
+
+  getBoutiqueVendeurData({var id}) async {
+    try {
+      var collection =
+          locator.get<ServiceAuth>().firestore.collection('boutique');
+      var docSnapshot =
+          await collection.where("vendeur", arrayContains: id).get();
+      if (docSnapshot.docs.isNotEmpty) {
+        return docSnapshot.docs[0].data();
       }
     } catch (e) {
       debugPrint("error $e");

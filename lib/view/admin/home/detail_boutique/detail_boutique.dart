@@ -1,18 +1,14 @@
 import 'package:ams/models/boutique_model.dart';
-import 'package:ams/view/admin/home/detail_boutique/ajout_vendeur/ajout_vendeur.dart';
 import 'package:ams/view/admin/home/detail_boutique/liste_vendeur/liste_vendeur.dart';
 import 'package:ams/view/admin/home/detail_boutique/stock_article/stock_article.dart';
 import 'package:ams/view/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:iconly/iconly.dart';
 
 import '../../../../provider/home_provider.dart';
 import '../../../../services/service_locator.dart';
 import '../../../../services/services_auth.dart';
-import '../../widget/dialogue_ajout.dart';
 import '../../widget/home_card_widget.dart';
-import '../ajout_boutique/ajout_boutique.dart';
 
 class DetailBoutique extends StatefulWidget {
   final BoutiqueModels boutique;

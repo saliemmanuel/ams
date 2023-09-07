@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:ams/models/article_modes.dart';
 import 'package:ams/models/boutique_model.dart';
 import 'package:ams/models/vendeur_model.dart';
+import 'package:ams/view/admin/admin.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +15,7 @@ import 'package:provider/provider.dart';
 import '../auth/firebase_auth.dart';
 import '../models/user.dart';
 import '../provider/home_provider.dart';
-import '../view/admin/home/admin_home.dart';
-import '../view/vendeur_home/vendeur_home.dart';
+import '../view/vendeur/vendeur.dart';
 import 'service_locator.dart';
 import '../view/widgets/custom_dialogue_card.dart';
 
@@ -385,7 +385,7 @@ class ServiceAuth {
     );
   }
 
-  redirectionUtil({var data, BuildContext? context}) {
+  redirectionUtil({var data, BuildContext? context}) async {
     if (data != null) {
       var user = Users.fromMap(data);
       // je verifie si l'utilisateur à déjà un token pour les messages
@@ -411,10 +411,16 @@ class ServiceAuth {
       // je fait les redirection
       if (data['grade'] == 'admin') {
         // Compte admin
-        Get.offAll(() => AdminHome(users: user));
+        Get.offAll(() => Admin(users: user));
       } else {
         // Compte vendeur
-        Get.offAll(() => VendeurHome(users: user));
+        // je recupère la boutique du vendeur
+        var docs = await locator
+            .get<FirebasesAuth>()
+            .getBoutiqueVendeurData(id: user.id);
+
+        var boutique = BoutiqueModels.fromMap(docs);
+        Get.offAll(() => VendeursH(users: user, boutique: boutique));
       }
     }
   }

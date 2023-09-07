@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ams/models/article_modes.dart';
 import 'package:ams/models/boutique_model.dart';
 import 'package:ams/provider/home_provider.dart';
@@ -24,22 +26,29 @@ class StockArticle extends StatefulWidget {
   State<StockArticle> createState() => _StockArticleState();
 }
 
+String selectedItem = 'Tous';
+
 class _StockArticleState extends State<StockArticle> {
-  String selectedItem = 'Tous';
+  @override
+  void initState() {
+    calculValeurStock();
+    super.initState();
+  }
+
   int nombrePiduit = 0;
   double valeurStock = 0.0;
   @override
   Widget build(BuildContext context) {
-    Provider.of<HomeProvider>(context, listen: false)
-        .setNombreBoutique(widget.boutique.id);
     return Scaffold(
         appBar: AppBar(
           title: const CustomText(data: "Stock"),
           actions: [
             FilledButton(
-                onPressed: () => dialogueAjout(
-                    child: AjoutArticle(boutique: widget.boutique),
-                    context: context),
+                onPressed: () {
+                  dialogueAjout(
+                      child: AjoutArticle(boutique: widget.boutique),
+                      context: context);
+                },
                 child: const CustomText(data: "Ajouter", color: Colors.white)),
             const SizedBox(width: 15.0),
             DropdownButton(
@@ -59,9 +68,9 @@ class _StockArticleState extends State<StockArticle> {
                   ),
                 ],
                 onChanged: (v) {
-                  calculValeurStock();
                   selectedItem = v!;
-                  valeurStock = 0.0;
+
+                  calculValeurStock();
                   setState(() {});
                 }),
             const SizedBox(width: 15.0),
@@ -101,8 +110,9 @@ class _StockArticleState extends State<StockArticle> {
                                   return ArticleCard(
                                     articleModels: articleModels,
                                     onTap: () {
-                                      Get.to(() =>
-                                          DetailAticle(article: articleModels));
+                                      Get.to(() => DetailAticle(
+                                          isVendeur: false,
+                                          article: articleModels));
                                     },
                                   );
                                 } else {
@@ -123,78 +133,116 @@ class _StockArticleState extends State<StockArticle> {
             ],
           ),
         ),
-        bottomNavigationBar: Consumer<HomeProvider>(
-          builder: (context, value, child) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: DataTable(showBottomBorder: true, columns: const [
-                    DataColumn(
-                      label: CustomText(
-                          data: "Nombre Produit", fontWeight: FontWeight.bold),
-                    ),
-                    DataColumn(
+        persistentFooterButtons: [
+          Consumer<HomeProvider>(
+            builder: (context, value, child) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: DataTable(showBottomBorder: true, columns: const [
+                      DataColumn(
                         label: CustomText(
-                            data: "Valeur du stock",
-                            fontWeight: FontWeight.bold))
-                  ], rows: [
-                    DataRow(cells: [
-                      DataCell(Center(
-                        child: StreamBuilder(
-                          stream: getStream(),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              if (snapshot.data!.docs.isEmpty) {
-                                return const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Center(
-                                      child: CustomText(
-                                    data: "0",
-                                  )),
-                                );
-                              }
-                              return Center(
-                                  child: CustomText(
-                                      data: snapshot.data!.docs.length
-                                          .toString()));
-                            }
-                            return const Center(
-                                child: CupertinoActivityIndicator());
-                          },
-                        ),
-                      )),
-                      const DataCell(
-                        Center(
-                          child: Text("dsk"),
-                          // child: StreamBuilder(
-                          //   stream: getStream(),
-                          //   builder: (context, snapshot) {
-                          //     if (snapshot.hasData) {
-                          //       if (snapshot.data!.docs.isEmpty) {
-                          //         return const Padding(
-                          //           padding: EdgeInsets.all(8.0),
-                          //           child: Center(
-                          //               child: CustomText(
-                          //             data: "0",
-                          //           )),
-                          //         );
-                          //       }
-                          //       return ;
-                          //     }
-                          //     return const Center(
-                          //         child: CupertinoActivityIndicator());
-                          //   },
-                          // ),
-                        ),
+                            data: "Nombre Produit",
+                            fontWeight: FontWeight.bold),
                       ),
-                    ])
-                  ]),
-                ),
-              ],
-            );
-          },
-        ));
+                      DataColumn(
+                          label: CustomText(
+                              data: "Valeur du stock",
+                              fontWeight: FontWeight.bold))
+                    ], rows: [
+                      DataRow(cells: [
+                        DataCell(Center(
+                          child: StreamBuilder(
+                            stream: getStream(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                if (snapshot.data!.docs.isEmpty) {
+                                  return const Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Center(
+                                        child: CustomText(
+                                      data: "0",
+                                    )),
+                                  );
+                                }
+                                return Center(
+                                    child: CustomText(
+                                        data: snapshot.data!.docs.length
+                                            .toString()));
+                              }
+                              return const Center(
+                                  child: CupertinoActivityIndicator());
+                            },
+                          ),
+                        )),
+                        selectedItem == "Epuiser"
+                            ? const DataCell(
+                                Center(child: Text("0")),
+                              )
+                            : DataCell(
+                                Center(
+                                    child: valeurStock == 0.0
+                                        ? const CupertinoActivityIndicator()
+                                        : Text(valeurStock.toString())),
+                              ),
+                      ])
+                    ]),
+                  ),
+                ],
+              );
+            },
+          )
+        ]);
+  }
+
+  calculValeurStock() async {
+    valeurStock = 0.0;
+    if (selectedItem == "Disponible") {
+      await locator
+          .get<ServiceAuth>()
+          .firestore
+          .collection('article')
+          .where("idBoutique", isEqualTo: widget.boutique.id)
+          .where("stockActuel", isGreaterThanOrEqualTo: 1)
+          .get()
+          .then((value) {
+        for (var element in value.docs) {
+          valeurStock +=
+              (element.data()['prixVente'] * element.data()['stockActuel']);
+        }
+      });
+    }
+    if (selectedItem == "Epuiser") {
+      await locator
+          .get<ServiceAuth>()
+          .firestore
+          .collection('article')
+          .where("idBoutique", isEqualTo: widget.boutique.id)
+          .where("stockActuel", isEqualTo: 0)
+          .get()
+          .then((value) {
+        for (var element in value.docs) {
+          valeurStock +=
+              (element.data()['prixVente'] * element.data()['stockActuel']);
+        }
+      });
+    }
+    if (selectedItem == "Tous") {
+      await locator
+          .get<ServiceAuth>()
+          .firestore
+          .collection('article')
+          .where("idBoutique", isEqualTo: widget.boutique.id)
+          .get()
+          .then((value) {
+        for (var element in value.docs) {
+          valeurStock +=
+              (element.data()['prixVente'] * element.data()['stockActuel']);
+        }
+      });
+    }
+    setState(() {});
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> getStream() {
@@ -228,50 +276,6 @@ class _StockArticleState extends State<StockArticle> {
           .collection('article')
           .where("idBoutique", isEqualTo: widget.boutique.id)
           .snapshots();
-    }
-  }
-
-  calculValeurStock() async {
-    if (selectedItem == "Disponible") {
-      locator
-          .get<ServiceAuth>()
-          .firestore
-          .collection('article')
-          .where("idBoutique", isEqualTo: widget.boutique.id)
-          .where("stockActuel", isGreaterThanOrEqualTo: 1)
-          .get()
-          .then((value) {
-        for (var element in value.docs) {
-          print(element.data());
-        }
-      });
-    }
-    if (selectedItem == "Epuiser") {
-      locator
-          .get<ServiceAuth>()
-          .firestore
-          .collection('article')
-          .where("idBoutique", isEqualTo: widget.boutique.id)
-          .where("stockActuel", isEqualTo: 0)
-          .get()
-          .then((value) {
-        for (var element in value.docs) {
-          print(element.data());
-        }
-      });
-    }
-    if (selectedItem == "Tous") {
-      locator
-          .get<ServiceAuth>()
-          .firestore
-          .collection('article')
-          .where("idBoutique", isEqualTo: widget.boutique.id)
-          .get()
-          .then((value) {
-        for (var element in value.docs) {
-          print(element.data());
-        }
-      });
     }
   }
 }

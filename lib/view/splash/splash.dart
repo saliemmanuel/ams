@@ -5,11 +5,9 @@ import 'package:ams/services/services_auth.dart';
 import 'package:ams/storage/local_storage/local_storage.dart';
 import 'package:ams/view/login/login.dart';
 import 'package:ams/view/onboarding/onboarding.dart';
-import 'package:ams/view/widgets/custom_text.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:panara_dialogs/panara_dialogs.dart';
@@ -28,7 +26,7 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
-   StreamSubscription? subscription;
+  StreamSubscription? subscription;
   bool isDeviceConnected = false;
   bool isAlertSet = false;
   @override
@@ -38,27 +36,18 @@ class _SplashState extends State<Splash> {
   }
 
   checkConnexoion() {
-    print(subscription);
     subscription = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult result) {
-          print(result);
-
-      if (result == ConnectivityResult.none) {
-        subscription =
-            InternetConnectionChecker().onStatusChange.listen((event) {
-          isDeviceConnected = event == InternetConnectionStatus.connected;
-          print(isDeviceConnected);
-          if (isDeviceConnected) {
-            init();
-            initNextPage();
-          } else {
-            showDialogBox();
-          }
-        });
-      } else {
-        showDialogBox();
-      }
+      subscription = InternetConnectionChecker().onStatusChange.listen((event) {
+        isDeviceConnected = event == InternetConnectionStatus.connected;
+        if (isDeviceConnected) {
+          init();
+          initNextPage();
+        } else {
+          showDialogBox();
+        }
+      });
     });
   }
 

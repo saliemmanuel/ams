@@ -8,8 +8,6 @@ import 'package:ams/view/admin/widget/dialogue_ajout.dart';
 import 'package:ams/view/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:iconly/iconly.dart';
-import 'package:provider/provider.dart';
 
 import '../../../provider/home_provider.dart';
 import '../../../services/service_locator.dart';
@@ -35,11 +33,13 @@ class _AdminHomeState extends State<AdminHome> {
       ),
       body: Scrollbar(
         child: ListView(
+          physics: const ScrollPhysics(),
           children: [
             CustomSearchBar(onTap: () {}),
             Container(
                 padding: const EdgeInsets.all(12.0),
                 child: GridView.count(
+                  physics: const ScrollPhysics(),
                   shrinkWrap: true,
                   crossAxisCount: 2,
                   children: [
@@ -115,6 +115,7 @@ class _AdminHomeState extends State<AdminHome> {
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ListView.builder(
+                      physics: const ScrollPhysics(),
                       shrinkWrap: true,
                       itemCount: snapshot.data!.docs.length,
                       itemBuilder: (context, index) {
@@ -142,20 +143,6 @@ class _AdminHomeState extends State<AdminHome> {
           ],
         ),
       ),
-      bottomNavigationBar: Consumer<HomeProvider>(
-          builder: (contexte, values, child) => BottomNavigationBar(
-                items: const [
-                  BottomNavigationBarItem(
-                      icon: Icon(IconlyBold.home), label: 'Accueil'),
-                  BottomNavigationBarItem(
-                      icon: Icon(IconlyBold.profile), label: 'Profil'),
-                ],
-                onTap: (value) {
-                  topIndex = value;
-                  setState(() {});
-                },
-                currentIndex: topIndex,
-              )),
     );
   }
 }

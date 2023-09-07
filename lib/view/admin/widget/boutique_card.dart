@@ -26,7 +26,6 @@ class BoutiqueCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             fontWeight: FontWeight.bold,
           ),
-          trailing: const Icon(Icons.arrow_forward_rounded),
         ),
       ),
     );
