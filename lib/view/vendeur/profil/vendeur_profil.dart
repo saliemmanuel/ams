@@ -18,36 +18,39 @@ class _VendeurProfilState extends State<VendeurProfil> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const CustomText(data: "Profil")),
-      body: ListView(
-        children: [
-          Card(
-            child: Center(
-                child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 25.0),
-                CustomText(
-                  data: '${widget.user.nom} ${widget.user.prenom} ',
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                ),
-                ListTile(
-                  title: CustomText(data: widget.user.email ?? ""),
-                ),
-                const SizedBox(height: 25.0),
-              ],
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: ListView(
+          children: [
+            Card(
+              child: Center(
+                  child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 25.0),
+                  CustomText(
+                    data: '${widget.user.nom} ${widget.user.prenom} ',
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  ListTile(
+                    title: CustomText(data: widget.user.email ?? ""),
+                  ),
+                  const SizedBox(height: 25.0),
+                ],
+              )),
+            ),
+            Card(
+                child: ListTile(
+              title: const CustomText(data: "Déconnexion", color: Colors.red),
+              leading: const Icon(Icons.logout, color: Colors.red),
+              onTap: () {
+                locator.get<HomeProvider>().destroyUser();
+              },
             )),
-          ),
-          Card(
-              child: ListTile(
-            title: const CustomText(data: "Déconnexion", color: Colors.red),
-            leading: const Icon(Icons.logout, color: Colors.red),
-            onTap: () {
-              locator.get<HomeProvider>().destroyUser();
-            },
-          )),
-        ],
+          ],
+        ),
       ),
     );
   }

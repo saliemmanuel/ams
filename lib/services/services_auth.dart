@@ -229,19 +229,22 @@ class ServiceAuth {
 
   // enregistre la facture du client
   saveFactureClientData(
-      {
-      required List<FactureClient>? facture,
+      {required List<FactureClient>? facture,
       required String nom,
       required String telephone,
+      required String idBoutique,
       required double? netPayer,
+      required Vendeur? vendeur,
       BuildContext? context}) async {
-    // try {
+    try {
       simpleDialogueCardSansTitle("Enregistrement...", context!);
       await locator
           .get<FirebasesAuth>()
           .saveFactureClientDatas(
+              vendeur: vendeur,
               facture: facture,
               nom: nom,
+              idBoutique: idBoutique,
               telephone: telephone,
               netPayer: netPayer)
           .then((value) {
@@ -258,14 +261,14 @@ class ServiceAuth {
             title: "Succès",
             message: "Facture enregistré avec succès");
       });
-    // } catch (e) {
-    //   Get.back();
-    //   dialogue(
-    //       panaraDialogType: PanaraDialogType.error,
-    //       context: context,
-    //       title: "Erreur",
-    //       message: e.toString());
-    // }
+    } catch (e) {
+      Get.back();
+      dialogue(
+          panaraDialogType: PanaraDialogType.error,
+          context: context,
+          title: "Erreur",
+          message: e.toString());
+    }
   }
 
   editStock({

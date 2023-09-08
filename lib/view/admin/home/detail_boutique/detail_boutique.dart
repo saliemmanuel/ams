@@ -1,4 +1,5 @@
 import 'package:ams/models/boutique_model.dart';
+import 'package:ams/view/admin/home/detail_boutique/bilan/bilan.dart';
 import 'package:ams/view/admin/home/detail_boutique/liste_vendeur/liste_vendeur.dart';
 import 'package:ams/view/admin/home/detail_boutique/stock_article/stock_article.dart';
 import 'package:ams/view/widgets/custom_text.dart';
@@ -81,6 +82,14 @@ class _DetailBoutiqueState extends State<DetailBoutique> {
                       Get.to(() => StockArticle(
                             boutique: widget.boutique,
                           ));
+                    },
+                  ),
+                  HomeCardWidget(
+                    label: "Bilan",
+                    child: const Icon(Icons.assignment_turned_in_outlined,
+                        size: 60.0),
+                    onTap: () {
+                      Get.to(() => Bilan(boutique: widget.boutique));
                     },
                   ),
                 ],

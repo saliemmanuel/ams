@@ -96,9 +96,17 @@ class _AdminHomeState extends State<AdminHome> {
                     ],
                   )),
             ),
-            const Divider(),
-            const ListTile(
-              title: CustomText(data: "Liste des Boutiques", fontSize: 18),
+            Visibility(
+              visible: search.isEmpty,
+              child: const Column(
+                children: [
+                  Divider(),
+                  ListTile(
+                    title:
+                        CustomText(data: "Liste des Boutiques", fontSize: 18),
+                  ),
+                ],
+              ),
             ),
             StreamBuilder(
               stream: locator

@@ -7,6 +7,7 @@ Is a turnkey financial management and stock control application created for a st
 flutter pub get 
 ```
 ## Firebase structure
+
 ### users
 ```
 users 
@@ -33,6 +34,50 @@ boutique
     | - villeBoutique
   
 ```
+### article
+```
+article 
+    | - codeEnregistrement
+    | - createAt 
+    | - designation
+    | - id
+    | - idAdmin
+    | - nomBoutique
+    | - prixAchat
+    | - prixNonAuto
+    | - prixVente
+    | - stockActuel
+    | - stockCritique
+    | - stockNormal
+```
+
+### facture
+
+```
+facture
+    | - createAt 
+    | - facture : []
+    | - idBoutique
+    | - netPayer
+    | - nom
+    | - telephone
+    | - vendeur : Vendeur
+```
+#
+
+creer un ficher env
+
+```
+.env
+```
+
+vous allez trouvez dans le fichier `exemple.env` le contenue du fichier `.env`
+
+## State Management 
+
+
+
+
 
 
   

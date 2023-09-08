@@ -8,15 +8,20 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../models/article_modes.dart';
-import '../../../../../models/facture_client_model.dart';
+import '../../../../../models/vendeur_model.dart';
 import '../../../../../provider/home_provider.dart';
 import '../../../../admin/home/detail_boutique/stock_article/detail_stock/detail_article.dart';
 import '../../../../widgets/custom_button.dart';
 
 class RecapitulatifFacture extends StatefulWidget {
-  final String nom, telephone;
+  final String nom, telephone, idBoutique;
+  final Vendeur? vendeur;
   const RecapitulatifFacture(
-      {super.key, required this.nom, required this.telephone});
+      {super.key,
+      required this.nom,
+      required this.telephone,
+      required this.idBoutique,
+      required this.vendeur});
 
   @override
   State<RecapitulatifFacture> createState() => _RecapitulatifFactureState();
@@ -192,6 +197,8 @@ class _RecapitulatifFactureState extends State<RecapitulatifFacture> {
                             child: "Enregistrer",
                             onPressed: () {
                               locator.get<ServiceAuth>().saveFactureClientData(
+                                  vendeur: widget.vendeur,
+                                  idBoutique: widget.idBoutique,
                                   telephone: widget.telephone,
                                   nom: widget.nom,
                                   netPayer: netAPayer,

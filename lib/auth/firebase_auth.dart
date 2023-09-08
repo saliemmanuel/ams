@@ -102,6 +102,8 @@ class FirebasesAuth {
       {required List<FactureClient>? facture,
       required String nom,
       required String telephone,
+      required String idBoutique,
+      required Vendeur? vendeur,
       required double? netPayer}) async {
     int nouvelStock = 0;
     for (var e in facture!) {
@@ -121,7 +123,10 @@ class FirebasesAuth {
       "facture": facture.map((e) => e.toMap()),
       'nom': nom,
       "telephone": telephone,
-      "netPayer": netPayer
+      "netPayer": netPayer,
+      "idBoutique": idBoutique,
+      "vendeur": vendeur!.toMap(),
+      "createAt": DateTime.now().toString()
     });
   }
 

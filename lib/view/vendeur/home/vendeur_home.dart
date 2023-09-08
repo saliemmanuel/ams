@@ -4,7 +4,6 @@ import 'package:ams/provider/home_provider.dart';
 import 'package:ams/view/vendeur/home/nouvelle_facture/nouvelle_facture.dart';
 import 'package:ams/view/widgets/custom_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:data_table_plus/data_table_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:get/get.dart';
@@ -16,6 +15,7 @@ import '../../../services/services_auth.dart';
 import '../../admin/home/detail_boutique/stock_article/detail_stock/detail_article.dart';
 import '../../admin/home/detail_boutique/stock_article/stock_article.dart';
 import '../../widgets/custom_search_bar.dart';
+import '../widget/article_card_home_vendeur.dart';
 
 class VendeurHome extends StatefulWidget {
   final Users users;
@@ -68,99 +68,103 @@ class _VendeurHomeState extends State<VendeurHome> {
                 setState(() {});
               }),
               StreamBuilder(
-                stream: getStream(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    if (snapshot.data!.docs.isEmpty) {
-                      return const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Center(
-                            child: CustomText(
-                                data: "Vous avez aucun article", fontSize: 18)),
+                  stream: getStream(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      if (snapshot.data!.docs.isEmpty) {
+                        return const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Center(
+                              child: CustomText(
+                                  data: "Vous avez aucun article",
+                                  fontSize: 18)),
+                        );
+                      }
+                      return ListView.builder(
+                        physics: const ScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          var articleModels = ArticleModels.fromMap(
+                              snapshot.data!.docs[index].data());
+                          if (search.isEmpty) {
+                            return ArticleCardHomeVendeur(
+                              onTap: () => Get.to(() => DetailAticle(
+                                  isVendeur: true, article: articleModels)),
+                              articleModels: articleModels,
+                              colorIcon: selectedItem == "Epuiser"
+                                  ? Colors.red
+                                  : articleModels.stockActuel == 0
+                                      ? Colors.red
+                                      : Colors.white,
+                              onPressed: (selectedItem == "Epuiser" ||
+                                      articleModels.stockActuel == 0)
+                                  ? null
+                                  : () {
+                                      if (!Provider.of<HomeProvider>(context,
+                                              listen: false)
+                                          .listArticleVente!
+                                          .contains(articleModels)) {
+                                        locator.get<ServiceAuth>().showToast(
+                                            "Ajouté",
+                                            context: context,
+                                            position: FlutterToastr.bottom);
+                                        Provider.of<HomeProvider>(context,
+                                                listen: false)
+                                            .setValeurListArticleVente(
+                                                articleModels);
+                                      } else {
+                                        locator.get<ServiceAuth>().showToast(
+                                            context: context,
+                                            "Déjà dans la facture",
+                                            position: FlutterToastr.bottom);
+                                      }
+                                    },
+                            );
+                          }
+                          if (articleModels.designation!
+                              .toLowerCase()
+                              .startsWith(search.toLowerCase())) {
+                            return ArticleCardHomeVendeur(
+                              onTap: () => Get.to(() => DetailAticle(
+                                  isVendeur: true, article: articleModels)),
+                              articleModels: articleModels,
+                              colorIcon: selectedItem == "Epuiser"
+                                  ? Colors.grey
+                                  : articleModels.stockActuel == 0
+                                      ? Colors.grey
+                                      : Colors.green,
+                              onPressed: (selectedItem == "Epuiser" ||
+                                      articleModels.stockActuel == 0)
+                                  ? null
+                                  : () {
+                                      if (!Provider.of<HomeProvider>(context,
+                                              listen: false)
+                                          .listArticleVente!
+                                          .contains(articleModels)) {
+                                        locator.get<ServiceAuth>().showToast(
+                                            "Ajouté",
+                                            context: context,
+                                            position: FlutterToastr.bottom);
+                                        Provider.of<HomeProvider>(context,
+                                                listen: false)
+                                            .setValeurListArticleVente(
+                                                articleModels);
+                                      } else {
+                                        locator.get<ServiceAuth>().showToast(
+                                            context: context,
+                                            "Déjà dans la facture",
+                                            position: FlutterToastr.bottom);
+                                      }
+                                    },
+                            );
+                          }
+                          return const SizedBox();
+                        },
                       );
                     }
-                    return DataTablePlus(
-                      columns: const [
-                        DataColumnPlus(label: Text('N°')),
-                        DataColumnPlus(label: Text('Désignation')),
-                        DataColumn(label: Text('Prix Unit.')),
-                        DataColumn(label: Text('Action')),
-                      ],
-                      rows: List<DataRow>.generate(snapshot.data!.docs.length,
-                          (index) {
-                        var articleModels = ArticleModels.fromMap(
-                            snapshot.data!.docs[index].data());
-                        return DataRow(
-                            color: index % 2 != 0
-                                ? MaterialStateProperty.all(Colors.white)
-                                : MaterialStateProperty.all(
-                                    Colors.grey.shade200),
-                            cells: [
-                              DataCell(
-                                Text((index + 1).toString()),
-                                onTap: () {
-                                  Get.to(() => DetailAticle(
-                                      isVendeur: true, article: articleModels));
-                                },
-                              ),
-                              DataCell(
-                                CustomText(data: articleModels.designation!),
-                                onTap: () {
-                                  Get.to(() => DetailAticle(
-                                      isVendeur: true, article: articleModels));
-                                },
-                              ),
-                              DataCell(
-                                CustomText(
-                                    data: articleModels.prixVente.toString()),
-                                onTap: () {
-                                  Get.to(() => DetailAticle(
-                                      isVendeur: true, article: articleModels));
-                                },
-                              ),
-                              DataCell(IconButton(
-                                  onPressed: (selectedItem == "Epuiser" ||
-                                          articleModels.stockActuel == 0)
-                                      ? null
-                                      : () {
-                                          if (!Provider.of<HomeProvider>(
-                                                  context,
-                                                  listen: false)
-                                              .listArticleVente!
-                                              .contains(articleModels)) {
-                                            locator
-                                                .get<ServiceAuth>()
-                                                .showToast("Ajouté",
-                                                    context: context,
-                                                    position:
-                                                        FlutterToastr.bottom);
-                                            Provider.of<HomeProvider>(context,
-                                                    listen: false)
-                                                .setValeurListArticleVente(
-                                                    articleModels);
-                                          } else {
-                                            locator
-                                                .get<ServiceAuth>()
-                                                .showToast(
-                                                    context: context,
-                                                    "Déjà dans la facture",
-                                                    position:
-                                                        FlutterToastr.bottom);
-                                          }
-                                        },
-                                  icon: Icon(Icons.add,
-                                      color: selectedItem == "Epuiser"
-                                          ? Colors.grey
-                                          : articleModels.stockActuel == 0
-                                              ? Colors.grey
-                                              : Colors.green)))
-                            ]);
-                      }),
-                    );
-                  }
-                  return const Center(child: CircularProgressIndicator());
-                },
-              ),
+                    return const Center(child: CircularProgressIndicator());
+                  }),
               const SizedBox(height: 100.0)
             ],
           ),
@@ -168,7 +172,8 @@ class _VendeurHomeState extends State<VendeurHome> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FilledButton.tonalIcon(
-          onPressed: () => Get.to(() => const NouvelleFacture()),
+          onPressed: () =>
+              Get.to(() => NouvelleFacture(boutiqueModels: widget.boutique)),
           icon: const Icon(Icons.assignment_outlined),
           label: const CustomText(data: "Facture")),
     );

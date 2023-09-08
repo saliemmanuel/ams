@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:ams/models/article_modes.dart';
@@ -8,12 +7,14 @@ class FactureClient {
   final double? prixTotal;
   final ArticleModels? articleModels;
   final int? quantite;
+  final String? idBoutique;
   final String? createAt;
   FactureClient({
     this.index,
     this.prixTotal,
     this.articleModels,
     this.quantite,
+    required this.idBoutique,
     this.createAt,
   });
 
@@ -22,6 +23,7 @@ class FactureClient {
     double? prixTotal,
     ArticleModels? articleModels,
     int? quantite,
+    String? idBoutique,
     String? createAt,
   }) {
     return FactureClient(
@@ -29,6 +31,7 @@ class FactureClient {
       prixTotal: prixTotal ?? this.prixTotal,
       articleModels: articleModels ?? this.articleModels,
       quantite: quantite ?? this.quantite,
+      idBoutique: idBoutique ?? this.idBoutique,
       createAt: createAt ?? this.createAt,
     );
   }
@@ -39,6 +42,7 @@ class FactureClient {
       'prixTotal': prixTotal,
       'articleModels': articleModels?.toMap(),
       'quantite': quantite,
+      'idBoutique': idBoutique,
       'createAt': createAt,
     };
   }
@@ -51,6 +55,8 @@ class FactureClient {
           ? ArticleModels.fromMap(map['articleModels'] as Map<String, dynamic>)
           : null,
       quantite: map['quantite'] != null ? map['quantite'] as int : null,
+      idBoutique:
+          map['idBoutique'] != null ? map['idBoutique'] as String : null,
       createAt: map['createAt'] != null ? map['createAt'] as String : null,
     );
   }
@@ -62,7 +68,7 @@ class FactureClient {
 
   @override
   String toString() {
-    return 'FactureClient(index: $index, prixTotal: $prixTotal, articleModels: $articleModels, quantite: $quantite, createAt: $createAt)';
+    return 'FactureClient(index: $index, prixTotal: $prixTotal, articleModels: $articleModels, quantite: $quantite, idBoutique: $idBoutique, createAt: $createAt)';
   }
 
   @override
@@ -73,6 +79,7 @@ class FactureClient {
         other.prixTotal == prixTotal &&
         other.articleModels == articleModels &&
         other.quantite == quantite &&
+        other.idBoutique == idBoutique &&
         other.createAt == createAt;
   }
 
@@ -82,6 +89,7 @@ class FactureClient {
         prixTotal.hashCode ^
         articleModels.hashCode ^
         quantite.hashCode ^
+        idBoutique.hashCode ^
         createAt.hashCode;
   }
 }

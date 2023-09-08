@@ -1,4 +1,5 @@
 import 'package:ams/models/article_modes.dart';
+import 'package:ams/models/boutique_model.dart';
 import 'package:ams/models/facture_client_model.dart';
 import 'package:ams/services/services_auth.dart';
 import 'package:data_table_plus/data_table_plus.dart';
@@ -12,7 +13,8 @@ import '../../../themes/theme.dart';
 import '../../widgets/custom_text.dart';
 
 class ListDetailFacture extends StatefulWidget {
-  const ListDetailFacture({super.key});
+  final BoutiqueModels boutiqueModels;
+  const ListDetailFacture({super.key, required this.boutiqueModels});
 
   @override
   State<ListDetailFacture> createState() => _ListDetailFactureState();
@@ -29,7 +31,7 @@ class _ListDetailFactureState extends State<ListDetailFacture> {
           itemCount: value.listArticleVente!.length,
           itemBuilder: (context, index) {
             return Container(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.only(bottom: 10.0),
               alignment: Alignment.center,
               margin: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -44,12 +46,18 @@ class _ListDetailFactureState extends State<ListDetailFacture> {
                         child: DataTable(columns: const [
                           DataColumnPlus(
                               label: CustomText(
-                                  data: 'Nom article',
-                                  fontWeight: FontWeight.bold)),
+                                  data: 'Nom', fontWeight: FontWeight.bold)),
+                          DataColumn(
+                            label: CustomText(
+                                data: 'Prix U.',
+                                overflow: TextOverflow.ellipsis,
+                                fontWeight: FontWeight.bold),
+                          ),
                           DataColumn(
                               label: CustomText(
-                                  data: 'Prix Unit.',
-                                  fontWeight: FontWeight.bold)),
+                                  data: 'Stock A.',
+                                  overflow: TextOverflow.ellipsis,
+                                  fontWeight: FontWeight.bold))
                         ], rows: [
                           DataRow(cells: [
                             DataCell(CustomText(
@@ -57,6 +65,9 @@ class _ListDetailFactureState extends State<ListDetailFacture> {
                                     .listArticleVente![index].designation!)),
                             DataCell(CustomText(
                                 data: value.listArticleVente![index].prixVente
+                                    .toString())),
+                            DataCell(CustomText(
+                                data: value.listArticleVente![index].stockActuel
                                     .toString())),
                           ])
                         ]),
@@ -67,7 +78,7 @@ class _ListDetailFactureState extends State<ListDetailFacture> {
                   PrixEtQuantite(
                     index: index,
                     listArticleVente: value.listArticleVente!,
-                    onChange: (value) {},
+                    boutiqueModels: widget.boutiqueModels,
                   )
                 ],
               ),
@@ -81,15 +92,15 @@ class _ListDetailFactureState extends State<ListDetailFacture> {
 
 class PrixEtQuantite extends StatefulWidget {
   final List<ArticleModels>? listArticleVente;
-  final Function(double value) onChange;
+  final BoutiqueModels boutiqueModels;
 
   final int index;
 
   const PrixEtQuantite(
       {super.key,
       required this.index,
-      required this.onChange,
-      required this.listArticleVente});
+      required this.listArticleVente,
+      required this.boutiqueModels});
 
   @override
   State<PrixEtQuantite> createState() => _PrixEtQuantiteState();
@@ -120,7 +131,8 @@ class _PrixEtQuantiteState extends State<PrixEtQuantite> {
         "prixTotal": prixTotal,
         "quantite": int.parse(controller.text),
         "articleModels": widget.listArticleVente![widget.index].toMap(),
-        "createAt": date
+        "createAt": date,
+        "idBoutique": widget.boutiqueModels.id
       });
       // et je l'insère dans la liste globale de facture
       // echoVal dans HomeProvider est une List<FactureClient>
@@ -264,7 +276,8 @@ class _PrixEtQuantiteState extends State<PrixEtQuantite> {
       "prixTotal": prixTotal,
       "quantite": int.parse(controller.text),
       "articleModels": widget.listArticleVente![widget.index].toMap(),
-      "createAt": date
+      "createAt": date,
+      "idBoutique": widget.boutiqueModels.id
     });
     // je la remove
     Provider.of<HomeProvider>(context, listen: false)
@@ -273,7 +286,6 @@ class _PrixEtQuantiteState extends State<PrixEtQuantite> {
     });
     // je la remplace
     Provider.of<HomeProvider>(context, listen: false).setEchoVal(facture);
-    print(Provider.of<HomeProvider>(context, listen: false).echoVal.toString());
     setState(() {});
   }
 }

@@ -1,3 +1,4 @@
+import 'package:ams/models/boutique_model.dart';
 import 'package:ams/provider/home_provider.dart';
 import 'package:ams/services/services_auth.dart';
 import 'package:ams/view/admin/widget/dialogue_ajout.dart';
@@ -9,6 +10,7 @@ import 'package:iconly/iconly.dart';
 import 'package:panara_dialogs/panara_dialogs.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../models/vendeur_model.dart';
 import '../../../../services/service_locator.dart';
 import '../../../widgets/custom_dialogue_card.dart';
 import '../../../widgets/custom_text.dart';
@@ -17,8 +19,10 @@ import '../../widget/article_card.dart';
 import 'recapitulatif_facture/recapitulatif_facture.dart';
 
 class NouvelleFacture extends StatefulWidget {
+  final BoutiqueModels boutiqueModels;
   const NouvelleFacture({
     super.key,
+    required this.boutiqueModels,
   });
 
   @override
@@ -118,7 +122,7 @@ class NouvelleFactureState extends State<NouvelleFacture> {
               ),
             ),
             // ici j'affiche les listes des articles selectionner
-            const ListDetailFacture(),
+            ListDetailFacture(boutiqueModels: widget.boutiqueModels),
             const SizedBox(height: 160.0)
           ],
         ),
@@ -156,6 +160,9 @@ class NouvelleFactureState extends State<NouvelleFacture> {
             } else {
               dialogueAjout(
                   child: RecapitulatifFacture(
+                    idBoutique: widget.boutiqueModels.id!,
+                    vendeur: Vendeur.fromMap(
+                        locator.get<HomeProvider>().user.toMap()),
                     nom: nom.text,
                     telephone: telephone.text,
                   ),
