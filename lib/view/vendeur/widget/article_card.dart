@@ -274,7 +274,7 @@ class _PrixEtQuantiteState extends State<PrixEtQuantite> {
     var facture = FactureClient.fromMap({
       "index": widget.index,
       "prixTotal": prixTotal,
-      "quantite": int.parse(controller.text),
+      "quantite": int.parse(controller.text.isEmpty ? "1" : controller.text),
       "articleModels": widget.listArticleVente![widget.index].toMap(),
       "createAt": date,
       "idBoutique": widget.boutiqueModels.id

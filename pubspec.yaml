@@ -64,6 +64,12 @@ dependencies:
   expandable_datatable: ^0.0.7
   data_table_plus: ^0.0.1
   flutter_toastr: ^1.0.3
+  animated_digit: ^3.2.3
+  flutter_native_splash: ^2.3.2
+  date_formatter: ^0.0.4
+  new_pinput: ^1.0.1
+  jwt_decoder: ^2.0.1
+  dart_jsonwebtoken: ^2.11.0
 
 dev_dependencies:
   flutter_test:

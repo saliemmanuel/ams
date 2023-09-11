@@ -2,7 +2,10 @@ import 'package:ams/models/boutique_model.dart';
 import 'package:ams/view/admin/home/detail_boutique/bilan/bilan.dart';
 import 'package:ams/view/admin/home/detail_boutique/liste_vendeur/liste_vendeur.dart';
 import 'package:ams/view/admin/home/detail_boutique/stock_article/stock_article.dart';
+import 'package:ams/view/admin/home/detail_boutique/widget/edite_boutique.dart';
+import 'package:ams/view/admin/widget/dialogue_ajout.dart';
 import 'package:ams/view/widgets/custom_text.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -24,8 +27,33 @@ class _DetailBoutiqueState extends State<DetailBoutique> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: CustomText(
-            data: locator.get<HomeProvider>().boutiqueModels.nomBoutique!),
+        title: StreamBuilder(
+          stream: locator
+              .get<ServiceAuth>()
+              .firestore
+              .collection("boutique")
+              .where("id", isEqualTo: widget.boutique.id)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              var boutique =
+                  BoutiqueModels.fromMap(snapshot.data!.docs[0].data());
+              return CustomText(data: boutique.nomBoutique!);
+            }
+            return const CupertinoActivityIndicator();
+          },
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              dialogueAjout2(
+                  child: EditeBoutique(boutiqueModels: widget.boutique),
+                  context: context);
+            },
+            icon: const Icon(Icons.edit),
+          ),
+          const SizedBox(width: 10.0)
+        ],
       ),
       body: ListView(
         children: [

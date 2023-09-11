@@ -7,9 +7,9 @@ import 'custom_button.dart';
 
 dialogue(
     {required PanaraDialogType panaraDialogType,
-    BuildContext? context,
-    String? message,
-    String? title}) {
+    required BuildContext? context,
+    required String? message,
+    required String? title}) {
   PanaraInfoDialog.show(
     panaraDialogType: panaraDialogType,
     context!,

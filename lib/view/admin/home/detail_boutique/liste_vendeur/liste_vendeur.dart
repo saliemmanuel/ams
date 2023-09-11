@@ -69,7 +69,7 @@ class _ListVendeurState extends State<ListVendeur> {
                         child: Center(
                           child:  CustomText(
                               fontSize: 22.0,
-                              data: "Vous avez aucun vendeur dans la boutique2"),
+                              data: "Vous avez aucun vendeur dans la boutique"),
                         ),
                       );
                     }

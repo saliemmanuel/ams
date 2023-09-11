@@ -9,6 +9,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:panara_dialogs/panara_dialogs.dart';
 
@@ -31,6 +32,7 @@ class _SplashState extends State<Splash> {
   bool isAlertSet = false;
   @override
   void initState() {
+    FlutterNativeSplash.remove();
     checkConnexoion();
     super.initState();
   }
@@ -97,11 +99,12 @@ class _SplashState extends State<Splash> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 25.0, bottom: 30.0),
-            child: Image.asset("assets/images/logo.png"),
-          ),
-          const CircularProgressIndicator()
+          const Spacer(flex: 3),
+          Image.asset("assets/images/logo.png",height: 200.0, width: 550),
+          const Spacer(flex: 2),
+          const CircularProgressIndicator(),
+          const Spacer(flex: 1,),
+
         ],
       ),
     );

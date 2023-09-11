@@ -304,6 +304,103 @@ class ServiceAuth {
     }
   }
 
+  editUsersNomAndPrenom({
+    Users? users,
+    BuildContext? context,
+    String? nom,
+    String? prenom,
+  }) async {
+    try {
+      simpleDialogueCardSansTitle("Enregistrement...", context!);
+      await locator
+          .get<FirebasesAuth>()
+          .updateUserDatas(users: users, nom: nom, prenom: prenom)
+          .then((value) {
+        Get.back();
+        dialogueAndonTapDismiss(
+            onTapDismiss: () {
+              Get.back();
+              Get.back();
+            },
+            panaraDialogType: PanaraDialogType.success,
+            context: context,
+            title: "Succès",
+            message: "Modification éffectuée");
+      });
+    } catch (e) {
+      Get.back();
+      dialogue(
+          panaraDialogType: PanaraDialogType.error,
+          context: context,
+          title: "Erreur",
+          message: e.toString());
+    }
+  }
+
+  getCreateUserCode({
+    Users? users,
+    BuildContext? context,
+    String? code,
+  }) async {
+    try {
+      simpleDialogueCardSansTitle("Enregistrement...", context!);
+      await locator
+          .get<FirebasesAuth>()
+          .createUserCode(users: users, code: code)
+          .then((value) {
+        Get.back();
+        dialogueAndonTapDismiss(
+            onTapDismiss: () {
+              Get.back();
+            },
+            panaraDialogType: PanaraDialogType.success,
+            context: context,
+            title: "Succès",
+            message: "Effectuée");
+      });
+    } catch (e) {
+      Get.back();
+      dialogue(
+          panaraDialogType: PanaraDialogType.error,
+          context: context,
+          title: "Erreur",
+          message: e.toString());
+    }
+  }
+
+  editNomBoutique({
+    BoutiqueModels? boutiqueModels,
+    BuildContext? context,
+    String? nouveauNom,
+  }) async {
+    try {
+      simpleDialogueCardSansTitle("Enregistrement...", context!);
+      await locator
+          .get<FirebasesAuth>()
+          .updateNomBoutiqueDatas(
+              nouveauNom: nouveauNom, boutiqueModels: boutiqueModels)
+          .then((value) {
+        Get.back();
+        dialogueAndonTapDismiss(
+            onTapDismiss: () {
+              Get.back();
+              Get.back();
+            },
+            panaraDialogType: PanaraDialogType.success,
+            context: context,
+            title: "Succès",
+            message: "Modification éffectuée");
+      });
+    } catch (e) {
+      Get.back();
+      dialogue(
+          panaraDialogType: PanaraDialogType.error,
+          context: context,
+          title: "Erreur",
+          message: e.toString());
+    }
+  }
+
   addNewVendeurDataInBoutiques(
       {Vendeur? vendeur,
       BoutiqueModels? boutiqueModels,

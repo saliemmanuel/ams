@@ -139,6 +139,40 @@ class FirebasesAuth {
         .update({key!: value!});
   }
 
+  updateUserDatas(
+      {Users? users, required String? nom, required String? prenom}) async {
+    return await locator
+        .get<ServiceAuth>()
+        .firestore
+        .collection("users")
+        .doc(users!.id)
+        .update({"nom": nom, "prenom": prenom});
+  }
+
+  createUserCode({Users? users, required String? code}) async {
+    var hashCode = locator
+        .get<HomeProvider>()
+        .chiffrement(payload: {"users": users!.toMap(), "code": code});
+    return await locator
+        .get<ServiceAuth>()
+        .firestore
+        .collection("code")
+        .doc(users.id)
+        .set({"users": users.toMap(), "code": hashCode});
+  }
+
+  updateNomBoutiqueDatas({
+    BoutiqueModels? boutiqueModels,
+    required String? nouveauNom,
+  }) async {
+    return await locator
+        .get<ServiceAuth>()
+        .firestore
+        .collection("boutique")
+        .doc(boutiqueModels!.id)
+        .update({"nomBoutique": nouveauNom});
+  }
+
   saveBoutiqueDatas(
       {BoutiqueModels? boutiqueModels, String? collection}) async {
     return await locator

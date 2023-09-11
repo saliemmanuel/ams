@@ -9,5 +9,5 @@ dialogueAjout({BuildContext? context, Widget? child}) => showDialog(
               ClipRRect(borderRadius: BorderRadius.circular(20), child: child),
         ));
 
-dialogueAjout2({BuildContext? context, Widget? child}) =>
+dialogueAjout2({required BuildContext? context, Widget? child}) =>
     showCupertinoDialog(context: context!, builder: (context) => child!);

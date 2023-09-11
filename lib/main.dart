@@ -4,6 +4,7 @@ import 'package:ams/storage/local_storage/local_storage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
@@ -17,15 +18,13 @@ void main() async {
   LocalStorage.init();
   ServiceLocator.initServiceLocator();
   await dotenv.load(fileName: ".env");
-  // await FirebaseMessaging.instance.getInitialMessage();
-  // await FireMessageging.initializeLocalNotifications();
-  // FireMessageging().onMessageListen();
-  // FireMessageging().requestPermission();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   runApp(MultiProvider(
       providers: [ChangeNotifierProvider(create: (context) => HomeProvider())],
       child: GetMaterialApp(
-        title: "AMS",
+          title: "AMS",
           debugShowCheckedModeBanner: false,
           theme: ThemeApp.lightTheme(),
           home: const Splash())));

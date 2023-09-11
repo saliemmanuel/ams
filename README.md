@@ -63,6 +63,15 @@ facture
     | - telephone
     | - vendeur : Vendeur
 ```
+
+### code
+
+```
+code
+    | - hash
+    | - id
+    | - idUser
+```
 #
 
 creer un ficher env
@@ -72,6 +81,8 @@ creer un ficher env
 ```
 
 vous allez trouvez dans le fichier `exemple.env` le contenue du fichier `.env`
+## organisation des dossier 
+- __assets/image/__ 
 
 ## State Management 
 

@@ -223,7 +223,7 @@ class _DetailAticleState extends State<DetailAticle> {
                           ]),
                       DataRow(
                           color:
-                              MaterialStateProperty.all(Colors.grey.shade200),
+                              MaterialStateProperty.all(Colors.white),
                           cells: [
                             const DataCell(CustomText(data: "Bénéfice")),
                             DataCell(Row(
@@ -312,7 +312,7 @@ class _DetailAticleState extends State<DetailAticle> {
                           ]),
                       DataRow(
                           color:
-                              MaterialStateProperty.all(Colors.grey.shade200),
+                              MaterialStateProperty.all(Colors.white),
                           cells: [
                             const DataCell(CustomText(data: "Prix de vente ")),
                             DataCell(

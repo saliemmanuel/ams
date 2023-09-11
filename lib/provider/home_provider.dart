@@ -3,7 +3,10 @@ import 'package:ams/models/article_modes.dart';
 import 'package:ams/models/boutique_model.dart';
 import 'package:ams/models/facture_client_model.dart';
 import 'package:ams/services/service_locator.dart';
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
+import 'package:date_formatter/date_formatter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../models/user.dart';
 import '../services/services_auth.dart';
@@ -16,8 +19,8 @@ class HomeProvider extends ChangeNotifier {
   int? _topIndex = 0;
   int? _nomProduit = 0;
   double _valeurStock = 0;
-  double _prixTotal = 0.0;
-  List<ArticleModels>? _listArticleVente = [];
+  final double _prixTotal = 0.0;
+  final List<ArticleModels> _listArticleVente = [];
 
   List<FactureClient> echoVal = [];
 
@@ -67,17 +70,17 @@ class HomeProvider extends ChangeNotifier {
   }
 
   setValeurListArticleVente(ArticleModels? value) {
-    _listArticleVente!.add(value!);
+    _listArticleVente.add(value!);
     notifyListeners();
   }
 
   remoceValeurArticleVente(ArticleModels? value) {
-    _listArticleVente!.remove(value!);
+    _listArticleVente.remove(value!);
     notifyListeners();
   }
 
   remoceAllValeurArticleVente() {
-    _listArticleVente!.clear();
+    _listArticleVente.clear();
     echoVal.clear();
     notifyListeners();
   }
@@ -105,5 +108,38 @@ class HomeProvider extends ChangeNotifier {
         status: "");
     notifyListeners();
     locator.get<FirebasesAuth>().signOut();
+  }
+
+  formatDate({String? date}) {
+    return DateFormatter.formatStringDate(
+      date: date!,
+      inputFormat: 'yyyy-MM-dd HH:mm:ss',
+      outputFormat: 'dd MMM yyyy à HH:mm:ss',
+    );
+  }
+
+  // recupération de la clé de chiffrement utilisé
+  chiffrement({required Map<String, dynamic> payload}) {
+    final String? jwtkey = dotenv.env['JWT_KEY'];
+    // instance JWT
+    final jwt = JWT(payload);
+    // chiffrement du message et creation du token (le chiffré)
+    String token = jwt.sign(SecretKey(jwtkey!));
+    // renvoi du chiffré
+    return token;
+  }
+
+  deChiffrement({String? token}) {
+    final String? jwtkey = dotenv.env['JWT_KEY'];
+    try {
+      // Verifition du token (qui as été utiliser lors du chiffrement)
+      final jwt = JWT.verify(token!, SecretKey(jwtkey!));
+      // renvoi des info claire déchéffré
+      return jwt.payload;
+    } on JWTExpiredException {
+      debugPrint('jwt expired');
+    } on JWTException catch (ex) {
+      debugPrint(ex.message);
+    }
   }
 }

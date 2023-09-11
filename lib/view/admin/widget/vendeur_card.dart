@@ -1,7 +1,10 @@
 import 'package:ams/models/boutique_model.dart';
 import 'package:ams/models/vendeur_model.dart';
+import 'package:ams/provider/home_provider.dart';
 import 'package:ams/services/service_locator.dart';
 import 'package:ams/services/services_auth.dart';
+import 'package:ams/view/admin/widget/dialogue_ajout.dart';
+import 'package:ams/view/widgets/code_user.dart';
 import 'package:ams/view/widgets/custom_dialogue_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -47,8 +50,15 @@ class VendeurCard extends StatelessWidget {
                   context: context,
                   onTapConfirm: () {
                     Get.back();
-                    locator.get<ServiceAuth>().deleteVendeur(
-                        context: context, vendeurId: vendeur!.id);
+                    // locator.get<ServiceAuth>().deleteVendeur(
+                    //     context: context, vendeurId: vendeur!.id);
+                    dialogueAjout2(
+                        context: context,
+                        child: CodeUser(
+                          label: "",
+                          statut: codeStatut.creation,
+                          users: locator.get<HomeProvider>().user,
+                        ));
                   });
             },
           ),

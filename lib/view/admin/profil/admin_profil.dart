@@ -1,11 +1,16 @@
 import 'package:ams/models/user.dart';
 import 'package:ams/provider/home_provider.dart';
+import 'package:ams/view/widgets/code_user.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../services/service_locator.dart';
+import '../../../services/services_auth.dart';
 import '../../create_account/create_account.dart';
 import '../../widgets/custom_text.dart';
+import '../../widgets/edite_profil.dart';
+import '../widget/dialogue_ajout.dart';
 
 class AdminProfil extends StatefulWidget {
   final Users user;
@@ -31,10 +36,40 @@ class _AdminProfilState extends State<AdminProfil> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 25.0),
-                  CustomText(
-                    data: '${widget.user.nom} ${widget.user.prenom} ',
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold,
+                  StreamBuilder(
+                    stream: locator
+                        .get<ServiceAuth>()
+                        .firestore
+                        .collection('users')
+                        .where('id', isEqualTo: widget.user.id)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: snapshot.data!.docs.length,
+                            itemBuilder: (context, index) {
+                              var user = Users.fromMap(
+                                  snapshot.data!.docs[index].data());
+                              return ListTile(
+                                title: CustomText(
+                                  data: '${user.nom} ${user.prenom ?? "#"} ',
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                trailing: IconButton(
+                                    onPressed: () {
+                                      dialogueAjout2(
+                                          context: context,
+                                          child:
+                                              EditeProfil(users: widget.user));
+                                    },
+                                    icon: const Icon(Icons.edit)),
+                              );
+                            });
+                      }
+                      return const CircularProgressIndicator();
+                    },
                   ),
                   ListTile(
                     title: CustomText(data: widget.user.email ?? ""),
@@ -42,6 +77,48 @@ class _AdminProfilState extends State<AdminProfil> {
                   const SizedBox(height: 25.0),
                 ],
               )),
+            ),
+            StreamBuilder(
+              stream: locator
+                  .get<ServiceAuth>()
+                  .firestore
+                  .collection("code")
+                  .where("id", isEqualTo: widget.user.id)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data!.docs.isNotEmpty) {
+                    return ListTile(
+                      onTap: () {
+                        Get.back();
+                        dialogueAjout2(
+                            context: context,
+                            child: CodeUser(
+                                label: "",
+                                statut: codeStatut.modification,
+                                users: widget.user));
+                      },
+                      leading: const Icon(Icons.lock),
+                      title: const CustomText(data: " Changer code secret"),
+                    );
+                  } else if (snapshot.data!.docs.isEmpty) {
+                    return ListTile(
+                      onTap: () {
+                        Get.back();
+                        dialogueAjout2(
+                            context: context,
+                            child: CodeUser(
+                                label: "",
+                                statut: codeStatut.creation,
+                                users: widget.user));
+                      },
+                      leading: const Icon(Icons.lock),
+                      title: const CustomText(data: "Créer code secret"),
+                    );
+                  }
+                }
+                return const CupertinoActivityIndicator();
+              },
             ),
             Card(
                 child: ListTile(
