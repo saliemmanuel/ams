@@ -51,7 +51,6 @@ class VendeurCard extends StatelessWidget {
                   context: context,
                   onTapConfirm: () {
                     Get.back();
-
                     dialogueAjout2(
                         context: context,
                         child: VerifCodeUser(

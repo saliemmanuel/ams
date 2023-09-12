@@ -379,7 +379,7 @@ class ServiceAuth {
       simpleDialogueCardSansTitle("Enregistrement...", context!);
       await locator
           .get<FirebasesAuth>()
-          .createUserCode(users: users, code: code)
+          .updateUserCode(users: users, code: code)
           .then((value) {
         Get.back();
         dialogueAndonTapDismiss(
@@ -412,18 +412,6 @@ class ServiceAuth {
       await locator
           .get<FirebasesAuth>()
           .verifUserCode(users: users, code: code, callBack: callBack);
-      //     .then((value) {
-      //   Get.back();
-      //   dialogueAndonTapDismiss(
-      //       onTapDismiss: () {
-      //         Get.back();
-      //         Get.back();
-      //       },
-      //       panaraDialogType: PanaraDialogType.success,
-      //       context: context,
-      //       title: "Succès",
-      //       message: "Effectuée");
-      // });
     } catch (e) {
       Get.back();
       dialogue(

@@ -1,13 +1,17 @@
 import 'package:ams/models/user.dart';
 import 'package:ams/services/services_auth.dart';
+import 'package:ams/view/widgets/update_code_user.dart';
+import 'package:ams/view/widgets/verif_ancient_code_user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:panara_dialogs/panara_dialogs.dart';
 
 import '../../../provider/home_provider.dart';
 import '../../../services/service_locator.dart';
 import '../../admin/widget/dialogue_ajout.dart';
 import '../../widgets/create_code_user.dart';
+import '../../widgets/custom_dialogue_card.dart';
 import '../../widgets/custom_text.dart';
 import '../../widgets/edite_profil.dart';
 
@@ -93,7 +97,29 @@ class _VendeurProfilState extends State<VendeurProfil> {
                           Get.back();
                           dialogueAjout2(
                               context: context,
-                              child: CreateCodeUser(users: widget.user));
+                              child: VerificationAncientCode(
+                                users: widget.user,
+                                callBack: (value) {
+                                  Get.back();
+                                  if (value) {
+                                    dialogueAjout2(
+                                        context: context,
+                                        child: UpdateCodeUser(
+                                          users: widget.user,
+                                        ));
+                                  } else {
+                                    dialogueAndonTapDismiss(
+                                        onTapDismiss: () {
+                                          Get.back();
+                                        },
+                                        panaraDialogType:
+                                            PanaraDialogType.error,
+                                        message: "Code secret incorrect",
+                                        title: "",
+                                        context: context);
+                                  }
+                                },
+                              ));
                         },
                         leading: const Icon(Icons.lock),
                         title: const CustomText(data: " Changer code secret"),

@@ -4,12 +4,16 @@ import 'package:ams/view/widgets/create_code_user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:panara_dialogs/panara_dialogs.dart';
 
 import '../../../services/service_locator.dart';
 import '../../../services/services_auth.dart';
 import '../../create_account/create_account.dart';
+import '../../widgets/custom_dialogue_card.dart';
 import '../../widgets/custom_text.dart';
 import '../../widgets/edite_profil.dart';
+import '../../widgets/update_code_user.dart';
+import '../../widgets/verif_ancient_code_user.dart';
 import '../widget/dialogue_ajout.dart';
 
 class AdminProfil extends StatefulWidget {
@@ -94,7 +98,29 @@ class _AdminProfilState extends State<AdminProfil> {
                           Get.back();
                           dialogueAjout2(
                               context: context,
-                              child: CreateCodeUser(users: widget.user));
+                              child: VerificationAncientCode(
+                                users: widget.user,
+                                callBack: (value) {
+                                  Get.back();
+                                  if (value) {
+                                    dialogueAjout2(
+                                        context: context,
+                                        child: UpdateCodeUser(
+                                          users: widget.user,
+                                        ));
+                                  } else {
+                                    dialogueAndonTapDismiss(
+                                        onTapDismiss: () {
+                                          Get.back();
+                                        },
+                                        panaraDialogType:
+                                            PanaraDialogType.error,
+                                        message: "Code secret incorrect",
+                                        title: "",
+                                        context: context);
+                                  }
+                                },
+                              ));
                         },
                         leading: const Icon(Icons.lock),
                         title: const CustomText(data: " Changer code secret"),
@@ -115,7 +141,9 @@ class _AdminProfilState extends State<AdminProfil> {
                     );
                   }
                 }
-                return const CupertinoActivityIndicator();
+                return const Row(
+                  children: [CupertinoActivityIndicator()],
+                );
               },
             ),
             Card(

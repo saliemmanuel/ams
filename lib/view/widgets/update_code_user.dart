@@ -9,22 +9,19 @@ import 'package:new_pinput/new_pinput.dart';
 
 import 'custom_button.dart';
 
-class ChangeCodeUser extends StatefulWidget {
+class UpdateCodeUser extends StatefulWidget {
   final Users users;
 
-  final String? label;
-
-  const ChangeCodeUser({
+  const UpdateCodeUser({
     super.key,
     required this.users,
-    required this.label,
   });
 
   @override
-  State<ChangeCodeUser> createState() => _ChangeCodeUserState();
+  State<UpdateCodeUser> createState() => _UpdateCodeUserState();
 }
 
-class _ChangeCodeUserState extends State<ChangeCodeUser> {
+class _UpdateCodeUserState extends State<UpdateCodeUser> {
   var code = TextEditingController();
 
   @override
@@ -58,7 +55,7 @@ class _ChangeCodeUserState extends State<ChangeCodeUser> {
               const Align(
                 alignment: Alignment.bottomLeft,
                 child: CustomText(
-                  data: "  Entrez code secret",
+                  data: "  Entrez nouveau code secret",
                   fontSize: 19.0,
                   fontWeight: FontWeight.bold,
                 ),
@@ -71,8 +68,11 @@ class _ChangeCodeUserState extends State<ChangeCodeUser> {
                 autofocus: true,
                 obscuringCharacter: "#",
                 onCompleted: (pin) {
-                  locator.get<ServiceAuth>().getCreateUserCode(
-                      context: context, users: widget.users, code: code.text);
+                  locator.get<ServiceAuth>().getUpdateUserCode(
+                        context: context,
+                        users: widget.users,
+                        code: code.text,
+                      );
                 },
               ),
               const SizedBox(height: 20.0),
@@ -80,19 +80,8 @@ class _ChangeCodeUserState extends State<ChangeCodeUser> {
                   child: "Validez",
                   color: Colors.white,
                   onPressed: () {
-                    // if (nomController!.text.isEmpty) {
-                    //   dialogue(
-                    //       panaraDialogType: PanaraDialogType.error,
-                    //       message: "Entrez un nom svp",
-                    //       title: "",
-                    //       context: context);
-                    // } else {
-                    //   locator.get<ServiceAuth>().editUsersNomAndPrenom(
-                    //       context: context,
-                    //       users: widget.users,
-                    //       nom: nomController!.text,
-                    //       prenom: prenomController!.text);
-                    // }
+                    locator.get<ServiceAuth>().getUpdateUserCode(
+                        context: context, users: widget.users, code: code.text);
                   }),
               const SizedBox(height: 8.0),
             ],
