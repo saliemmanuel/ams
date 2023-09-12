@@ -2,16 +2,17 @@ import 'package:ams/models/boutique_model.dart';
 import 'package:ams/models/vendeur_model.dart';
 import 'package:ams/provider/home_provider.dart';
 import 'package:ams/services/service_locator.dart';
-import 'package:ams/services/services_auth.dart';
 import 'package:ams/view/admin/widget/dialogue_ajout.dart';
-import 'package:ams/view/widgets/code_user.dart';
 import 'package:ams/view/widgets/custom_dialogue_card.dart';
+import 'package:ams/view/widgets/verif_code_user.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
 import 'package:panara_dialogs/panara_dialogs.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../services/services_auth.dart';
 import '../../widgets/custom_text.dart';
 
 class VendeurCard extends StatelessWidget {
@@ -50,13 +51,29 @@ class VendeurCard extends StatelessWidget {
                   context: context,
                   onTapConfirm: () {
                     Get.back();
-                    // locator.get<ServiceAuth>().deleteVendeur(
-                    //     context: context, vendeurId: vendeur!.id);
+
                     dialogueAjout2(
                         context: context,
-                        child: CodeUser(
-                          label: "",
-                          statut: codeStatut.creation,
+                        child: VerifCodeUser(
+                          callBack: (value) {
+                            if (value) {
+                              Get.back();
+                              locator.get<ServiceAuth>().deleteVendeur(
+                                  context: context, vendeurId: vendeur!.id);
+                              locator.get<ServiceAuth>().showToast("Supprimé",
+                                  context: context,
+                                  position: FlutterToastr.bottom);
+                            } else {
+                              dialogueAndonTapDismiss(
+                                  onTapDismiss: () {
+                                    Get.back();
+                                  },
+                                  panaraDialogType: PanaraDialogType.error,
+                                  message: "Code secret incorrect",
+                                  title: "",
+                                  context: context);
+                            }
+                          },
                           users: locator.get<HomeProvider>().user,
                         ));
                   });

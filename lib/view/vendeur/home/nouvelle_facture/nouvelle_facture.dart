@@ -18,6 +18,8 @@ import '../../../widgets/custum_text_field.dart';
 import '../../widget/article_card.dart';
 import 'recapitulatif_facture/recapitulatif_facture.dart';
 
+import 'package:flutter/services.dart';
+
 class NouvelleFacture extends StatefulWidget {
   final BoutiqueModels boutiqueModels;
   const NouvelleFacture({
@@ -87,6 +89,7 @@ class NouvelleFactureState extends State<NouvelleFacture> {
                       FilledButton.tonalIcon(
                         label: const CustomText(data: "Tous éffacer"),
                         onPressed: () {
+                          HapticFeedback.mediumImpact();
                           if (!Provider.of<HomeProvider>(context, listen: false)
                               .listArticleVente!
                               .isNotEmpty) {
@@ -102,6 +105,8 @@ class NouvelleFactureState extends State<NouvelleFacture> {
                                   Get.back();
                                 },
                                 onTapConfirm: () {
+                                  HapticFeedback.mediumImpact();
+
                                   Get.back();
                                   Provider.of<HomeProvider>(context,
                                           listen: false)
@@ -131,7 +136,8 @@ class NouvelleFactureState extends State<NouvelleFacture> {
       floatingActionButton: FilledButton.tonalIcon(
         icon: const Icon(Icons.save_outlined),
         label: const CustomText(data: "Termier"),
-        onPressed: () {
+        onPressed: () async {
+          HapticFeedback.mediumImpact();
           // je verifie si la liste globale des facture est vide
           if (!Provider.of<HomeProvider>(context, listen: false)
               .echoVal

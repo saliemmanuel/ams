@@ -5,13 +5,17 @@ import 'package:data_table_plus/data_table_plus.dart';
 import 'package:dotted_decoration/dotted_decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:panara_dialogs/panara_dialogs.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../models/article_modes.dart';
 import '../../../../../models/vendeur_model.dart';
 import '../../../../../provider/home_provider.dart';
 import '../../../../admin/home/detail_boutique/stock_article/detail_stock/detail_article.dart';
+import '../../../../admin/widget/dialogue_ajout.dart';
 import '../../../../widgets/custom_button.dart';
+import '../../../../widgets/custom_dialogue_card.dart';
+import '../../../../widgets/verif_code_user.dart';
 
 class RecapitulatifFacture extends StatefulWidget {
   final String nom, telephone, idBoutique;
@@ -196,16 +200,39 @@ class _RecapitulatifFactureState extends State<RecapitulatifFacture> {
                           CustomButton(
                             child: "Enregistrer",
                             onPressed: () {
-                              locator.get<ServiceAuth>().saveFactureClientData(
-                                  vendeur: widget.vendeur,
-                                  idBoutique: widget.idBoutique,
-                                  telephone: widget.telephone,
-                                  nom: widget.nom,
-                                  netPayer: netAPayer,
-                                  facture: Provider.of<HomeProvider>(context,
-                                          listen: false)
-                                      .echoVal,
-                                  context: context);
+                              dialogueAjout2(
+                                  context: context,
+                                  child: VerifCodeUser(
+                                      users: locator.get<HomeProvider>().user,
+                                      callBack: (value) {
+                                        if (value) {
+                                          Get.back();
+                                          locator
+                                              .get<ServiceAuth>()
+                                              .saveFactureClientData(
+                                                  vendeur: widget.vendeur,
+                                                  idBoutique: widget.idBoutique,
+                                                  telephone: widget.telephone,
+                                                  nom: widget.nom,
+                                                  netPayer: netAPayer,
+                                                  facture:
+                                                      Provider.of<HomeProvider>(
+                                                              context,
+                                                              listen: false)
+                                                          .echoVal,
+                                                  context: context);
+                                        } else {
+                                          dialogueAndonTapDismiss(
+                                              onTapDismiss: () {
+                                                Get.back();
+                                              },
+                                              panaraDialogType:
+                                                  PanaraDialogType.error,
+                                              message: "Code secret incorrect",
+                                              title: "",
+                                              context: context);
+                                        }
+                                      }));
                             },
                             color: Colors.white,
                           ),

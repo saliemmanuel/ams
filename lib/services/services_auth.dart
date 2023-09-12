@@ -352,12 +352,78 @@ class ServiceAuth {
         dialogueAndonTapDismiss(
             onTapDismiss: () {
               Get.back();
+              Get.back();
             },
             panaraDialogType: PanaraDialogType.success,
             context: context,
             title: "Succès",
             message: "Effectuée");
       });
+    } catch (e) {
+      Get.back();
+      dialogue(
+          panaraDialogType: PanaraDialogType.error,
+          context: context,
+          title: "Erreur",
+          message: e.toString());
+    }
+  }
+
+  ///
+  getUpdateUserCode({
+    Users? users,
+    BuildContext? context,
+    String? code,
+  }) async {
+    try {
+      simpleDialogueCardSansTitle("Enregistrement...", context!);
+      await locator
+          .get<FirebasesAuth>()
+          .createUserCode(users: users, code: code)
+          .then((value) {
+        Get.back();
+        dialogueAndonTapDismiss(
+            onTapDismiss: () {
+              Get.back();
+              Get.back();
+            },
+            panaraDialogType: PanaraDialogType.success,
+            context: context,
+            title: "Succès",
+            message: "Effectuée");
+      });
+    } catch (e) {
+      Get.back();
+      dialogue(
+          panaraDialogType: PanaraDialogType.error,
+          context: context,
+          title: "Erreur",
+          message: e.toString());
+    }
+  }
+
+  getVerifUserCode(
+      {Users? users,
+      BuildContext? context,
+      String? code,
+      required Function(bool) callBack}) async {
+    try {
+      simpleDialogueCardSansTitle("Traitement...", context!);
+      await locator
+          .get<FirebasesAuth>()
+          .verifUserCode(users: users, code: code, callBack: callBack);
+      //     .then((value) {
+      //   Get.back();
+      //   dialogueAndonTapDismiss(
+      //       onTapDismiss: () {
+      //         Get.back();
+      //         Get.back();
+      //       },
+      //       panaraDialogType: PanaraDialogType.success,
+      //       context: context,
+      //       title: "Succès",
+      //       message: "Effectuée");
+      // });
     } catch (e) {
       Get.back();
       dialogue(

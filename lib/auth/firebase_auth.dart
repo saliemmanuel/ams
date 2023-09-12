@@ -4,6 +4,7 @@ import 'package:ams/models/facture_client_model.dart';
 import 'package:ams/models/vendeur_model.dart';
 import 'package:ams/provider/home_provider.dart';
 import 'package:ams/view/login/login.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -158,7 +159,38 @@ class FirebasesAuth {
         .firestore
         .collection("code")
         .doc(users.id)
-        .set({"users": users.toMap(), "code": hashCode});
+        .set({'id': users.id, "users": users.toMap(), "code": hashCode});
+  }
+
+  updateUserCode({Users? users, required String? code}) async {
+    var hashCode = locator
+        .get<HomeProvider>()
+        .chiffrement(payload: {"users": users!.toMap(), "code": code});
+    return await locator
+        .get<ServiceAuth>()
+        .firestore
+        .collection("code")
+        .doc(users.id)
+        .set({'id': users.id, "users": users.toMap(), "code": hashCode});
+  }
+
+  verifUserCode(
+      {Users? users,
+      required String? code,
+      required Function(bool) callBack}) async {
+    DocumentSnapshot<Map<String, dynamic>> data = await locator
+        .get<ServiceAuth>()
+        .firestore
+        .collection("code")
+        .doc(users!.id)
+        .get();
+    if (data.data()!.isNotEmpty) {
+      Get.back();
+    }
+    await callBack(locator
+            .get<HomeProvider>()
+            .deChiffrement(token: data.data()!['code'])['code'] ==
+        code);
   }
 
   updateNomBoutiqueDatas({

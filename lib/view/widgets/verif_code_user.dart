@@ -2,7 +2,6 @@ import 'package:ams/services/service_locator.dart';
 import 'package:ams/services/services_auth.dart';
 import 'package:ams/view/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import 'package:ams/models/user.dart';
@@ -10,26 +9,16 @@ import 'package:new_pinput/new_pinput.dart';
 
 import 'custom_button.dart';
 
-enum codeStatut { creation, modification, verification }
-
-class CodeUser extends StatefulWidget {
+class VerifCodeUser extends StatefulWidget {
   final Users users;
-  final codeStatut statut;
-
-  final String? label;
-
-  const CodeUser({
-    super.key,
-    required this.users,
-    required this.label,
-    required this.statut,
-  });
+  final dynamic Function(bool) callBack;
+  const VerifCodeUser({super.key, required this.users, required this.callBack});
 
   @override
-  State<CodeUser> createState() => _CodeUserState();
+  State<VerifCodeUser> createState() => _VerifCodeUserState();
 }
 
-class _CodeUserState extends State<CodeUser> {
+class _VerifCodeUserState extends State<VerifCodeUser> {
   var code = TextEditingController();
 
   @override
@@ -70,42 +59,28 @@ class _CodeUserState extends State<CodeUser> {
               ),
               const SizedBox(height: 20.0),
               Pinput(
-                length: 4,
-                obscureText: true,
-                controller: code,
-                autofocus: true,
-                obscuringCharacter: "#",
-                onCompleted: (pin) {
-                  if (widget.statut == codeStatut.creation) {
-                    print("creation");
-                    locator.get<ServiceAuth>().getCreateUserCode(
-                        users: widget.users, code: code.text);
-                  } else if (widget.statut == codeStatut.modification) {
-                    print("modificaiton");
-                  } else if (widget.statut == codeStatut.verification) {
-                    print("verification");
-                  }
-                },
-              ),
+                  length: 4,
+                  obscureText: true,
+                  controller: code,
+                  autofocus: true,
+                  obscuringCharacter: "#",
+                  onCompleted: (pin) {
+                    locator.get<ServiceAuth>().getVerifUserCode(
+                        context: context,
+                        users: widget.users,
+                        code: code.text,
+                        callBack: widget.callBack);
+                  }),
               const SizedBox(height: 20.0),
               CustomButton(
                   child: "Validez",
                   color: Colors.white,
                   onPressed: () {
-                    
-                    // if (nomController!.text.isEmpty) {
-                    //   dialogue(
-                    //       panaraDialogType: PanaraDialogType.error,
-                    //       message: "Entrez un nom svp",
-                    //       title: "",
-                    //       context: context);
-                    // } else {
-                    //   locator.get<ServiceAuth>().editUsersNomAndPrenom(
-                    //       context: context,
-                    //       users: widget.users,
-                    //       nom: nomController!.text,
-                    //       prenom: prenomController!.text);
-                    // }
+                    locator.get<ServiceAuth>().getVerifUserCode(
+                        context: context,
+                        users: widget.users,
+                        code: code.text,
+                        callBack: widget.callBack);
                   }),
               const SizedBox(height: 8.0),
             ],

@@ -4,6 +4,7 @@ import 'package:ams/models/facture_client_model.dart';
 import 'package:ams/services/services_auth.dart';
 import 'package:data_table_plus/data_table_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:provider/provider.dart';
 
@@ -180,6 +181,7 @@ class _PrixEtQuantiteState extends State<PrixEtQuantite> {
                         // si non je recalcule le prix vente par rapport à la Qté qu'il as renseigné
                         calcPrixVente();
                       }
+                      HapticFeedback.mediumImpact();
                     },
                     controller: controller,
                     keyboardType: TextInputType.number,
@@ -194,6 +196,8 @@ class _PrixEtQuantiteState extends State<PrixEtQuantite> {
                       InkWell(
                         child: const Icon(Icons.add),
                         onTap: () {
+                          HapticFeedback.mediumImpact();
+
                           // je verifie quand le vendeur increment il ne doit pas dépasser la Qté actuelle disponible
                           if (int.parse(controller.text.isEmpty
                                   ? "1"
@@ -220,6 +224,7 @@ class _PrixEtQuantiteState extends State<PrixEtQuantite> {
                       InkWell(
                         child: const Icon(Icons.remove),
                         onTap: () {
+                          HapticFeedback.mediumImpact();
                           // je décrement la Qté
                           var decrement = int.parse(controller.text.isEmpty
                                   ? "1"
@@ -252,6 +257,8 @@ class _PrixEtQuantiteState extends State<PrixEtQuantite> {
                         context: context,
                         "Supprimé",
                         position: FlutterToastr.bottom);
+
+                    HapticFeedback.mediumImpact();
                     setState(() {});
                   },
                   icon: const Icon(Icons.delete, color: Colors.red))),

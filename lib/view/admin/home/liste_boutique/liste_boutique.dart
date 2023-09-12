@@ -1,12 +1,16 @@
 import 'package:ams/view/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:panara_dialogs/panara_dialogs.dart';
 
 import '../../../../models/boutique_model.dart';
 import '../../../../provider/home_provider.dart';
 import '../../../../services/service_locator.dart';
 import '../../../../services/services_auth.dart';
+import '../../../widgets/custom_dialogue_card.dart';
+import '../../../widgets/verif_code_user.dart';
 import '../../widget/boutique_card.dart';
+import '../../widget/dialogue_ajout.dart';
 import '../detail_boutique/detail_boutique.dart';
 
 class ListBoutique extends StatefulWidget {
@@ -48,9 +52,30 @@ class _ListBoutiqueState extends State<ListBoutique> {
                       return BoutiqueCard(
                         nomBoutique: boutique.nomBoutique,
                         onTap: () {
-                          locator.get<HomeProvider>().setBoutiqueModels =
-                              boutique;
-                          Get.to(() => DetailBoutique(boutique: boutique));
+                          dialogueAjout2(
+                              context: context,
+                              child: VerifCodeUser(
+                                  users: locator.get<HomeProvider>().user,
+                                  callBack: (value) {
+                                    if (value) {
+                                      Get.back();
+                                      locator
+                                          .get<HomeProvider>()
+                                          .setBoutiqueModels = boutique;
+                                      Get.to(() =>
+                                          DetailBoutique(boutique: boutique));
+                                    } else {
+                                      dialogueAndonTapDismiss(
+                                          onTapDismiss: () {
+                                            Get.back();
+                                          },
+                                          panaraDialogType:
+                                              PanaraDialogType.error,
+                                          message: "Code secret incorrect",
+                                          title: "",
+                                          context: context);
+                                    }
+                                  }));
                         },
                       );
                     } else {

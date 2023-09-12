@@ -1,6 +1,6 @@
 import 'package:ams/models/user.dart';
 import 'package:ams/provider/home_provider.dart';
-import 'package:ams/view/widgets/code_user.dart';
+import 'package:ams/view/widgets/create_code_user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -88,32 +88,30 @@ class _AdminProfilState extends State<AdminProfil> {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   if (snapshot.data!.docs.isNotEmpty) {
-                    return ListTile(
-                      onTap: () {
-                        Get.back();
-                        dialogueAjout2(
-                            context: context,
-                            child: CodeUser(
-                                label: "",
-                                statut: codeStatut.modification,
-                                users: widget.user));
-                      },
-                      leading: const Icon(Icons.lock),
-                      title: const CustomText(data: " Changer code secret"),
+                    return Card(
+                      child: ListTile(
+                        onTap: () {
+                          Get.back();
+                          dialogueAjout2(
+                              context: context,
+                              child: CreateCodeUser(users: widget.user));
+                        },
+                        leading: const Icon(Icons.lock),
+                        title: const CustomText(data: " Changer code secret"),
+                      ),
                     );
                   } else if (snapshot.data!.docs.isEmpty) {
-                    return ListTile(
-                      onTap: () {
-                        Get.back();
-                        dialogueAjout2(
-                            context: context,
-                            child: CodeUser(
-                                label: "",
-                                statut: codeStatut.creation,
-                                users: widget.user));
-                      },
-                      leading: const Icon(Icons.lock),
-                      title: const CustomText(data: "Créer code secret"),
+                    return Card(
+                      child: ListTile(
+                        onTap: () {
+                          Get.back();
+                          dialogueAjout2(
+                              context: context,
+                              child: CreateCodeUser(users: widget.user));
+                        },
+                        leading: const Icon(Icons.lock),
+                        title: const CustomText(data: "Créer code secret"),
+                      ),
                     );
                   }
                 }

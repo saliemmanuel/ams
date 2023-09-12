@@ -64,10 +64,10 @@ class _ListVendeurState extends State<ListVendeur> {
                   // Comptage des vendeurs
                   if (snap.hasData) {
                     if (snap.data!.docs.isEmpty) {
-                      return const  Padding(
-                        padding:  EdgeInsets.all(8.0),
+                      return const Padding(
+                        padding: EdgeInsets.all(8.0),
                         child: Center(
-                          child:  CustomText(
+                          child: CustomText(
                               fontSize: 22.0,
                               data: "Vous avez aucun vendeur dans la boutique"),
                         ),
@@ -81,7 +81,6 @@ class _ListVendeurState extends State<ListVendeur> {
                           itemBuilder: (context, i) {
                             var vendeur =
                                 Vendeur.fromMap(snap.data!.docs[i].data());
-
                             return VendeurCard(
                                 boutiqueModels: boutique,
                                 vendeur: vendeur,

@@ -6,12 +6,15 @@ import 'package:ams/view/admin/home/liste_boutique/liste_boutique.dart';
 import 'package:ams/view/admin/widget/boutique_card.dart';
 import 'package:ams/view/admin/widget/dialogue_ajout.dart';
 import 'package:ams/view/widgets/custom_text.dart';
+import 'package:ams/view/widgets/verif_code_user.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:panara_dialogs/panara_dialogs.dart';
 
 import '../../../provider/home_provider.dart';
 import '../../../services/service_locator.dart';
 import '../../../services/services_auth.dart';
+import '../../widgets/custom_dialogue_card.dart';
 import '../../widgets/custom_search_bar.dart';
 import '../widget/home_card_widget.dart';
 
@@ -143,10 +146,31 @@ class _AdminHomeState extends State<AdminHome> {
                             return BoutiqueCard(
                               nomBoutique: boutique.nomBoutique,
                               onTap: () {
-                                locator.get<HomeProvider>().setBoutiqueModels =
-                                    boutique;
-                                Get.to(
-                                    () => DetailBoutique(boutique: boutique));
+                                dialogueAjout2(
+                                    context: context,
+                                    child: VerifCodeUser(
+                                        users: widget.users,
+                                        callBack: (value) {
+                                          if (value) {
+                                            Get.back();
+                                            locator
+                                                .get<HomeProvider>()
+                                                .setBoutiqueModels = boutique;
+                                            Get.to(() => DetailBoutique(
+                                                boutique: boutique));
+                                          } else {
+                                            dialogueAndonTapDismiss(
+                                                onTapDismiss: () {
+                                                  Get.back();
+                                                },
+                                                panaraDialogType:
+                                                    PanaraDialogType.error,
+                                                message:
+                                                    "Code secret incorrect",
+                                                title: "",
+                                                context: context);
+                                          }
+                                        }));
                               },
                             );
                           }

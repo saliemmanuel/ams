@@ -1,11 +1,13 @@
 import 'package:ams/models/user.dart';
 import 'package:ams/services/services_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../provider/home_provider.dart';
 import '../../../services/service_locator.dart';
 import '../../admin/widget/dialogue_ajout.dart';
-import '../../admin/widget/edit_widget.dart';
+import '../../widgets/create_code_user.dart';
 import '../../widgets/custom_text.dart';
 import '../../widgets/edite_profil.dart';
 
@@ -43,7 +45,7 @@ class _VendeurProfilState extends State<VendeurProfil> {
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         return ListView.builder(
-                          shrinkWrap: true,
+                            shrinkWrap: true,
                             itemCount: snapshot.data!.docs.length,
                             itemBuilder: (context, index) {
                               var user = Users.fromMap(
@@ -74,6 +76,48 @@ class _VendeurProfilState extends State<VendeurProfil> {
                   const SizedBox(height: 25.0),
                 ],
               )),
+            ),
+            StreamBuilder(
+              stream: locator
+                  .get<ServiceAuth>()
+                  .firestore
+                  .collection("code")
+                  .where("id", isEqualTo: widget.user.id)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data!.docs.isNotEmpty) {
+                    return Card(
+                      child: ListTile(
+                        onTap: () {
+                          Get.back();
+                          dialogueAjout2(
+                              context: context,
+                              child: CreateCodeUser(users: widget.user));
+                        },
+                        leading: const Icon(Icons.lock),
+                        title: const CustomText(data: " Changer code secret"),
+                      ),
+                    );
+                  } else if (snapshot.data!.docs.isEmpty) {
+                    return Card(
+                      child: ListTile(
+                        onTap: () {
+                          Get.back();
+                          dialogueAjout2(
+                              context: context,
+                              child: CreateCodeUser(users: widget.user));
+                        },
+                        leading: const Icon(Icons.lock),
+                        title: const CustomText(data: "Créer code secret"),
+                      ),
+                    );
+                  }
+                }
+                return const Row(
+                  children: [CupertinoActivityIndicator()],
+                );
+              },
             ),
             Card(
                 child: ListTile(

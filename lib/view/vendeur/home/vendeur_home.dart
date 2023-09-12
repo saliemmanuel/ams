@@ -5,6 +5,7 @@ import 'package:ams/view/vendeur/home/nouvelle_facture/nouvelle_facture.dart';
 import 'package:ams/view/widgets/custom_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -105,6 +106,8 @@ class _VendeurHomeState extends State<VendeurHome> {
                                               listen: false)
                                           .listArticleVente!
                                           .contains(articleModels)) {
+                                        HapticFeedback.mediumImpact();
+
                                         locator.get<ServiceAuth>().showToast(
                                             "Ajouté",
                                             context: context,
@@ -172,8 +175,10 @@ class _VendeurHomeState extends State<VendeurHome> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FilledButton.tonalIcon(
-          onPressed: () =>
-              Get.to(() => NouvelleFacture(boutiqueModels: widget.boutique)),
+          onPressed: () {
+            HapticFeedback.mediumImpact();
+            Get.to(() => NouvelleFacture(boutiqueModels: widget.boutique));
+          },
           icon: const Icon(Icons.assignment_outlined),
           label: const CustomText(data: "Facture")),
     );
