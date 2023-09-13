@@ -65,22 +65,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
-  audio_session:
-    dependency: transitive
-    description:
-      name: audio_session
-      sha256: "8a2bc5e30520e18f3fb0e366793d78057fb64cd5287862c76af0c8771f2a52ad"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.1.16"
-  awesome_notifications:
-    dependency: "direct main"
-    description:
-      name: awesome_notifications
-      sha256: "6ba98d73553c8a54e7b77f8dd8b95ce9d32a7839ef182b28cf2ad54ec28b1821"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.7.5-dev.3"
   barcode:
     dependency: transitive
     description:
@@ -632,38 +616,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.7"
-  just_audio:
-    dependency: "direct main"
-    description:
-      name: just_audio
-      sha256: "890cd0fc41a1a4530c171e375a2a3fb6a09d84e9d508c5195f40bcff54330327"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.9.34"
-  just_audio_platform_interface:
-    dependency: transitive
-    description:
-      name: just_audio_platform_interface
-      sha256: d8409da198bbc59426cd45d4c92fca522a2ec269b576ce29459d6d6fcaeb44df
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.2.1"
-  just_audio_web:
-    dependency: transitive
-    description:
-      name: just_audio_web
-      sha256: ff62f733f437b25a0ff590f0e295fa5441dcb465f1edbdb33b3dea264705bc13
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.4.8"
-  jwt_decoder:
-    dependency: "direct main"
-    description:
-      name: jwt_decoder
-      sha256: "54774aebf83f2923b99e6416b4ea915d47af3bde56884eb622de85feabbc559f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.1"
   lints:
     dependency: transitive
     description:
@@ -872,14 +824,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.1"
-  rxdart:
-    dependency: transitive
-    description:
-      name: rxdart
-      sha256: "0c7c0cedd93788d996e33041ffecda924cc54389199cde4e6a34b440f50044cb"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.27.7"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -1098,14 +1042,6 @@ packages:
     description:
       name: url_launcher_windows
       sha256: "7967065dd2b5fccc18c653b97958fdf839c5478c28e767c61ee879f4e7882422"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.7"
-  uuid:
-    dependency: transitive
-    description:
-      name: uuid
-      sha256: "648e103079f7c64a36dc7d39369cabb358d377078a051d6ae2ad3aa539519313"
       url: "https://pub.dev"
     source: hosted
     version: "3.0.7"

@@ -626,4 +626,23 @@ class ServiceAuth {
       {int? duration, required BuildContext? context, int? position}) {
     FlutterToastr.show(msg, context!, duration: duration, position: position);
   }
+
+  restaurePasswordByEmail(
+      {String? email, required BuildContext context}) async {
+    try {
+      simpleDialogueCardSansTitle("Traitement...", context);
+      await locator
+          .get<FirebasesAuth>()
+          .sendPasswordResetEmail(email: email!.trim())
+          .whenComplete(() {
+        Navigator.pop(context);
+        succesTransaction(
+                "Un e-mail recupération a été envoyer au ${maskEmail(email)}",
+                context)
+            .then((value) => Get.back());
+      });
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+  }
 }

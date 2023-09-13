@@ -176,7 +176,7 @@ class _AdminHomeState extends State<AdminHome> {
                           }
                           if (boutique.nomBoutique!
                               .toLowerCase()
-                              .startsWith(search.toLowerCase())) {
+                              .contains(search.toLowerCase())) {
                             return BoutiqueCard(
                               nomBoutique: boutique.nomBoutique,
                               onTap: () {

@@ -49,6 +49,10 @@ class _VendeurHomeState extends State<VendeurHome> {
                   child: CustomText(data: 'Epuiser'),
                 ),
                 DropdownMenuItem(
+                  value: "Critique",
+                  child: CustomText(data: 'Critique'),
+                ),
+                DropdownMenuItem(
                   value: "Tous",
                   child: CustomText(data: 'Tous'),
                 ),
@@ -127,7 +131,7 @@ class _VendeurHomeState extends State<VendeurHome> {
                           }
                           if (articleModels.designation!
                               .toLowerCase()
-                              .startsWith(search.toLowerCase())) {
+                              .contains(search.toLowerCase())) {
                             return ArticleCardHomeVendeur(
                               onTap: () => Get.to(() => DetailAticle(
                                   isVendeur: true, article: articleModels)),
@@ -136,7 +140,7 @@ class _VendeurHomeState extends State<VendeurHome> {
                                   ? Colors.grey
                                   : articleModels.stockActuel == 0
                                       ? Colors.grey
-                                      : Colors.green,
+                                      : Colors.white,
                               onPressed: (selectedItem == "Epuiser" ||
                                       articleModels.stockActuel == 0)
                                   ? null
@@ -213,7 +217,7 @@ class _VendeurHomeState extends State<VendeurHome> {
           .get<ServiceAuth>()
           .firestore
           .collection('article')
-          .where("idBoutique", isEqualTo: widget.boutique.id)
+          .where("idBoutique", isGreaterThan: widget.boutique.id)
           .snapshots();
     }
   }

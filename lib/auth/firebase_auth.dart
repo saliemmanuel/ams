@@ -299,4 +299,8 @@ class FirebasesAuth {
       debugPrint(e.toString());
     }
   }
+
+  sendPasswordResetEmail({String? email}) {
+    return _firebaseAuth.sendPasswordResetEmail(email: email!.trim());
+  }
 }

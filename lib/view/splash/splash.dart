@@ -57,8 +57,8 @@ class _SplashState extends State<Splash> {
     try {
       await FirebaseMessaging.instance.getInitialMessage();
       await FireMessageging().getTokenDeviceToken();
-      await FireMessageging.initializeLocalNotifications();
-      FireMessageging().onMessageListen();
+      // await FireMessageging.initializeLocalNotifications();
+      // FireMessageging().onMessageListen();
       FireMessageging().requestPermission();
     } catch (e) {
       debugPrint(e.toString());

@@ -116,9 +116,10 @@ class _PrixEtQuantiteState extends State<PrixEtQuantite> {
   String date = DateTime.now().toIso8601String();
   @override
   void initState() {
-    // je commmence par initier le prix total (
-    // elle se calcule comme suit prixVente * Qté)
+    // je commmence par initier le prix total
+    // elle se calcule comme suit prixVente * Qté
     // donc je peut l'aisser ça égale au prixVente
+    // Comme la quantité est de 1
     prixTotal = widget.listArticleVente![widget.index].prixVente!;
     initCustomval();
     super.initState();
@@ -146,125 +147,189 @@ class _PrixEtQuantiteState extends State<PrixEtQuantite> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          child: DataTable(columns: const [
-            DataColumn(
-                label: CustomText(data: 'Qté', fontWeight: FontWeight.bold)),
-            DataColumn(
-                label:
-                    CustomText(data: 'Prix T.', fontWeight: FontWeight.bold)),
-            DataColumn(
-                label: CustomText(data: 'Supp.', fontWeight: FontWeight.bold)),
-          ], rows: [
-            DataRow(cells: [
-              DataCell(Row(
-                children: [
-                  Expanded(
-                      child: TextField(
-                    onChanged: (value) {
-                      // Je verifie si le vendeur entre une Qté qui n'est pas suppérieur au stock actuell
-                      if (int.parse(controller.text.isEmpty
-                              ? "1"
-                              : controller.text) >=
-                          widget.listArticleVente![widget.index].stockActuel!) {
-                        // Si oui je lui renvoi un message
-                        locator.get<ServiceAuth>().showToast(
-                            context: context,
-                            "Overflow stock",
-                            position: FlutterToastr.bottom);
-                        controller.text = widget
-                            .listArticleVente![widget.index].stockActuel!
-                            .toString();
-                      } else {
-                        // si non je recalcule le prix vente par rapport à la Qté qu'il as renseigné
-                        calcPrixVente();
-                      }
-                      HapticFeedback.mediumImpact();
-                    },
-                    controller: controller,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          borderSide: const BorderSide(color: Palette.primary)),
-                    ),
-                  )),
-                  Column(
+        Row(
+          children: [
+            Expanded(
+              child: DataTable(columns: const [
+                DataColumn(
+                    label:
+                        CustomText(data: 'Qté', fontWeight: FontWeight.bold)),
+                DataColumn(
+                    label: CustomText(
+                        data: 'Prix T.', fontWeight: FontWeight.bold)),
+                DataColumn(
+                    label:
+                        CustomText(data: 'Supp.', fontWeight: FontWeight.bold)),
+              ], rows: [
+                DataRow(cells: [
+                  DataCell(Row(
                     children: [
-                      InkWell(
-                        child: const Icon(Icons.add),
-                        onTap: () {
-                          HapticFeedback.mediumImpact();
-
-                          // je verifie quand le vendeur increment il ne doit pas dépasser la Qté actuelle disponible
+                      Expanded(
+                          child: TextField(
+                        onChanged: (value) {
+                          // Je verifie si le vendeur entre une Qté qui n'est pas suppérieur au stock actuell
                           if (int.parse(controller.text.isEmpty
                                   ? "1"
                                   : controller.text) >=
                               widget.listArticleVente![widget.index]
                                   .stockActuel!) {
-                            // s'il le depasse, il as un message
+                            // Si oui je lui renvoi un message
                             locator.get<ServiceAuth>().showToast(
                                 context: context,
                                 "Overflow stock",
                                 position: FlutterToastr.bottom);
+                            controller.text = widget
+                                .listArticleVente![widget.index].stockActuel!
+                                .toString();
                           } else {
-                            // s'il ne depasse j'incrémente cette valeur
-                            var increment = int.parse(controller.text.isEmpty
-                                    ? "1"
-                                    : controller.text) +
-                                1;
-                            controller.text = increment.toString();
-                            // et je refait les calcules
+                            // si non je recalcule le prix vente par rapport à la Qté qu'il as renseigné
                             calcPrixVente();
                           }
-                        },
-                      ),
-                      InkWell(
-                        child: const Icon(Icons.remove),
-                        onTap: () {
                           HapticFeedback.mediumImpact();
-                          // je décrement la Qté
-                          var decrement = int.parse(controller.text.isEmpty
-                                  ? "1"
-                                  : controller.text) -
-                              1;
-                          //
-                          if (decrement >= 1) {
-                            controller.text = decrement.toString();
-                          }
-                          calcPrixVente();
                         },
+                        controller: controller,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              borderSide:
+                                  const BorderSide(color: Palette.primary)),
+                        ),
+                      )),
+                      Column(
+                        children: [
+                          InkWell(
+                            child: const Icon(Icons.add),
+                            onTap: () {
+                              HapticFeedback.mediumImpact();
+
+                              /// je verifie quand le vendeur increment il ne doit
+                              /// pas dépasser la Qté actuelle disponible
+                              if (int.parse(controller.text.isEmpty
+                                      ? "1"
+                                      : controller.text) >=
+                                  widget.listArticleVente![widget.index]
+                                      .stockActuel!) {
+                                // s'il le depasse, il as un message
+                                locator.get<ServiceAuth>().showToast(
+                                    context: context,
+                                    "Overflow stock",
+                                    position: FlutterToastr.bottom);
+                              } else {
+                                // s'il ne depasse j'incrémente cette valeur
+                                var increment = int.parse(
+                                        controller.text.isEmpty
+                                            ? "1"
+                                            : controller.text) +
+                                    1;
+                                controller.text = increment.toString();
+                                // et je refait les calcules
+                                calcPrixVente();
+                              }
+                            },
+                          ),
+                          InkWell(
+                            child: const Icon(Icons.remove),
+                            onTap: () {
+                              HapticFeedback.mediumImpact();
+                              // je décrement la Qté
+                              var decrement = int.parse(controller.text.isEmpty
+                                      ? "1"
+                                      : controller.text) -
+                                  1;
+                              //
+                              if (decrement >= 1) {
+                                controller.text = decrement.toString();
+                              }
+                              calcPrixVente();
+                            },
+                          )
+                        ],
                       )
                     ],
-                  )
-                ],
-              )),
-              DataCell(CustomText(data: prixTotal.toString())),
-              DataCell(IconButton(
-                  onPressed: () {
-                    // ici je supprime de la liste des articles de la liste globale des articles
-                    Provider.of<HomeProvider>(context, listen: false)
-                        .remoceValeurArticleVente(
-                            widget.listArticleVente![widget.index]);
-                    // je parcours la liste globale de facture, et je remove par rapport à l'index
-                    Provider.of<HomeProvider>(context, listen: false)
-                        .removeWhereListArticleVente((element) {
-                      return element.index == widget.index;
-                    });
-                    locator.get<ServiceAuth>().showToast(
-                        context: context,
-                        "Supprimé",
-                        position: FlutterToastr.bottom);
+                  )),
+                  DataCell(CustomText(data: prixTotal.toString())),
+                  DataCell(IconButton(
+                      onPressed: () {
+                        // ici je supprime de la liste des articles de la liste globale des articles
+                        Provider.of<HomeProvider>(context, listen: false)
+                            .remoceValeurArticleVente(
+                                widget.listArticleVente![widget.index]);
+                        // je parcours la liste globale de facture, et je remove par rapport à l'index
+                        Provider.of<HomeProvider>(context, listen: false)
+                            .removeWhereListArticleVente((element) {
+                          return element.index == widget.index;
+                        });
+                        locator.get<ServiceAuth>().showToast(
+                            context: context,
+                            "Supprimé",
+                            position: FlutterToastr.bottom);
 
-                    HapticFeedback.mediumImpact();
-                    setState(() {});
-                  },
-                  icon: const Icon(Icons.delete, color: Colors.red))),
-            ])
-          ]),
+                        HapticFeedback.mediumImpact();
+                        setState(() {});
+                      },
+                      icon: const Icon(Icons.delete, color: Colors.red))),
+                ])
+              ]),
+            ),
+          ],
         ),
+        const Divider(thickness: 5
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: DataTable(columns: const [
+                DataColumn(label: CustomText(data: "Prix Non Au.")),
+                DataColumn(label: CustomText(data: "")),
+                DataColumn(label: CustomText(data: "Nouv. Prix")),
+              ], rows: [
+                DataRow(cells: [
+                  DataCell(CustomText(
+                    color: Colors.red,
+                      data: widget.listArticleVente![widget.index].prixNonAuto
+                          .toString())),
+                  DataCell(
+                    TextField(
+                      onChanged: (value) {
+                    // Je verifie si le vendeur entre une Qté qui n'est pas suppérieur au stock actuell
+                    if (int.parse(controller.text.isEmpty
+                            ? "1"
+                            : controller.text) >=
+                        widget
+                            .listArticleVente![widget.index].stockActuel!) {
+                      // Si oui je lui renvoi un message
+                      locator.get<ServiceAuth>().showToast(
+                          context: context,
+                          "Overflow stock",
+                          position: FlutterToastr.bottom);
+                      controller.text = widget
+                          .listArticleVente![widget.index].stockActuel!
+                          .toString();
+                    } else {
+                      // si non je recalcule le prix vente par rapport à la Qté qu'il as renseigné
+                      calcPrixVente();
+                    }
+                    HapticFeedback.mediumImpact();
+                      },
+                      controller: controller,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                        borderSide:
+                            const BorderSide(color: Palette.primary)),
+                      ),
+                    ),
+                  ),
+                  DataCell(CustomText(data: "data"))
+                ])
+              ]),
+            ),
+          ],
+        )
       ],
     );
   }

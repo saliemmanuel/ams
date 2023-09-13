@@ -90,7 +90,7 @@ class _DetailBilanState extends State<DetailBilan> {
                   ],
                   rows: widget.bilanFactureModel.facture.map(
                     (ele) {
-                      beneficeT = ((ele.articleModels!.prixVente! -
+                      beneficeT += ((ele.articleModels!.prixVente! -
                               ele.articleModels!.prixAchat!) *
                           ele.quantite!);
                       return DataRow(

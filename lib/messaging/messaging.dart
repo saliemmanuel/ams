@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -10,16 +8,15 @@ import 'package:http/http.dart';
 
 import '../provider/home_provider.dart';
 import '../services/service_locator.dart';
-import '../themes/theme.dart';
 
 Future<void> backgroundMessagingHandler(RemoteMessage message) async {
-  AwesomeNotifications().createNotificationFromJsonData(message.data);
+  // AwesomeNotifications().createNotificationFromJsonData(message.data);
 }
 
 class FireMessageging {
   // création des instances 
   var messaging = FirebaseMessaging.instance;
-  static ReceivedAction? initialAction;
+  // static ReceivedAction? initialAction;
 
   // Mehtode pour la récupération du token permettant l'envoi des message
   getTokenDeviceToken() async {
@@ -37,26 +34,26 @@ class FireMessageging {
   }
 
 
-  static Future<void> initializeLocalNotifications() async {
-    await AwesomeNotifications().initialize(
-        null,
-        [
-          NotificationChannel(
-              channelKey: 'AMS',
-              channelName: 'AMS',
-              channelDescription: 'Notification AMS',
-              playSound: true,
-              onlyAlertOnce: true,
-              groupAlertBehavior: GroupAlertBehavior.Children,
-              importance: NotificationImportance.High,
-              defaultPrivacy: NotificationPrivacy.Private,
-              ledColor: Palette.primary,
-              channelShowBadge: true,
-              criticalAlerts: true,
-              defaultColor: Palette.primary)
-        ],
-        debug: false);
-  }
+  // static Future<void> initializeLocalNotifications() async {
+  //   await AwesomeNotifications().initialize(
+  //       null,
+  //       [
+  //         NotificationChannel(
+  //             channelKey: 'AMS',
+  //             channelName: 'AMS',
+  //             channelDescription: 'Notification AMS',
+  //             playSound: true,
+  //             onlyAlertOnce: true,
+  //             groupAlertBehavior: GroupAlertBehavior.Children,
+  //             importance: NotificationImportance.High,
+  //             defaultPrivacy: NotificationPrivacy.Private,
+  //             ledColor: Palette.primary,
+  //             channelShowBadge: true,
+  //             criticalAlerts: true,
+  //             defaultColor: Palette.primary)
+  //       ],
+  //       debug: false);
+  // }
 
   requestPermission() async {
     await messaging.requestPermission(
@@ -69,26 +66,26 @@ class FireMessageging {
         sound: true);
   }
 
-  onMessageListen() {
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      if (message.notification != null) {
-        localNotifications(
-            chanelId: Random().nextInt(10).toString(),
-            body: message.notification?.body);
-      }
-    });
-  }
+  // onMessageListen() {
+  //   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+  //     if (message.notification != null) {
+  //       localNotifications(
+  //           chanelId: Random().nextInt(10).toString(),
+  //           body: message.notification?.body);
+  //     }
+  //   });
+  // }
 
-  static localNotifications({String? body, required String? chanelId}) async {
-    await AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            criticalAlert: true,
-            category: NotificationCategory.Status,
-            id: int.parse(chanelId!),
-            channelKey: 'AMS',
-            title: 'AMS',
-            body: body));
-  }
+  // static localNotifications({String? body, required String? chanelId}) async {
+  //   await AwesomeNotifications().createNotification(
+  //       content: NotificationContent(
+  //           criticalAlert: true,
+  //           category: NotificationCategory.Status,
+  //           id: int.parse(chanelId!),
+  //           channelKey: 'AMS',
+  //           title: 'AMS',
+  //           body: body));
+  // }
 
   Future<void> sendPushNotification(var tokenRecipient) async {
     String authorization = dotenv.get('KEY_MESSAGING');

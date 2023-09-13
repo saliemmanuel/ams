@@ -123,7 +123,7 @@ class _StockArticleState extends State<StockArticle> {
                                   }
                                   if (articleModels.designation!
                                       .toLowerCase()
-                                      .startsWith(search.toLowerCase())) {
+                                      .contains(search.toLowerCase())) {
                                     return ArticleCard(
                                       articleModels: articleModels,
                                       onTap: () {

@@ -82,7 +82,7 @@ class _BilanState extends State<Bilan> {
                                 }
                                 if (bilanFactureModel.nom
                                     .toLowerCase()
-                                    .startsWith(search.toLowerCase())) {
+                                    .contains(search.toLowerCase())) {
                                   return BilanFactureCard(
                                     bilanFactureModel: bilanFactureModel,
                                     onTap: () {
