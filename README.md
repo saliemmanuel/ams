@@ -1,4 +1,7 @@
 # ams
+![1JLDBPvTbcL8_1024_500](https://github.com/saliemmanuel/ams/blob/main/screenshot/screen_1.png)
+##
+![1JLDBPvTbcL8_1024_500](https://github.com/saliemmanuel/ams/blob/main/screenshot/screen_2.png)
 
 Is a turnkey financial management and stock control application created for a structure that I will not disclose the name
 
