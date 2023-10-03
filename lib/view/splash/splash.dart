@@ -95,16 +95,16 @@ class _SplashState extends State<Splash> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Spacer(flex: 3),
-          Image.asset("assets/images/logo.png",height: 200.0, width: 550),
+          Image.asset("assets/images/logo.png",height: 230.0, width: 650),
           const Spacer(flex: 2),
           const CircularProgressIndicator(),
           const Spacer(flex: 1,),
-
         ],
       ),
     );

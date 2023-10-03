@@ -205,6 +205,14 @@ class _VendeurHomeState extends State<VendeurHome> {
           .where("idBoutique", isEqualTo: widget.boutique.id)
           .where("stockActuel", isEqualTo: 0)
           .snapshots();
+    } else if (selectedItem == "Critique") {
+      return locator
+          .get<ServiceAuth>()
+          .firestore
+          .collection('article')
+          .where("idBoutique", isEqualTo: widget.boutique.id).
+          where('stockActuel', isLessThanOrEqualTo: 1)
+          .snapshots();
     } else if (selectedItem == "Tous") {
       return locator
           .get<ServiceAuth>()

@@ -4,6 +4,7 @@ import 'package:ams/models/facture_client_model.dart';
 import 'package:ams/models/vendeur_model.dart';
 import 'package:ams/provider/home_provider.dart';
 import 'package:ams/view/login/login.dart';
+import 'package:ams/view/widgets/formate_date.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -127,7 +128,7 @@ class FirebasesAuth {
       "netPayer": netPayer,
       "idBoutique": idBoutique,
       "vendeur": vendeur!.toMap(),
-      "createAt": DateTime.now().toString()
+      "createAt": formatDate(date: DateTime.now().toString())
     });
   }
 

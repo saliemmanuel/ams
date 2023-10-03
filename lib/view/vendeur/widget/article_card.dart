@@ -2,7 +2,8 @@ import 'package:ams/models/article_modes.dart';
 import 'package:ams/models/boutique_model.dart';
 import 'package:ams/models/facture_client_model.dart';
 import 'package:ams/services/services_auth.dart';
-import 'package:data_table_plus/data_table_plus.dart';
+import 'package:ams/view/widgets/formate_date.dart';
+import 'package:dotted_decoration/dotted_decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_toastr/flutter_toastr.dart';
@@ -38,49 +39,71 @@ class _ListDetailFactureState extends State<ListDetailFacture> {
               decoration: BoxDecoration(
                   color: Colors.grey.shade300,
                   borderRadius: BorderRadius.circular(12.0)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Stack(
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: DataTable(columns: const [
-                          DataColumnPlus(
-                              label: CustomText(
-                                  data: 'Nom', fontWeight: FontWeight.bold)),
-                          DataColumn(
-                            label: CustomText(
-                                data: 'Prix U.',
-                                overflow: TextOverflow.ellipsis,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          DataColumn(
-                              label: CustomText(
-                                  data: 'Stock A.',
-                                  overflow: TextOverflow.ellipsis,
-                                  fontWeight: FontWeight.bold))
-                        ], rows: [
-                          DataRow(cells: [
-                            DataCell(CustomText(
-                                data: value
-                                    .listArticleVente![index].designation!)),
-                            DataCell(CustomText(
-                                data: value.listArticleVente![index].prixVente
-                                    .toString())),
-                            DataCell(CustomText(
-                                data: value.listArticleVente![index].stockActuel
-                                    .toString())),
-                          ])
-                        ]),
-                      ),
-                    ],
+                  Positioned(
+                    top: 8.0,
+                    right: 10.0,
+                    child: IconButton(
+                        onPressed: () {
+                          // ici je supprime de la liste des articles de la liste globale des articles
+                          Provider.of<HomeProvider>(context, listen: false)
+                              .remoceValeurArticleVente(
+                                  value.listArticleVente![index]);
+                          // je parcours la liste globale de facture, et je remove par rapport à l'index
+                          Provider.of<HomeProvider>(context, listen: false)
+                              .removeWhereListArticleVente((element) {
+                            return element.index == index;
+                          });
+                          locator.get<ServiceAuth>().showToast(
+                              context: context,
+                              "Supprimé",
+                              position: FlutterToastr.bottom);
+
+                          HapticFeedback.mediumImpact();
+                          setState(() {});
+                        },
+                        icon: const Icon(Icons.close, color: Colors.red)),
                   ),
-                  const Divider(thickness: 2),
-                  PrixEtQuantite(
-                    index: index,
-                    listArticleVente: value.listArticleVente!,
-                    boutiqueModels: widget.boutiqueModels,
-                  )
+                  Padding(
+                    padding: const EdgeInsets.all(26.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text.rich(TextSpan(
+                          children: [
+                            TextSpan(
+                                text:
+                                    value.listArticleVente![index].designation!,
+                                style: const TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold)),
+                          ],
+                        )),
+                        const Divider(),
+                        const SizedBox(height: 10.0),
+                        Text.rich(TextSpan(
+                          children: [
+                            const TextSpan(
+                                text: 'Stock Actuel  : ',
+                                style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold)),
+                            TextSpan(
+                                text: value.listArticleVente![index].stockActuel
+                                    .toString(),
+                                style: const TextStyle(fontSize: 18.0)),
+                          ],
+                        )),
+                        const Divider(thickness: 2),
+                        PrixEtQuantite(
+                          index: index,
+                          listArticleVente: value.listArticleVente!,
+                          boutiqueModels: widget.boutiqueModels,
+                        )
+                      ],
+                    ),
+                  ),
                 ],
               ),
             );
@@ -89,6 +112,13 @@ class _ListDetailFactureState extends State<ListDetailFacture> {
       },
     );
   }
+
+  // ce widget est la pour les line intérrompu
+  Widget dotWidget = Container(
+    decoration:
+        DottedDecoration(shape: Shape.line, linePosition: LinePosition.bottom),
+    width: double.infinity,
+  );
 }
 
 class PrixEtQuantite extends StatefulWidget {
@@ -109,18 +139,26 @@ class PrixEtQuantite extends StatefulWidget {
 
 class _PrixEtQuantiteState extends State<PrixEtQuantite> {
   // J'initie la quantité d'article à 1
-  var controller = TextEditingController(text: "1");
+  var quantite = TextEditingController(text: "1");
+  // je créer un crontroller pour le Prix de vente
+  // Qui peut être modifer par le vendeur
+  // Mais controler, cette valeur ne doit pas être inférieur au prix non autorisé
+  // late TextEditingController? prixVente;
+  var remise = TextEditingController(text: "0");
 
   // pour le calcule du prix total des articles du clients
   late double prixTotal;
-  String date = DateTime.now().toIso8601String();
+  String date = DateTime.now().toString();
   @override
   void initState() {
     // je commmence par initier le prix total
     // elle se calcule comme suit prixVente * Qté
     // donc je peut l'aisser ça égale au prixVente
     // Comme la quantité est de 1
-    prixTotal = widget.listArticleVente![widget.index].prixVente!;
+
+    prixTotal = double.parse(
+        widget.listArticleVente![widget.index].prixVente!.toString());
+
     initCustomval();
     super.initState();
   }
@@ -131,11 +169,15 @@ class _PrixEtQuantiteState extends State<PrixEtQuantite> {
       var facture = FactureClient.fromMap({
         "index": widget.index,
         "prixTotal": prixTotal,
-        "quantite": int.parse(controller.text),
+        "quantite": int.parse(quantite.text),
         "articleModels": widget.listArticleVente![widget.index].toMap(),
-        "createAt": date,
+        "createAt": formatDate(date: date, enableHour: false),
+        "remise": (double.parse(remise.text.isEmpty ? "0" : remise.text)),
         "idBoutique": widget.boutiqueModels.id
       });
+      // prixVente = TextEditingController(
+      //     text: facture.articleModels!.prixVente.toString());
+
       // et je l'insère dans la liste globale de facture
       // echoVal dans HomeProvider est une List<FactureClient>
       // setEchoVal(FactureClient facture){
@@ -148,195 +190,214 @@ class _PrixEtQuantiteState extends State<PrixEtQuantite> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const SizedBox(height: 15.0),
+        Text.rich(TextSpan(
+          children: [
+            const TextSpan(
+                text: 'Prix Non Auto.  : ',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
+            TextSpan(
+                text: widget.listArticleVente![widget.index].prixNonAuto
+                    .toString(),
+                style: TextStyle(
+                    fontSize: 18.0,
+                    color: widget.listArticleVente![widget.index].prixNonAuto! *
+                                int.parse(quantite.text.isEmpty
+                                    ? "1"
+                                    : quantite.text) >
+                            prixTotal
+                        ? Colors.red
+                        : null)),
+          ],
+        )),
+        const Divider(),
+        const SizedBox(height: 8.0),
         Row(
           children: [
+            const CustomText(
+                data: 'Quantité  : ',
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold),
             Expanded(
-              child: DataTable(columns: const [
-                DataColumn(
-                    label:
-                        CustomText(data: 'Qté', fontWeight: FontWeight.bold)),
-                DataColumn(
-                    label: CustomText(
-                        data: 'Prix T.', fontWeight: FontWeight.bold)),
-                DataColumn(
-                    label:
-                        CustomText(data: 'Supp.', fontWeight: FontWeight.bold)),
-              ], rows: [
-                DataRow(cells: [
-                  DataCell(Row(
+              child: Row(
+                children: [
+                  Expanded(
+                      child: Container(
+                    alignment: Alignment.center,
+                    height: 55.0,
+                    child: TextField(
+                      onChanged: (value) {
+                        // Je verifie si le vendeur entre une Qté qui n'est pas suppérieur au stock actuell
+                        if (int.parse(
+                                quantite.text.isEmpty ? "1" : quantite.text) >=
+                            widget
+                                .listArticleVente![widget.index].stockActuel!) {
+                          // Si oui je lui renvoi un message
+                          locator.get<ServiceAuth>().showToast(
+                              context: context,
+                              "Overflow stock",
+                              position: FlutterToastr.bottom);
+                          quantite.text = widget
+                              .listArticleVente![widget.index].stockActuel!
+                              .toString();
+                        } else if (value == "0") {
+                          quantite.text = "1";
+                        } else {
+                          // si non je recalcule le prix vente par rapport à la Qté qu'il as renseigné
+                          calcPrixVente();
+                        }
+                        HapticFeedback.mediumImpact();
+                      },
+                      controller: quantite,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                            borderSide:
+                                const BorderSide(color: Palette.primary)),
+                      ),
+                    ),
+                  )),
+                  Column(
                     children: [
-                      Expanded(
-                          child: TextField(
-                        onChanged: (value) {
-                          // Je verifie si le vendeur entre une Qté qui n'est pas suppérieur au stock actuell
-                          if (int.parse(controller.text.isEmpty
+                      InkWell(
+                        child: const Icon(Icons.add),
+                        onTap: () {
+                          HapticFeedback.mediumImpact();
+
+                          /// je verifie quand le vendeur increment il ne doit
+                          /// pas dépasser la Qté actuelle disponible
+                          if (int.parse(quantite.text.isEmpty
                                   ? "1"
-                                  : controller.text) >=
+                                  : quantite.text) >=
                               widget.listArticleVente![widget.index]
                                   .stockActuel!) {
-                            // Si oui je lui renvoi un message
+                            // s'il le depasse, il as un message
                             locator.get<ServiceAuth>().showToast(
                                 context: context,
                                 "Overflow stock",
                                 position: FlutterToastr.bottom);
-                            controller.text = widget
-                                .listArticleVente![widget.index].stockActuel!
-                                .toString();
                           } else {
-                            // si non je recalcule le prix vente par rapport à la Qté qu'il as renseigné
+                            // s'il ne depasse j'incrémente cette valeur
+                            var increment = int.parse(quantite.text.isEmpty
+                                    ? "1"
+                                    : quantite.text) +
+                                1;
+                            quantite.text = increment.toString();
+                            // et je refait les calcules
                             calcPrixVente();
                           }
-                          HapticFeedback.mediumImpact();
                         },
-                        controller: controller,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide:
-                                  const BorderSide(color: Palette.primary)),
-                        ),
-                      )),
-                      Column(
-                        children: [
-                          InkWell(
-                            child: const Icon(Icons.add),
-                            onTap: () {
-                              HapticFeedback.mediumImpact();
-
-                              /// je verifie quand le vendeur increment il ne doit
-                              /// pas dépasser la Qté actuelle disponible
-                              if (int.parse(controller.text.isEmpty
-                                      ? "1"
-                                      : controller.text) >=
-                                  widget.listArticleVente![widget.index]
-                                      .stockActuel!) {
-                                // s'il le depasse, il as un message
-                                locator.get<ServiceAuth>().showToast(
-                                    context: context,
-                                    "Overflow stock",
-                                    position: FlutterToastr.bottom);
-                              } else {
-                                // s'il ne depasse j'incrémente cette valeur
-                                var increment = int.parse(
-                                        controller.text.isEmpty
-                                            ? "1"
-                                            : controller.text) +
-                                    1;
-                                controller.text = increment.toString();
-                                // et je refait les calcules
-                                calcPrixVente();
-                              }
-                            },
-                          ),
-                          InkWell(
-                            child: const Icon(Icons.remove),
-                            onTap: () {
-                              HapticFeedback.mediumImpact();
-                              // je décrement la Qté
-                              var decrement = int.parse(controller.text.isEmpty
-                                      ? "1"
-                                      : controller.text) -
-                                  1;
-                              //
-                              if (decrement >= 1) {
-                                controller.text = decrement.toString();
-                              }
-                              calcPrixVente();
-                            },
-                          )
-                        ],
+                      ),
+                      InkWell(
+                        child: const Icon(Icons.remove),
+                        onTap: () {
+                          HapticFeedback.mediumImpact();
+                          // je décrement la Qté
+                          var decrement = int.parse(
+                                  quantite.text.isEmpty ? "1" : quantite.text) -
+                              1;
+                          //
+                          if (decrement >= 1) {
+                            quantite.text = decrement.toString();
+                          }
+                          calcPrixVente();
+                        },
                       )
                     ],
-                  )),
-                  DataCell(CustomText(data: prixTotal.toString())),
-                  DataCell(IconButton(
-                      onPressed: () {
-                        // ici je supprime de la liste des articles de la liste globale des articles
-                        Provider.of<HomeProvider>(context, listen: false)
-                            .remoceValeurArticleVente(
-                                widget.listArticleVente![widget.index]);
-                        // je parcours la liste globale de facture, et je remove par rapport à l'index
-                        Provider.of<HomeProvider>(context, listen: false)
-                            .removeWhereListArticleVente((element) {
-                          return element.index == widget.index;
-                        });
-                        locator.get<ServiceAuth>().showToast(
-                            context: context,
-                            "Supprimé",
-                            position: FlutterToastr.bottom);
-
-                        HapticFeedback.mediumImpact();
-                        setState(() {});
-                      },
-                      icon: const Icon(Icons.delete, color: Colors.red))),
-                ])
-              ]),
+                  )
+                ],
+              ),
             ),
           ],
         ),
-        const Divider(thickness: 5
-        ),
+        const Divider(),
+        const SizedBox(height: 18.0),
+        Text.rich(TextSpan(
+          children: [
+            const TextSpan(
+                text: '  Prix U.   : ',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
+            TextSpan(
+                text:
+                    widget.listArticleVente![widget.index].prixVente.toString(),
+                style: const TextStyle(
+                  fontSize: 18.0,
+                )),
+          ],
+        )),
+        const Divider(),
+        const SizedBox(height: 8.0),
         Row(
           children: [
+            const CustomText(
+                data: 'Remise:  ', fontSize: 18.0, fontWeight: FontWeight.bold),
             Expanded(
-              child: DataTable(columns: const [
-                DataColumn(label: CustomText(data: "Prix Non Au.")),
-                DataColumn(label: CustomText(data: "")),
-                DataColumn(label: CustomText(data: "Nouv. Prix")),
-              ], rows: [
-                DataRow(cells: [
-                  DataCell(CustomText(
-                    color: Colors.red,
-                      data: widget.listArticleVente![widget.index].prixNonAuto
-                          .toString())),
-                  DataCell(
-                    TextField(
+              child: Row(
+                children: [
+                  Expanded(
+                      child: Container(
+                    alignment: Alignment.center,
+                    height: 55.0,
+                    child: TextField(
+                      controller: remise,
                       onChanged: (value) {
-                    // Je verifie si le vendeur entre une Qté qui n'est pas suppérieur au stock actuell
-                    if (int.parse(controller.text.isEmpty
-                            ? "1"
-                            : controller.text) >=
-                        widget
-                            .listArticleVente![widget.index].stockActuel!) {
-                      // Si oui je lui renvoi un message
-                      locator.get<ServiceAuth>().showToast(
-                          context: context,
-                          "Overflow stock",
-                          position: FlutterToastr.bottom);
-                      controller.text = widget
-                          .listArticleVente![widget.index].stockActuel!
-                          .toString();
-                    } else {
-                      // si non je recalcule le prix vente par rapport à la Qté qu'il as renseigné
-                      calcPrixVente();
-                    }
-                    HapticFeedback.mediumImpact();
+                        HapticFeedback.mediumImpact();
+                        print(widget.listArticleVente![widget.index]
+                                    .prixNonAuto! *
+                                int.parse(quantite.text.isEmpty
+                                    ? "1"
+                                    : quantite.text) >
+                            prixTotal);
+                        calcPrixVente();
                       },
-                      controller: controller,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                        borderSide:
-                            const BorderSide(color: Palette.primary)),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                            borderSide:
+                                const BorderSide(color: Palette.primary)),
                       ),
                     ),
-                  ),
-                  DataCell(CustomText(data: "data"))
-                ])
-              ]),
+                  )),
+                  const SizedBox(width: 22.0)
+                ],
+              ),
             ),
           ],
-        )
+        ),
+        const SizedBox(height: 10.0),
+        // ignore: prefer_const_constructors
+        Visibility(
+          visible: widget.listArticleVente![widget.index].prixNonAuto! *
+                  int.parse(quantite.text.isEmpty ? "1" : quantite.text) >
+              prixTotal,
+          child: const CustomText(
+              data: "Vous ne pouvez pas vendre à ce prix", color: Colors.red),
+        ),
+        const Divider(),
+        const SizedBox(height: 10.0),
+        Text.rich(TextSpan(
+          children: [
+            const TextSpan(
+                text: 'Prix T. : ',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
+            TextSpan(
+                text: prixTotal.toString(),
+                style: const TextStyle(fontSize: 18.0)),
+          ],
+        )),
       ],
     );
   }
 
   calcPrixVente() {
-    prixTotal = widget.listArticleVente![widget.index].prixVente! *
-        int.parse(controller.text.isEmpty ? "1" : controller.text);
+    prixTotal = ((double.parse(
+                widget.listArticleVente![widget.index].prixVente.toString()) *
+            int.parse(quantite.text.isEmpty ? "1" : quantite.text)) -
+        double.parse(remise.text.isEmpty ? "0" : remise.text));
 
     // je dois update la Qté et le prixTotal
     // de la liste globale des facture
@@ -346,9 +407,10 @@ class _PrixEtQuantiteState extends State<PrixEtQuantite> {
     var facture = FactureClient.fromMap({
       "index": widget.index,
       "prixTotal": prixTotal,
-      "quantite": int.parse(controller.text.isEmpty ? "1" : controller.text),
+      "quantite": int.parse(quantite.text.isEmpty ? "1" : quantite.text),
       "articleModels": widget.listArticleVente![widget.index].toMap(),
-      "createAt": date,
+      "createAt": formatDate(date: date,enableHour: false),
+      "remise": (double.parse(remise.text.isEmpty ? "0" : remise.text)),
       "idBoutique": widget.boutiqueModels.id
     });
     // je la remove

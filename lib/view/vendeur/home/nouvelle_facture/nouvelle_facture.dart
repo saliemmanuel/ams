@@ -163,7 +163,8 @@ class NouvelleFactureState extends State<NouvelleFacture> {
                   context: context,
                   title: "Erreur",
                   message: "Entrez un numéro de téléphone valide");
-            } else {
+            } else if (Provider.of<HomeProvider>(context, listen: false)
+                .activePaiement) {
               dialogueAjout(
                   child: RecapitulatifFacture(
                     idBoutique: widget.boutiqueModels.id!,
@@ -173,6 +174,12 @@ class NouvelleFactureState extends State<NouvelleFacture> {
                     telephone: telephone.text,
                   ),
                   context: context);
+            } else {
+              dialogue(
+                  panaraDialogType: PanaraDialogType.error,
+                  context: context,
+                  title: "Erreur",
+                  message: "Vérifier les articles");
             }
           }
         },

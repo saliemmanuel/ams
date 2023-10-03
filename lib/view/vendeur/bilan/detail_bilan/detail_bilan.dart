@@ -5,18 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 
 import '../../../../../../models/bilan_facture_model.dart';
-import '../../../../../widgets/custom_text.dart';
+import '../../../widgets/custom_text.dart';
 
-class DetailBilan extends StatefulWidget {
+class DetailBilanVendeux extends StatefulWidget {
   final BilanFactureModel bilanFactureModel;
 
-  const DetailBilan({super.key, required this.bilanFactureModel});
+  const DetailBilanVendeux({super.key, required this.bilanFactureModel});
 
   @override
-  State<DetailBilan> createState() => _DetailBilanState();
+  State<DetailBilanVendeux> createState() => _DetailBilanVendeuxState();
 }
 
-class _DetailBilanState extends State<DetailBilan> {
+class _DetailBilanVendeuxState extends State<DetailBilanVendeux> {
   var beneficeT = 0.0;
   @override
   Widget build(BuildContext context) {
@@ -135,10 +135,10 @@ class _DetailBilanState extends State<DetailBilan> {
                 ),
                 DataColumn(
                   label: CustomText(
-                    data: " ",
+                    data: "",
                     fontWeight: FontWeight.bold,
                   ),
-                )
+                ),
               ],
               rows: [
                 DataRow(
@@ -148,36 +148,6 @@ class _DetailBilanState extends State<DetailBilan> {
                       DataCell(CustomText(
                         data: locator.get<HomeProvider>().formatDate(
                             date: widget.bilanFactureModel.createAt),
-                      )),
-                    ]),
-                DataRow(cells: [
-                  const DataCell(Row(
-                    children: [
-                      CustomText(data: "Net Payer  "),
-                      Icon(Icons.check_circle_outline, color: Colors.green),
-                    ],
-                  )),
-                  DataCell(Row(
-                    children: [
-                      CustomText(
-                          data: widget.bilanFactureModel.netPayer.toString()),
-                    ],
-                  )),
-                ]),
-                DataRow(
-                    color: MaterialStateProperty.all(Colors.grey.shade200),
-                    cells: [
-                      const DataCell(Row(
-                        children: [
-                          CustomText(data: "Bénéfice    "),
-                          Icon(Icons.monetization_on_outlined,
-                              color: Colors.green),
-                        ],
-                      )),
-                      DataCell(Row(
-                        children: [
-                          CustomText(data: beneficeT.toString()),
-                        ],
                       )),
                     ]),
               ],

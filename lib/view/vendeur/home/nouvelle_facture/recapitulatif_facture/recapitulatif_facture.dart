@@ -107,77 +107,80 @@ class _RecapitulatifFactureState extends State<RecapitulatifFacture> {
                           ),
                           const SizedBox(height: 15.0),
                           dotWidget,
-                          DataTablePlus(
-                            columns: const [
-                              DataColumnPlus(label: Text('N°')),
-                              DataColumnPlus(label: Text('Désignation')),
-                              DataColumn(label: Text('Qté')),
-                              DataColumn(label: Text('Prix T.')),
-                            ],
-                            rows: List<DataRow>.generate(
-                                Provider.of<HomeProvider>(context,
-                                        listen: false)
-                                    .echoVal
-                                    .length, (index) {
-                              var articleModels = ArticleModels.fromMap(
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: DataTablePlus(
+                              columns: const [
+                                DataColumnPlus(label: Text('N°')),
+                                DataColumnPlus(label: Text('Désignation')),
+                                DataColumn(label: Text('Qté')),
+                                DataColumn(label: Text('Prix T.')),
+                              ],
+                              rows: List<DataRow>.generate(
                                   Provider.of<HomeProvider>(context,
                                           listen: false)
-                                      .echoVal[index]
-                                      .articleModels!
-                                      .toMap());
-                              return DataRow(
-                                  color: index % 2 != 0
-                                      ? MaterialStateProperty.all(Colors.white)
-                                      : MaterialStateProperty.all(
-                                          Colors.grey.shade200),
-                                  cells: [
-                                    DataCell(
-                                      Text((index + 1).toString()),
-                                      onTap: () {
-                                        Get.to(() => DetailAticle(
-                                            isVendeur: true,
-                                            article: articleModels));
-                                      },
-                                    ),
-                                    DataCell(
-                                      CustomText(
-                                          data: articleModels.designation!),
-                                      onTap: () {
-                                        Get.to(() => DetailAticle(
-                                            isVendeur: true,
-                                            article: articleModels));
-                                      },
-                                    ),
-                                    DataCell(
-                                      CustomText(
-                                          data: Provider.of<HomeProvider>(
-                                                  context,
-                                                  listen: false)
-                                              .echoVal[index]
-                                              .quantite
-                                              .toString()),
-                                      onTap: () {
-                                        Get.to(() => DetailAticle(
-                                            isVendeur: true,
-                                            article: articleModels));
-                                      },
-                                    ),
-                                    DataCell(
-                                      CustomText(
-                                          data: Provider.of<HomeProvider>(
-                                                  context,
-                                                  listen: false)
-                                              .echoVal[index]
-                                              .prixTotal
-                                              .toString()),
-                                      onTap: () {
-                                        Get.to(() => DetailAticle(
-                                            isVendeur: true,
-                                            article: articleModels));
-                                      },
-                                    ),
-                                  ]);
-                            }),
+                                      .echoVal
+                                      .length, (index) {
+                                var articleModels = ArticleModels.fromMap(
+                                    Provider.of<HomeProvider>(context,
+                                            listen: false)
+                                        .echoVal[index]
+                                        .articleModels!
+                                        .toMap());
+                                return DataRow(
+                                    color: index % 2 != 0
+                                        ? MaterialStateProperty.all(Colors.white)
+                                        : MaterialStateProperty.all(
+                                            Colors.grey.shade200),
+                                    cells: [
+                                      DataCell(
+                                        Text((index + 1).toString()),
+                                        onTap: () {
+                                          Get.to(() => DetailAticle(
+                                              isVendeur: true,
+                                              article: articleModels));
+                                        },
+                                      ),
+                                      DataCell(
+                                        CustomText(
+                                            data: articleModels.designation!),
+                                        onTap: () {
+                                          Get.to(() => DetailAticle(
+                                              isVendeur: true,
+                                              article: articleModels));
+                                        },
+                                      ),
+                                      DataCell(
+                                        CustomText(
+                                            data: Provider.of<HomeProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .echoVal[index]
+                                                .quantite
+                                                .toString()),
+                                        onTap: () {
+                                          Get.to(() => DetailAticle(
+                                              isVendeur: true,
+                                              article: articleModels));
+                                        },
+                                      ),
+                                      DataCell(
+                                        CustomText(
+                                            data: Provider.of<HomeProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .echoVal[index]
+                                                .prixTotal
+                                                .toString()),
+                                        onTap: () {
+                                          Get.to(() => DetailAticle(
+                                              isVendeur: true,
+                                              article: articleModels));
+                                        },
+                                      ),
+                                    ]);
+                              }),
+                            ),
                           ),
                           const SizedBox(height: 15.0),
                           dotWidget,

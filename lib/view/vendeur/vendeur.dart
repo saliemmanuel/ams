@@ -1,5 +1,6 @@
 import 'package:ams/models/boutique_model.dart';
 import 'package:ams/models/user.dart';
+import 'package:ams/view/vendeur/bilan/bilan_vendeur.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +24,8 @@ class _VendeursHState extends State<VendeursH> {
   Widget build(BuildContext context) {
     var page = [
       VendeurHome(users: widget.users, boutique: widget.boutique),
-      VendeurProfil(user: widget.users)
+      BilanVendeur(boutique: widget.boutique),
+      VendeurProfil(user: widget.users),
     ];
     return Scaffold(
       body: page[topIndex],
@@ -32,6 +34,8 @@ class _VendeursHState extends State<VendeursH> {
                 items: const [
                   BottomNavigationBarItem(
                       icon: Icon(IconlyBold.home), label: 'Accueil'),
+                  BottomNavigationBarItem(
+                      icon: Icon(IconlyBold.wallet), label: 'Mes ventes'),
                   BottomNavigationBarItem(
                       icon: Icon(IconlyBold.profile), label: 'Profil'),
                 ],

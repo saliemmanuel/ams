@@ -21,8 +21,8 @@ class HomeProvider extends ChangeNotifier {
   double _valeurStock = 0;
   final double _prixTotal = 0.0;
   final List<ArticleModels> _listArticleVente = [];
-
   List<FactureClient> echoVal = [];
+  bool _activePaiement = true;
 
   Users get user => _user!;
   BoutiqueModels get boutiqueModels => _boutiqueModels!;
@@ -30,9 +30,17 @@ class HomeProvider extends ChangeNotifier {
   double get prixTotal => _prixTotal;
   double? get valeurStock => _valeurStock;
   List<ArticleModels>? get listArticleVente => _listArticleVente;
+  bool get activePaiement => _activePaiement;
 
   setUserData(Users? user) {
     _user = Users.fromMap(user!.toMap());
+    notifyListeners();
+  }
+
+  setactivePaiement(bool activePaiement) {
+    _activePaiement = activePaiement;
+    print("_activePaiement");
+    print(_activePaiement);
     notifyListeners();
   }
 

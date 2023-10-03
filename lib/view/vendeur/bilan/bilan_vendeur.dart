@@ -1,40 +1,69 @@
 import 'package:ams/models/bilan_facture_model.dart';
 import 'package:ams/models/boutique_model.dart';
 import 'package:ams/view/admin/home/detail_boutique/bilan/widget/bilan_facture_cart.dart';
+import 'package:ams/view/vendeur/bilan/widget/bilan_facture_cart.dart';
 import 'package:ams/view/widgets/custom_text.dart';
+import 'package:ams/view/widgets/formate_date.dart';
 import 'package:animated_digit/animated_digit.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../services/service_locator.dart';
 import '../../../../../services/services_auth.dart';
-import '../../../../widgets/custom_date_widget.dart';
-import '../../../../widgets/custom_search_bar.dart';
+import '../../widgets/custom_date_widget.dart';
+import '../../widgets/custom_search_bar.dart';
 import 'detail_bilan/detail_bilan.dart';
 
-class Bilan extends StatefulWidget {
+class BilanVendeur extends StatefulWidget {
   final BoutiqueModels boutique;
-  const Bilan({super.key, required this.boutique});
+  const BilanVendeur({super.key, required this.boutique});
 
   @override
-  State<Bilan> createState() => _BilanState();
+  State<BilanVendeur> createState() => _BilanVendeurState();
 }
 
-class _BilanState extends State<Bilan> {
-  @override
-  void initState() {
-    buildBenefice();
-    super.initState();
-  }
-
-  int nombrePiduit = 0;
-  double valeurStock = 0.0;
+class _BilanVendeurState extends State<BilanVendeur> {
   String search = "";
+  List listJour = [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "28",
+    "30",
+    "31",
+  ];
+  String selectedDay = "Jour";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const CustomText(data: "Bilan"),
+        title: const CustomText(data: "Mes ventes"),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -71,13 +100,7 @@ class _BilanState extends State<Bilan> {
               setState(() {});
             }),
             StreamBuilder(
-              stream: locator
-                  .get<ServiceAuth>()
-                  .firestore
-                  .collection("facture")
-                  .where("idBoutique", isEqualTo: widget.boutique.id)
-                  .orderBy("createAt", descending: false)
-                  .snapshots(),
+              stream: getStream(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   if (snapshot.data!.docs.isEmpty) {
@@ -105,10 +128,10 @@ class _BilanState extends State<Bilan> {
 
                               if (bilanFactureModel.toJson().isNotEmpty) {
                                 if (search.isEmpty) {
-                                  return BilanFactureCard(
+                                  return BilanFactureVendeurCard(
                                     bilanFactureModel: bilanFactureModel,
                                     onTap: () {
-                                      Get.to(() => DetailBilan(
+                                      Get.to(() => DetailBilanVendeux(
                                           bilanFactureModel:
                                               bilanFactureModel));
                                     },
@@ -117,10 +140,10 @@ class _BilanState extends State<Bilan> {
                                 if (bilanFactureModel.nom
                                     .toLowerCase()
                                     .contains(search.toLowerCase())) {
-                                  return BilanFactureCard(
+                                  return BilanFactureVendeurCard(
                                     bilanFactureModel: bilanFactureModel,
                                     onTap: () {
-                                      Get.to(() => DetailBilan(
+                                      Get.to(() => DetailBilanVendeux(
                                           bilanFactureModel:
                                               bilanFactureModel));
                                     },
@@ -147,30 +170,21 @@ class _BilanState extends State<Bilan> {
           ],
         ),
       ),
-      bottomNavigationBar: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-            child: DataTable(showBottomBorder: true, columns: const [
-              DataColumn(
-                  label:
-                      CustomText(data: "Bénéfice", fontWeight: FontWeight.bold))
-            ], rows: [
-              DataRow(cells: [
-                DataCell(
-                  AnimatedDigitWidget(
-                    value: beneficeT,
-                    controller: _controller,
-                    fractionDigits: 2,
-                    enableSeparator: true,
-                  ),
-                )
-              ])
-            ]),
-          ),
-        ],
-      ),
     );
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> getStream() {
+    setState(() {});
+    print(selectedDate);
+    return locator
+        .get<ServiceAuth>()
+        .firestore
+        .collection("facture")
+        // .where("idBoutique", isEqualTo: widget.boutique.id)
+        .where("createAt", isGreaterThanOrEqualTo: selectedDate)
+        .where("createAt", isLessThanOrEqualTo: "30-Sep-2023 ")
+        .orderBy("createAt", descending: false)
+        .snapshots();
   }
 
   dynamic selectedDate;
@@ -198,29 +212,6 @@ class _BilanState extends State<Bilan> {
       setState(() {
         selectedDate2 = '${picked.day}-${picked.month}-${picked.year} ';
       });
-    }
-  }
-
-  final _controller = AnimatedDigitController(0);
-
-  double beneficeT = 0.0;
-  buildBenefice() async {
-    var data = await locator
-        .get<ServiceAuth>()
-        .firestore
-        .collection("facture")
-        .where("idBoutique", isEqualTo: widget.boutique.id)
-        .get();
-
-    for (var value in data.docs) {
-      var bilanFactureModel = BilanFactureModel.fromMap(value.data());
-      for (var ele in bilanFactureModel.facture) {
-        beneficeT +=
-            ((ele.articleModels!.prixVente! - ele.articleModels!.prixAchat!) *
-                ele.quantite!);
-      }
-      _controller.value = beneficeT;
-      setState(() {});
     }
   }
 }

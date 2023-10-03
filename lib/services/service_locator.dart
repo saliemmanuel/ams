@@ -14,5 +14,6 @@ class ServiceLocator {
     locator.registerLazySingleton<FireMessageging>(() => FireMessageging());
     locator.registerLazySingleton<HomeProvider>(() => HomeProvider());
     
+    
   }
 }
