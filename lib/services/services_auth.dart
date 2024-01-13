@@ -417,7 +417,7 @@ class ServiceAuth {
       dialogue(
           panaraDialogType: PanaraDialogType.error,
           context: context,
-          title: "Erreur",
+          title: "Erreur aaa",
           message: e.toString());
     }
   }

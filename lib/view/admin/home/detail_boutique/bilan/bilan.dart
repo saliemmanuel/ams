@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import '../../../../../services/service_locator.dart';
 import '../../../../../services/services_auth.dart';
 import '../../../../widgets/custom_date_widget.dart';
+import '../../../../widgets/custom_layout_builder.dart';
 import '../../../../widgets/custom_search_bar.dart';
 import 'detail_bilan/detail_bilan.dart';
 
@@ -32,143 +33,145 @@ class _BilanState extends State<Bilan> {
   String search = "";
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const CustomText(data: "Bilan"),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 25.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  child: CustomDetailWidget(
-                    title: "Du",
-                    nullVal: "Date",
-                    subtitle: selectedDate,
-                    onTap: () {
-                      _selectDate(context);
-                    },
+    return CustomLayoutBuilder(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const CustomText(data: "Bilan"),
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 25.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: CustomDetailWidget(
+                      title: "Du",
+                      nullVal: "Date",
+                      subtitle: selectedDate,
+                      onTap: () {
+                        _selectDate(context);
+                      },
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8.0),
-                Expanded(
-                  child: CustomDetailWidget(
-                    title: "Au",
-                    nullVal: "Date",
-                    subtitle: selectedDate2,
-                    onTap: () {
-                      _selectDate2(context);
-                    },
+                  const SizedBox(width: 8.0),
+                  Expanded(
+                    child: CustomDetailWidget(
+                      title: "Au",
+                      nullVal: "Date",
+                      subtitle: selectedDate2,
+                      onTap: () {
+                        _selectDate2(context);
+                      },
+                    ),
                   ),
-                ),
-              ],
-            ),
-            CustomSearchBar(onChanged: (value) {
-              search = value;
-              setState(() {});
-            }),
-            StreamBuilder(
-              stream: locator
-                  .get<ServiceAuth>()
-                  .firestore
-                  .collection("facture")
-                  .where("idBoutique", isEqualTo: widget.boutique.id)
-                  .orderBy("createAt", descending: false)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  if (snapshot.data!.docs.isEmpty) {
-                    return const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Center(
-                          child: CustomText(
-                        data: "Aucune facture",
-                        fontSize: 18,
-                      )),
-                    );
-                  }
-                  return Column(
-                    children: [
-                      Scrollbar(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ListView.builder(
-                            physics: const PageScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: snapshot.data!.docs.length,
-                            itemBuilder: (context, index) {
-                              var bilanFactureModel = BilanFactureModel.fromMap(
-                                  snapshot.data!.docs[index].data());
-
-                              if (bilanFactureModel.toJson().isNotEmpty) {
-                                if (search.isEmpty) {
-                                  return BilanFactureCard(
-                                    bilanFactureModel: bilanFactureModel,
-                                    onTap: () {
-                                      Get.to(() => DetailBilan(
-                                          bilanFactureModel:
-                                              bilanFactureModel));
-                                    },
+                ],
+              ),
+              CustomSearchBar(onChanged: (value) {
+                search = value;
+                setState(() {});
+              }),
+              StreamBuilder(
+                stream: locator
+                    .get<ServiceAuth>()
+                    .firestore
+                    .collection("facture")
+                    .where("idBoutique", isEqualTo: widget.boutique.id)
+                    .orderBy("createAt", descending: false)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    if (snapshot.data!.docs.isEmpty) {
+                      return const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Center(
+                            child: CustomText(
+                          data: "Aucune facture",
+                          fontSize: 18,
+                        )),
+                      );
+                    }
+                    return Column(
+                      children: [
+                        Scrollbar(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ListView.builder(
+                              physics: const PageScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: snapshot.data!.docs.length,
+                              itemBuilder: (context, index) {
+                                var bilanFactureModel = BilanFactureModel.fromMap(
+                                    snapshot.data!.docs[index].data());
+    
+                                if (bilanFactureModel.toJson().isNotEmpty) {
+                                  if (search.isEmpty) {
+                                    return BilanFactureCard(
+                                      bilanFactureModel: bilanFactureModel,
+                                      onTap: () {
+                                        Get.to(() => DetailBilan(
+                                            bilanFactureModel:
+                                                bilanFactureModel));
+                                      },
+                                    );
+                                  }
+                                  if (bilanFactureModel.nom
+                                      .toLowerCase()
+                                      .contains(search.toLowerCase())) {
+                                    return BilanFactureCard(
+                                      bilanFactureModel: bilanFactureModel,
+                                      onTap: () {
+                                        Get.to(() => DetailBilan(
+                                            bilanFactureModel:
+                                                bilanFactureModel));
+                                      },
+                                    );
+                                  }
+                                  return const SizedBox();
+                                } else {
+                                  return const Center(
+                                    child: CustomText(
+                                        data: "Une erreur s'est produite"),
                                   );
                                 }
-                                if (bilanFactureModel.nom
-                                    .toLowerCase()
-                                    .contains(search.toLowerCase())) {
-                                  return BilanFactureCard(
-                                    bilanFactureModel: bilanFactureModel,
-                                    onTap: () {
-                                      Get.to(() => DetailBilan(
-                                          bilanFactureModel:
-                                              bilanFactureModel));
-                                    },
-                                  );
-                                }
-                                return const SizedBox();
-                              } else {
-                                return const Center(
-                                  child: CustomText(
-                                      data: "Une erreur s'est produite"),
-                                );
-                              }
-                            },
+                              },
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                }
-                return const Center(child: CircularProgressIndicator());
-              },
+                      ],
+                    );
+                  }
+                  return const Center(child: CircularProgressIndicator());
+                },
+              ),
+              const SizedBox(height: 100.0)
+            ],
+          ),
+        ),
+        bottomNavigationBar: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: DataTable(showBottomBorder: true, columns: const [
+                DataColumn(
+                    label:
+                        CustomText(data: "Bénéfice", fontWeight: FontWeight.bold))
+              ], rows: [
+                DataRow(cells: [
+                  DataCell(
+                    AnimatedDigitWidget(
+                      value: beneficeT,
+                      controller: _controller,
+                      fractionDigits: 2,
+                      enableSeparator: true,
+                    ),
+                  )
+                ])
+              ]),
             ),
-            const SizedBox(height: 100.0)
           ],
         ),
-      ),
-      bottomNavigationBar: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-            child: DataTable(showBottomBorder: true, columns: const [
-              DataColumn(
-                  label:
-                      CustomText(data: "Bénéfice", fontWeight: FontWeight.bold))
-            ], rows: [
-              DataRow(cells: [
-                DataCell(
-                  AnimatedDigitWidget(
-                    value: beneficeT,
-                    controller: _controller,
-                    fractionDigits: 2,
-                    enableSeparator: true,
-                  ),
-                )
-              ])
-            ]),
-          ),
-        ],
       ),
     );
   }

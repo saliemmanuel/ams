@@ -14,7 +14,7 @@ Future<void> backgroundMessagingHandler(RemoteMessage message) async {
 }
 
 class FireMessageging {
-  // création des instances 
+  // création des instances
   var messaging = FirebaseMessaging.instance;
   // static ReceivedAction? initialAction;
 
@@ -32,7 +32,6 @@ class FireMessageging {
     });
     FirebaseMessaging.onBackgroundMessage(backgroundMessagingHandler);
   }
-
 
   // static Future<void> initializeLocalNotifications() async {
   //   await AwesomeNotifications().initialize(

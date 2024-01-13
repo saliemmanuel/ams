@@ -14,6 +14,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../../services/service_locator.dart';
 import '../../../../../services/services_auth.dart';
+import '../../../../widgets/custom_layout_builder.dart';
 import '../../../../widgets/custom_search_bar.dart';
 import '../../../widget/dialogue_ajout.dart';
 import 'ajout_article/ajout_article.dart';
@@ -40,181 +41,184 @@ class _StockArticleState extends State<StockArticle> {
   String search = "";
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const CustomText(data: "Stock"),
-          actions: [
-            FilledButton(
-                onPressed: () {
-                  dialogueAjout(
-                      child: AjoutArticle(boutique: widget.boutique),
-                      context: context);
-                },
-                child: const CustomText(data: "Ajouter", color: Colors.white)),
-            const SizedBox(width: 15.0),
-            DropdownButton(
-                hint: CustomText(data: selectedItem),
-                items: const [
-                  DropdownMenuItem(
-                    value: "Disponible",
-                    child: CustomText(data: 'Disponible'),
-                  ),
-                  DropdownMenuItem(
-                    value: "Epuiser",
-                    child: CustomText(data: 'Epuiser'),
-                  ),
-                  DropdownMenuItem(
-                    value: "Tous",
-                    child: CustomText(data: 'Tous'),
-                  ),
-                ],
-                onChanged: (v) {
-                  selectedItem = v!;
+    return CustomLayoutBuilder(
+      child: Scaffold(
+          appBar: AppBar(
+            title: const CustomText(data: "Stock"),
+            actions: [
+              FilledButton(
+                  onPressed: () {
+                    dialogueAjout(
+                        child: AjoutArticle(boutique: widget.boutique),
+                        context: context);
+                  },
+                  child:
+                      const CustomText(data: "Ajouter", color: Colors.white)),
+              const SizedBox(width: 15.0),
+              DropdownButton(
+                  hint: CustomText(data: selectedItem),
+                  items: const [
+                    DropdownMenuItem(
+                      value: "Disponible",
+                      child: CustomText(data: 'Disponible'),
+                    ),
+                    DropdownMenuItem(
+                      value: "Epuiser",
+                      child: CustomText(data: 'Epuiser'),
+                    ),
+                    DropdownMenuItem(
+                      value: "Tous",
+                      child: CustomText(data: 'Tous'),
+                    ),
+                  ],
+                  onChanged: (v) {
+                    selectedItem = v!;
 
-                  calculValeurStock();
-                  setState(() {});
-                }),
-            const SizedBox(width: 15.0),
-          ],
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              CustomSearchBar(onChanged: (value) {
-                search = value;
-                setState(() {});
-              }),
-              StreamBuilder(
-                stream: getStream(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    if (snapshot.data!.docs.isEmpty) {
-                      return const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Center(
-                            child: CustomText(
-                          data: "Vous avez aucun article",
-                          fontSize: 18,
-                        )),
-                      );
-                    }
-                    return Column(
-                      children: [
-                        Scrollbar(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ListView.builder(
-                              physics: const PageScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: snapshot.data!.docs.length,
-                              itemBuilder: (context, index) {
-                                var articleModels = ArticleModels.fromMap(
-                                    snapshot.data!.docs[index].data());
-                                if (articleModels.toJson().isNotEmpty) {
-                                  if (search.isEmpty) {
-                                    return ArticleCard(
-                                      articleModels: articleModels,
-                                      onTap: () {
-                                        Get.to(() => DetailAticle(
-                                            isVendeur: false,
-                                            article: articleModels));
-                                      },
-                                    );
-                                  }
-                                  if (articleModels.designation!
-                                      .toLowerCase()
-                                      .contains(search.toLowerCase())) {
-                                    return ArticleCard(
-                                      articleModels: articleModels,
-                                      onTap: () {
-                                        Get.to(() => DetailAticle(
-                                            isVendeur: false,
-                                            article: articleModels));
-                                      },
-                                    );
-                                  }
-                                  return const SizedBox();
-                                } else {
-                                  return const Center(
-                                    child: CustomText(
-                                        data: "Une erreur s'est produite"),
-                                  );
-                                }
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  }
-                  return const Center(child: CircularProgressIndicator());
-                },
-              ),
-              const SizedBox(height: 100.0)
+                    calculValeurStock();
+                    setState(() {});
+                  }),
+              const SizedBox(width: 15.0),
             ],
           ),
-        ),
-        persistentFooterButtons: [
-          Consumer<HomeProvider>(
-            builder: (context, value, child) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: DataTable(showBottomBorder: true, columns: const [
-                      DataColumn(
-                        label: CustomText(
-                            data: "Nombre Produit",
-                            fontWeight: FontWeight.bold),
-                      ),
-                      DataColumn(
-                          label: CustomText(
-                              data: "Valeur du stock",
-                              fontWeight: FontWeight.bold))
-                    ], rows: [
-                      DataRow(cells: [
-                        DataCell(Center(
-                          child: StreamBuilder(
-                            stream: getStream(),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                if (snapshot.data!.docs.isEmpty) {
-                                  return const Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: Center(
-                                        child: CustomText(
-                                      data: "0",
-                                    )),
-                                  );
-                                }
-                                return Center(
-                                    child: CustomText(
-                                        data: snapshot.data!.docs.length
-                                            .toString()));
-                              }
-                              return const Center(
-                                  child: CupertinoActivityIndicator());
-                            },
-                          ),
-                        )),
-                        selectedItem == "Epuiser"
-                            ? const DataCell(
-                                Center(child: Text("0")),
-                              )
-                            : DataCell(
-                                Center(
-                                    child: valeurStock == 0.0
-                                        ? const CupertinoActivityIndicator()
-                                        : Text(valeurStock.toString())),
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                CustomSearchBar(onChanged: (value) {
+                  search = value;
+                  setState(() {});
+                }),
+                StreamBuilder(
+                  stream: getStream(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      if (snapshot.data!.docs.isEmpty) {
+                        return const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Center(
+                              child: CustomText(
+                            data: "Vous avez aucun article",
+                            fontSize: 18,
+                          )),
+                        );
+                      }
+                      return Column(
+                        children: [
+                          Scrollbar(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ListView.builder(
+                                physics: const PageScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: snapshot.data!.docs.length,
+                                itemBuilder: (context, index) {
+                                  var articleModels = ArticleModels.fromMap(
+                                      snapshot.data!.docs[index].data());
+                                  if (articleModels.toJson().isNotEmpty) {
+                                    if (search.isEmpty) {
+                                      return ArticleCard(
+                                        articleModels: articleModels,
+                                        onTap: () {
+                                          Get.to(() => DetailAticle(
+                                              isVendeur: false,
+                                              article: articleModels));
+                                        },
+                                      );
+                                    }
+                                    if (articleModels.designation!
+                                        .toLowerCase()
+                                        .contains(search.toLowerCase())) {
+                                      return ArticleCard(
+                                        articleModels: articleModels,
+                                        onTap: () {
+                                          Get.to(() => DetailAticle(
+                                              isVendeur: false,
+                                              article: articleModels));
+                                        },
+                                      );
+                                    }
+                                    return const SizedBox();
+                                  } else {
+                                    return const Center(
+                                      child: CustomText(
+                                          data: "Une erreur s'est produite"),
+                                    );
+                                  }
+                                },
                               ),
-                      ])
-                    ]),
-                  ),
-                ],
-              );
-            },
-          )
-        ]);
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                    return const Center(child: CircularProgressIndicator());
+                  },
+                ),
+                const SizedBox(height: 100.0)
+              ],
+            ),
+          ),
+          persistentFooterButtons: [
+            Consumer<HomeProvider>(
+              builder: (context, value, child) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: DataTable(showBottomBorder: true, columns: const [
+                        DataColumn(
+                          label: CustomText(
+                              data: "Nombre Produit",
+                              fontWeight: FontWeight.bold),
+                        ),
+                        DataColumn(
+                            label: CustomText(
+                                data: "Valeur du stock",
+                                fontWeight: FontWeight.bold))
+                      ], rows: [
+                        DataRow(cells: [
+                          DataCell(Center(
+                            child: StreamBuilder(
+                              stream: getStream(),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  if (snapshot.data!.docs.isEmpty) {
+                                    return const Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Center(
+                                          child: CustomText(
+                                        data: "0",
+                                      )),
+                                    );
+                                  }
+                                  return Center(
+                                      child: CustomText(
+                                          data: snapshot.data!.docs.length
+                                              .toString()));
+                                }
+                                return const Center(
+                                    child: CupertinoActivityIndicator());
+                              },
+                            ),
+                          )),
+                          selectedItem == "Epuiser"
+                              ? const DataCell(
+                                  Center(child: Text("0")),
+                                )
+                              : DataCell(
+                                  Center(
+                                      child: valeurStock == 0.0
+                                          ? const CupertinoActivityIndicator()
+                                          : Text(valeurStock.toString())),
+                                ),
+                        ])
+                      ]),
+                    ),
+                  ],
+                );
+              },
+            )
+          ]),
+    );
   }
 
   calculValeurStock() async {

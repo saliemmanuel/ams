@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../../../provider/home_provider.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_dialogue_card.dart';
+import '../../widgets/custom_layout_builder.dart';
 import '../../widgets/custum_text_field.dart';
 
 class EditeWidget extends StatefulWidget {
@@ -42,58 +43,70 @@ class _EditeWidgetState extends State<EditeWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      child: Material(
-        color: Colors.transparent,
-        child: Container(
-          constraints: const BoxConstraints(),
-          margin: const EdgeInsets.all(24),
-          padding: const EdgeInsets.all(15),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  IconButton(
-                      onPressed: () {
-                        Get.back();
-                      },
-                      icon: const Icon(Icons.close)),
-                ],
-              ),
-              CustumTextField(
-                  keyboardType: !widget.isString
-                      ? TextInputType.number
-                      : TextInputType.text,
-                  controller: controller,
-                  child: widget.label,
-                  obscureText: false),
-              const SizedBox(height: 8.0),
-              CustomButton(
-                  child: "Enregistrez",
-                  color: Colors.white,
-                  onPressed: () {
-                    if (widget.label == "Nouveau nom") {
-                      locator.get<ServiceAuth>().editStock(
-                          article: widget.article,
-                          context: context,
-                          key: widget.value,
-                          value: controller!.text);
-                    } else {
-                      if (!widget.isDouble) {
-                        if (int.tryParse(controller!.text) == null) {
-                          dialogue(
-                              panaraDialogType: PanaraDialogType.error,
-                              message: "Entrez un entier svp",
-                              title: "",
-                              context: context);
+    return CustomLayoutBuilder(
+      child: Align(
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            constraints: const BoxConstraints(),
+            margin: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                        onPressed: () {
+                          Get.back();
+                        },
+                        icon: const Icon(Icons.close)),
+                  ],
+                ),
+                CustumTextField(
+                    keyboardType: !widget.isString
+                        ? TextInputType.number
+                        : TextInputType.text,
+                    controller: controller,
+                    child: widget.label,
+                    obscureText: false),
+                const SizedBox(height: 8.0),
+                CustomButton(
+                    child: "Enregistrez",
+                    color: Colors.white,
+                    onPressed: () {
+                      if (widget.label == "Nouveau nom") {
+                        locator.get<ServiceAuth>().editStock(
+                            article: widget.article,
+                            context: context,
+                            key: widget.value,
+                            value: controller!.text);
+                      } else {
+                        if (!widget.isDouble) {
+                          if (int.tryParse(controller!.text) == null) {
+                            dialogue(
+                                panaraDialogType: PanaraDialogType.error,
+                                message: "Entrez un entier svp",
+                                title: "",
+                                context: context);
+                          } else {
+                            Provider.of<HomeProvider>(context, listen: false)
+                                .setNombreBoutique(widget.article.idBoutique);
+                            locator.get<ServiceAuth>().editStock(
+                                article: widget.article,
+                                context: context,
+                                key: widget.value,
+                                value: widget.isDouble
+                                    ? double.parse(controller!.text)
+                                    : int.parse(controller!.text));
+                          }
                         } else {
                           Provider.of<HomeProvider>(context, listen: false)
                               .setNombreBoutique(widget.article.idBoutique);
@@ -101,23 +114,13 @@ class _EditeWidgetState extends State<EditeWidget> {
                               article: widget.article,
                               context: context,
                               key: widget.value,
-                              value: widget.isDouble
-                                  ? double.parse(controller!.text)
-                                  : int.parse(controller!.text));
+                              value: double.parse(controller!.text));
                         }
-                      } else {
-                        Provider.of<HomeProvider>(context, listen: false)
-                            .setNombreBoutique(widget.article.idBoutique);
-                        locator.get<ServiceAuth>().editStock(
-                            article: widget.article,
-                            context: context,
-                            key: widget.value,
-                            value: double.parse(controller!.text));
                       }
-                    }
-                  }),
-              const SizedBox(height: 8.0),
-            ],
+                    }),
+                const SizedBox(height: 8.0),
+              ],
+            ),
           ),
         ),
       ),

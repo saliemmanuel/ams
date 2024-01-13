@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../../models/user.dart';
 import '../../provider/home_provider.dart';
+import '../widgets/custom_layout_builder.dart';
 
 class Admin extends StatefulWidget {
   final Users users;
@@ -26,7 +27,7 @@ class _AdminState extends State<Admin> {
       AdminProfil(user: widget.users)
     ];
     return Scaffold(
-      body: page[topIndex],
+      body: CustomLayoutBuilder(child: page[topIndex]),
       bottomNavigationBar: Consumer<HomeProvider>(
           builder: (contexte, values, child) => BottomNavigationBar(
                 items: const [

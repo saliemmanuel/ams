@@ -17,29 +17,33 @@ class HomeCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      child: Container(
-        height: 160.0,
-        width: 160.0,
-        margin: const EdgeInsets.all(15.0),
-        decoration: BoxDecoration(
-          color: Colors.grey.shade300,
-          borderRadius: BorderRadius.circular(20.0),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 10.0),
-            Expanded(
-              child: Padding(padding: const EdgeInsets.all(8.0), child: child),
+      child: Column(
+        children: [
+          Container(
+            height: 160.0,
+            width: 160.0,
+            alignment: Alignment.center,
+            margin: const EdgeInsets.all(15.0),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(20.0),
             ),
-            CustomText(
-              data: label,
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(height: 10.0),
+                Padding(padding: const EdgeInsets.all(8.0), child: child),
+                const SizedBox(height: 10.0)
+              ],
             ),
-            const SizedBox(height: 10.0)
-          ],
-        ),
+          ),
+          CustomText(
+            data: label,
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ],
       ),
     );
   }

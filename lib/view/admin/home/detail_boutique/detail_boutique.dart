@@ -12,6 +12,7 @@ import 'package:get/get.dart';
 import '../../../../provider/home_provider.dart';
 import '../../../../services/service_locator.dart';
 import '../../../../services/services_auth.dart';
+import '../../../widgets/custom_layout_builder.dart';
 import '../../widget/home_card_widget.dart';
 
 class DetailBoutique extends StatefulWidget {
@@ -25,104 +26,108 @@ class DetailBoutique extends StatefulWidget {
 class _DetailBoutiqueState extends State<DetailBoutique> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: StreamBuilder(
-          stream: locator
-              .get<ServiceAuth>()
-              .firestore
-              .collection("boutique")
-              .where("id", isEqualTo: widget.boutique.id)
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              var boutique =
-                  BoutiqueModels.fromMap(snapshot.data!.docs[0].data());
-              return CustomText(data: boutique.nomBoutique!);
-            }
-            return const CupertinoActivityIndicator();
-          },
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              dialogueAjout2(
-                  child: EditeBoutique(boutiqueModels: widget.boutique),
-                  context: context);
+    return CustomLayoutBuilder(
+      child: Scaffold(
+        appBar: AppBar(
+          title: StreamBuilder(
+            stream: locator
+                .get<ServiceAuth>()
+                .firestore
+                .collection("boutique")
+                .where("id", isEqualTo: widget.boutique.id)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                var boutique =
+                    BoutiqueModels.fromMap(snapshot.data!.docs[0].data());
+                return CustomText(data: boutique.nomBoutique!);
+              }
+              return const CupertinoActivityIndicator();
             },
-            icon: const Icon(Icons.edit),
           ),
-          const SizedBox(width: 10.0)
-        ],
-      ),
-      body: ListView(
-        children: [
-          Container(
-              padding: const EdgeInsets.all(12.0),
-              child: GridView.count(
-                shrinkWrap: true,
-                crossAxisCount: 2,
-                children: [
-                  StreamBuilder(
-                    stream: locator
-                        .get<ServiceAuth>()
-                        .firestore
-                        .collection('boutique')
-                        .where("id",
-                            isEqualTo:
-                                locator.get<HomeProvider>().boutiqueModels.id)
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      // Comptage des vendeurs
-                      if (snapshot.hasData) {
-                        if (snapshot.data!.docs.isEmpty) {
-                          return HomeCardWidget(
-                            label: "Vendeur",
-                            onTap: () {},
-                            child: const CustomText(
-                              data: "0",
-                              overflow: TextOverflow.ellipsis,
-                              fontSize: 55.0,
-                            ),
-                          );
-                        }
-                        var boutique = BoutiqueModels.fromMap(
-                            snapshot.data!.docs[0].data());
-                        return HomeCardWidget(
-                          label: "Vendeur",
-                          onTap: () =>
-                              Get.to(() => ListVendeur(boutique: boutique)),
-                          child: CustomText(
-                            data: snapshot.data!.docs[0]['vendeur'].length
-                                .toString(),
-                            overflow: TextOverflow.ellipsis,
-                            fontSize: 55.0,
-                          ),
-                        );
-                      }
-                      return const Center(child: CircularProgressIndicator());
-                    },
+          actions: [
+            IconButton(
+              onPressed: () {
+                dialogueAjout2(
+                    child: EditeBoutique(boutiqueModels: widget.boutique),
+                    context: context);
+              },
+              icon: const Icon(Icons.edit),
+            ),
+            const SizedBox(width: 10.0)
+          ],
+        ),
+        body: ListView(
+          children: [
+            Container(
+                padding: const EdgeInsets.all(12.0),
+                child: CustomLayoutBuilder(
+                  child: GridView.count(
+                    shrinkWrap: true,
+                    crossAxisCount: 2,
+                    children: [
+                      StreamBuilder(
+                        stream: locator
+                            .get<ServiceAuth>()
+                            .firestore
+                            .collection('boutique')
+                            .where("id",
+                                isEqualTo:
+                                    locator.get<HomeProvider>().boutiqueModels.id)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          // Comptage des vendeurs
+                          if (snapshot.hasData) {
+                            if (snapshot.data!.docs.isEmpty) {
+                              return HomeCardWidget(
+                                label: "Vendeur",
+                                onTap: () {},
+                                child: const CustomText(
+                                  data: "0",
+                                  overflow: TextOverflow.ellipsis,
+                                  fontSize: 55.0,
+                                ),
+                              );
+                            }
+                            var boutique = BoutiqueModels.fromMap(
+                                snapshot.data!.docs[0].data());
+                            return HomeCardWidget(
+                              label: "Vendeur",
+                              onTap: () =>
+                                  Get.to(() => ListVendeur(boutique: boutique)),
+                              child: CustomText(
+                                data: snapshot.data!.docs[0]['vendeur'].length
+                                    .toString(),
+                                overflow: TextOverflow.ellipsis,
+                                fontSize: 55.0,
+                              ),
+                            );
+                          }
+                          return const Center(child: CircularProgressIndicator());
+                        },
+                      ),
+                      HomeCardWidget(
+                        label: "Stock",
+                        child: const Icon(Icons.storage_rounded, size: 60.0),
+                        onTap: () {
+                          Get.to(() => StockArticle(
+                                boutique: widget.boutique,
+                              ));
+                        },
+                      ),
+                      HomeCardWidget(
+                        label: "Bilan",
+                        child: const Icon(Icons.assignment_turned_in_outlined,
+                            size: 60.0),
+                        onTap: () {
+                          Get.to(() => Bilan(boutique: widget.boutique));
+                        },
+                      ),
+                    ],
                   ),
-                  HomeCardWidget(
-                    label: "Stock",
-                    child: const Icon(Icons.storage_rounded, size: 60.0),
-                    onTap: () {
-                      Get.to(() => StockArticle(
-                            boutique: widget.boutique,
-                          ));
-                    },
-                  ),
-                  HomeCardWidget(
-                    label: "Bilan",
-                    child: const Icon(Icons.assignment_turned_in_outlined,
-                        size: 60.0),
-                    onTap: () {
-                      Get.to(() => Bilan(boutique: widget.boutique));
-                    },
-                  ),
-                ],
-              )),
-        ],
+                )),
+          ],
+        ),
       ),
     );
   }

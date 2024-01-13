@@ -8,6 +8,7 @@ import 'package:ams/view/onboarding/onboarding.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -30,10 +31,15 @@ class _SplashState extends State<Splash> {
   StreamSubscription? subscription;
   bool isDeviceConnected = false;
   bool isAlertSet = false;
+
   @override
   void initState() {
     FlutterNativeSplash.remove();
-    checkConnexoion();
+    if (kIsWeb) {
+      initNextPage();
+    } else {
+      checkConnexoion();
+    }
     super.initState();
   }
 
@@ -82,7 +88,7 @@ class _SplashState extends State<Splash> {
               .get<ServiceAuth>()
               .redirectionUtil(context: context, data: data);
         } else {
-          Get.off(() => LocalStorage.getData(key: 'onboarding') == null
+          Get.off(() => LocalStorage().getData(key: 'onboarding') == null
               ? const Onboarding()
               : const Login());
         }
@@ -96,16 +102,20 @@ class _SplashState extends State<Splash> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Spacer(flex: 3),
-          Image.asset("assets/images/logo.png",height: 230.0, width: 650),
-          const Spacer(flex: 2),
-          const CircularProgressIndicator(),
-          const Spacer(flex: 1,),
-        ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Spacer(flex: 3),
+            Image.asset("assets/images/logo.png", height: 230.0, width: 650),
+            const Spacer(flex: 2),
+            const CircularProgressIndicator(),
+            const Spacer(
+              flex: 1,
+            ),
+          ],
+        ),
       ),
     );
   }

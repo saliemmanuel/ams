@@ -6,6 +6,7 @@ import 'package:iconly/iconly.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/home_provider.dart';
+import '../widgets/custom_layout_builder.dart';
 import 'home/vendeur_home.dart';
 import 'profil/vendeur_profil.dart';
 
@@ -28,7 +29,7 @@ class _VendeursHState extends State<VendeursH> {
       VendeurProfil(user: widget.users),
     ];
     return Scaffold(
-      body: page[topIndex],
+      body: CustomLayoutBuilder(child: page[topIndex]),
       bottomNavigationBar: Consumer<HomeProvider>(
           builder: (contexte, values, child) => BottomNavigationBar(
                 items: const [

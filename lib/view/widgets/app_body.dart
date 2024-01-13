@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'custom_layout_builder.dart';
+
 class AppBody extends StatelessWidget {
   final PreferredSizeWidget? appBar;
-  final Widget? body;
+  final Widget? bodys;
   final Widget? floatingActionButton;
   final FloatingActionButtonLocation? floatingActionButtonLocation;
   final FloatingActionButtonAnimator? floatingActionButtonAnimator;
@@ -28,7 +30,7 @@ class AppBody extends StatelessWidget {
   const AppBody(
       {super.key,
       this.appBar,
-      this.body,
+      this.bodys,
       this.floatingActionButton,
       this.floatingActionButtonLocation,
       this.floatingActionButtonAnimator,
@@ -47,12 +49,14 @@ class AppBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: appBar,
-      body: Stack(
-        children: [
-          body!,
-        ],
+    return CustomLayoutBuilder(
+      child: Scaffold(
+        appBar: appBar,
+        body: Stack(
+          children: [
+            bodys!,
+          ],
+        ),
       ),
     );
   }

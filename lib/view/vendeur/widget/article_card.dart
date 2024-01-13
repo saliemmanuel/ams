@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import '../../../provider/home_provider.dart';
 import '../../../services/service_locator.dart';
 import '../../../themes/theme.dart';
+import '../../widgets/custom_layout_builder.dart';
 import '../../widgets/custom_text.dart';
 
 class ListDetailFacture extends StatefulWidget {
@@ -25,91 +26,93 @@ class ListDetailFacture extends StatefulWidget {
 class _ListDetailFactureState extends State<ListDetailFacture> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeProvider>(
-      builder: (context, value, child) {
-        return ListView.builder(
-          physics: const PageScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: value.listArticleVente!.length,
-          itemBuilder: (context, index) {
-            return Container(
-              padding: const EdgeInsets.only(bottom: 10.0),
-              alignment: Alignment.center,
-              margin: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(12.0)),
-              child: Stack(
-                children: [
-                  Positioned(
-                    top: 8.0,
-                    right: 10.0,
-                    child: IconButton(
-                        onPressed: () {
-                          // ici je supprime de la liste des articles de la liste globale des articles
-                          Provider.of<HomeProvider>(context, listen: false)
-                              .remoceValeurArticleVente(
-                                  value.listArticleVente![index]);
-                          // je parcours la liste globale de facture, et je remove par rapport à l'index
-                          Provider.of<HomeProvider>(context, listen: false)
-                              .removeWhereListArticleVente((element) {
-                            return element.index == index;
-                          });
-                          locator.get<ServiceAuth>().showToast(
-                              context: context,
-                              "Supprimé",
-                              position: FlutterToastr.bottom);
-
-                          HapticFeedback.mediumImpact();
-                          setState(() {});
-                        },
-                        icon: const Icon(Icons.close, color: Colors.red)),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(26.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text.rich(TextSpan(
-                          children: [
-                            TextSpan(
-                                text:
-                                    value.listArticleVente![index].designation!,
-                                style: const TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold)),
-                          ],
-                        )),
-                        const Divider(),
-                        const SizedBox(height: 10.0),
-                        Text.rich(TextSpan(
-                          children: [
-                            const TextSpan(
-                                text: 'Stock Actuel  : ',
-                                style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.bold)),
-                            TextSpan(
-                                text: value.listArticleVente![index].stockActuel
-                                    .toString(),
-                                style: const TextStyle(fontSize: 18.0)),
-                          ],
-                        )),
-                        const Divider(thickness: 2),
-                        PrixEtQuantite(
-                          index: index,
-                          listArticleVente: value.listArticleVente!,
-                          boutiqueModels: widget.boutiqueModels,
-                        )
-                      ],
+    return CustomLayoutBuilder(
+      child: Consumer<HomeProvider>(
+        builder: (context, value, child) {
+          return ListView.builder(
+            physics: const PageScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: value.listArticleVente!.length,
+            itemBuilder: (context, index) {
+              return Container(
+                padding: const EdgeInsets.only(bottom: 10.0),
+                alignment: Alignment.center,
+                margin: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(12.0)),
+                child: Stack(
+                  children: [
+                    Positioned(
+                      top: 8.0,
+                      right: 10.0,
+                      child: IconButton(
+                          onPressed: () {
+                            // ici je supprime de la liste des articles de la liste globale des articles
+                            Provider.of<HomeProvider>(context, listen: false)
+                                .remoceValeurArticleVente(
+                                    value.listArticleVente![index]);
+                            // je parcours la liste globale de facture, et je remove par rapport à l'index
+                            Provider.of<HomeProvider>(context, listen: false)
+                                .removeWhereListArticleVente((element) {
+                              return element.index == index;
+                            });
+                            locator.get<ServiceAuth>().showToast(
+                                context: context,
+                                "Supprimé",
+                                position: FlutterToastr.bottom);
+    
+                            HapticFeedback.mediumImpact();
+                            setState(() {});
+                          },
+                          icon: const Icon(Icons.close, color: Colors.red)),
                     ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
+                    Padding(
+                      padding: const EdgeInsets.all(26.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text.rich(TextSpan(
+                            children: [
+                              TextSpan(
+                                  text:
+                                      value.listArticleVente![index].designation!,
+                                  style: const TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.bold)),
+                            ],
+                          )),
+                          const Divider(),
+                          const SizedBox(height: 10.0),
+                          Text.rich(TextSpan(
+                            children: [
+                              const TextSpan(
+                                  text: 'Stock Actuel  : ',
+                                  style: TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.bold)),
+                              TextSpan(
+                                  text: value.listArticleVente![index].stockActuel
+                                      .toString(),
+                                  style: const TextStyle(fontSize: 18.0)),
+                            ],
+                          )),
+                          const Divider(thickness: 2),
+                          PrixEtQuantite(
+                            index: index,
+                            listArticleVente: value.listArticleVente!,
+                            boutiqueModels: widget.boutiqueModels,
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
