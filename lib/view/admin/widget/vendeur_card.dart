@@ -93,4 +93,5 @@ class VendeurCard extends StatelessWidget {
       throw Exception('Could not launch $url');
     }
   }
+  
 }
