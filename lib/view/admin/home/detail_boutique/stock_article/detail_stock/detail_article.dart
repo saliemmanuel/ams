@@ -1,11 +1,15 @@
-import 'package:ams/models/article_modes.dart';
+import 'package:ams/models/article_model.dart';
 import 'package:ams/view/admin/widget/dialogue_ajout.dart';
 import 'package:ams/view/admin/widget/edit_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_toastr/flutter_toastr.dart';
+import 'package:get/get.dart';
 import 'package:iconly/iconly.dart';
+import 'package:panara_dialogs/panara_dialogs.dart';
 
 import '../../../../../../services/service_locator.dart';
 import '../../../../../../services/services_auth.dart';
+import '../../../../../widgets/custom_dialogue_card.dart';
 import '../../../../../widgets/custom_layout_builder.dart';
 import '../../../../../widgets/custom_text.dart';
 
@@ -26,6 +30,28 @@ class _DetailAticleState extends State<DetailAticle> {
       child: Scaffold(
         appBar: AppBar(
           title: const CustomText(data: "Détail article"),
+          actions: [
+            Visibility(
+              visible: !widget.isVendeur,
+              child: IconButton(
+                onPressed: () {
+                  confirmDialogue(
+                      panaraDialogType: PanaraDialogType.error,
+                      title: "Suppression",
+                      message: "Voulez-vous vraiment supprimer cet article?",
+                      context: context,
+                      onTapConfirm: () {
+                        locator.get<ServiceAuth>().deleteArticle(
+                            context: context, idArticle: widget.article.id);
+                        locator.get<ServiceAuth>().showToast("Supprimé",
+                            context: context, position: FlutterToastr.bottom);
+                      });
+                },
+                icon: const Icon(Icons.delete, color: Colors.red),
+              ),
+            ),
+            const SizedBox(width: 10.0)
+          ],
         ),
         body: StreamBuilder(
           stream: locator
@@ -36,7 +62,11 @@ class _DetailAticleState extends State<DetailAticle> {
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              var article = ArticleModels.fromMap(snapshot.data!.docs[0].data());
+              if (snapshot.data!.docs.isEmpty) {
+                return const SizedBox();
+              }
+              var article =
+                  ArticleModels.fromMap(snapshot.data!.docs[0].data());
               return ListView(
                 shrinkWrap: true,
                 children: [
@@ -95,7 +125,8 @@ class _DetailAticleState extends State<DetailAticle> {
                             cells: [
                               const DataCell(CustomText(data: "Stock actuel")),
                               DataCell(Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   CustomText(
                                       data: article.stockActuel.toString()),
@@ -106,8 +137,8 @@ class _DetailAticleState extends State<DetailAticle> {
                                       dialogueAjout2(
                                           context: context,
                                           child: EditeWidget(
-                                              previusValue:
-                                                  article.stockActuel.toString(),
+                                              previusValue: article.stockActuel
+                                                  .toString(),
                                               isString: false,
                                               isDouble: false,
                                               value: "stockActuel",
@@ -125,7 +156,8 @@ class _DetailAticleState extends State<DetailAticle> {
                             children: [
                               CustomText(data: article.stockNormal.toString()),
                               IconButton(
-                                icon: const Icon(Icons.edit, color: Colors.black),
+                                icon:
+                                    const Icon(Icons.edit, color: Colors.black),
                                 onPressed: () {
                                   dialogueAjout2(
                                       context: context,
@@ -146,9 +178,11 @@ class _DetailAticleState extends State<DetailAticle> {
                             color:
                                 MaterialStateProperty.all(Colors.grey.shade200),
                             cells: [
-                              const DataCell(CustomText(data: "Stock critique ")),
+                              const DataCell(
+                                  CustomText(data: "Stock critique ")),
                               DataCell(Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   CustomText(
                                       data: article.stockCritique.toString()),
@@ -159,7 +193,8 @@ class _DetailAticleState extends State<DetailAticle> {
                                       dialogueAjout2(
                                           context: context,
                                           child: EditeWidget(
-                                              previusValue: article.stockCritique
+                                              previusValue: article
+                                                  .stockCritique
                                                   .toString(),
                                               isDouble: false,
                                               isString: false,
@@ -178,7 +213,8 @@ class _DetailAticleState extends State<DetailAticle> {
                             children: [
                               CustomText(data: article.prixAchat.toString()),
                               IconButton(
-                                icon: const Icon(Icons.edit, color: Colors.black),
+                                icon:
+                                    const Icon(Icons.edit, color: Colors.black),
                                 onPressed: () {
                                   dialogueAjout2(
                                       context: context,
@@ -199,11 +235,14 @@ class _DetailAticleState extends State<DetailAticle> {
                             color:
                                 MaterialStateProperty.all(Colors.grey.shade200),
                             cells: [
-                              const DataCell(CustomText(data: "Prix de vente ")),
+                              const DataCell(
+                                  CustomText(data: "Prix de vente ")),
                               DataCell(Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  CustomText(data: article.prixVente.toString()),
+                                  CustomText(
+                                      data: article.prixVente.toString()),
                                   IconButton(
                                     icon: const Icon(Icons.edit,
                                         color: Colors.black),
@@ -224,12 +263,12 @@ class _DetailAticleState extends State<DetailAticle> {
                               )),
                             ]),
                         DataRow(
-                            color:
-                                MaterialStateProperty.all(Colors.white),
+                            color: MaterialStateProperty.all(Colors.white),
                             cells: [
                               const DataCell(CustomText(data: "Bénéfice")),
                               DataCell(Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   CustomText(
                                       data: (article.prixVente! -
@@ -242,10 +281,11 @@ class _DetailAticleState extends State<DetailAticle> {
                             color:
                                 MaterialStateProperty.all(Colors.grey.shade200),
                             cells: [
-                              const DataCell(
-                                  CustomText(data: "Prix de vente non autorisé")),
+                              const DataCell(CustomText(
+                                  data: "Prix de vente non autorisé")),
                               DataCell(Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   CustomText(
                                       data: article.prixNonAuto.toString()),
@@ -256,8 +296,8 @@ class _DetailAticleState extends State<DetailAticle> {
                                       dialogueAjout2(
                                           context: context,
                                           child: EditeWidget(
-                                              previusValue:
-                                                  article.prixNonAuto.toString(),
+                                              previusValue: article.prixNonAuto
+                                                  .toString(),
                                               isDouble: true,
                                               isString: false,
                                               value: "prixNonAuto",
@@ -308,24 +348,25 @@ class _DetailAticleState extends State<DetailAticle> {
                             color:
                                 MaterialStateProperty.all(Colors.grey.shade200),
                             cells: [
-                              const DataCell(CustomText(data: "Stock critique ")),
+                              const DataCell(
+                                  CustomText(data: "Stock critique ")),
                               DataCell(CustomText(
                                   data: article.stockCritique.toString())),
                             ]),
                         DataRow(
-                            color:
-                                MaterialStateProperty.all(Colors.white),
+                            color: MaterialStateProperty.all(Colors.white),
                             cells: [
-                              const DataCell(CustomText(data: "Prix de vente ")),
-                              DataCell(
-                                  CustomText(data: article.prixVente.toString())),
+                              const DataCell(
+                                  CustomText(data: "Prix de vente ")),
+                              DataCell(CustomText(
+                                  data: article.prixVente.toString())),
                             ]),
                         DataRow(
                             color:
                                 MaterialStateProperty.all(Colors.grey.shade200),
                             cells: [
-                              const DataCell(
-                                  CustomText(data: "Prix de vente non autorisé")),
+                              const DataCell(CustomText(
+                                  data: "Prix de vente non autorisé")),
                               DataCell(CustomText(
                                   data: article.prixNonAuto.toString())),
                             ]),

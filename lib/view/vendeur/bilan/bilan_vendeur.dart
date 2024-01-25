@@ -1,17 +1,13 @@
 import 'package:ams/models/bilan_facture_model.dart';
 import 'package:ams/models/boutique_model.dart';
-import 'package:ams/view/admin/home/detail_boutique/bilan/widget/bilan_facture_cart.dart';
 import 'package:ams/view/vendeur/bilan/widget/bilan_facture_cart.dart';
 import 'package:ams/view/widgets/custom_text.dart';
-import 'package:ams/view/widgets/formate_date.dart';
-import 'package:animated_digit/animated_digit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../services/service_locator.dart';
 import '../../../../../services/services_auth.dart';
-import '../../widgets/custom_date_widget.dart';
 import '../../widgets/custom_layout_builder.dart';
 import '../../widgets/custom_search_bar.dart';
 import 'detail_bilan/detail_bilan.dart';
@@ -71,32 +67,6 @@ class _BilanVendeurState extends State<BilanVendeur> {
           child: Column(
             children: [
               const SizedBox(height: 25.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: CustomDetailWidget(
-                      title: "Du",
-                      nullVal: "Date",
-                      subtitle: selectedDate,
-                      onTap: () {
-                        _selectDate(context);
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 8.0),
-                  Expanded(
-                    child: CustomDetailWidget(
-                      title: "Au",
-                      nullVal: "Date",
-                      subtitle: selectedDate2,
-                      onTap: () {
-                        _selectDate2(context);
-                      },
-                    ),
-                  ),
-                ],
-              ),
               CustomSearchBar(onChanged: (value) {
                 search = value;
                 setState(() {});
@@ -125,9 +95,10 @@ class _BilanVendeurState extends State<BilanVendeur> {
                               shrinkWrap: true,
                               itemCount: snapshot.data!.docs.length,
                               itemBuilder: (context, index) {
-                                var bilanFactureModel = BilanFactureModel.fromMap(
-                                    snapshot.data!.docs[index].data());
-    
+                                var bilanFactureModel =
+                                    BilanFactureModel.fromMap(
+                                        snapshot.data!.docs[index].data());
+
                                 if (bilanFactureModel.toJson().isNotEmpty) {
                                   if (search.isEmpty) {
                                     return BilanFactureVendeurCard(
@@ -178,12 +149,11 @@ class _BilanVendeurState extends State<BilanVendeur> {
 
   Stream<QuerySnapshot<Map<String, dynamic>>> getStream() {
     setState(() {});
-    print(selectedDate);
     return locator
         .get<ServiceAuth>()
         .firestore
         .collection("facture")
-        // .where("idBoutique", isEqualTo: widget.boutique.id)
+        .where("idBoutique", isEqualTo: widget.boutique.id)
         .where("createAt", isGreaterThanOrEqualTo: selectedDate)
         .where("createAt", isLessThanOrEqualTo: "30-Sep-2023 ")
         .orderBy("createAt", descending: false)

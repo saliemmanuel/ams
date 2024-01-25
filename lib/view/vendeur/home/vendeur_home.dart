@@ -10,7 +10,7 @@ import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-import '../../../models/article_modes.dart';
+import '../../../models/article_model.dart';
 import '../../../services/service_locator.dart';
 import '../../../services/services_auth.dart';
 import '../../admin/home/detail_boutique/stock_article/detail_stock/detail_article.dart';

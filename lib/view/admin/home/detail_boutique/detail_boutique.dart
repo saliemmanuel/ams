@@ -108,7 +108,7 @@ class _DetailBoutiqueState extends State<DetailBoutique> {
                       ),
                       HomeCardWidget(
                         label: "Stock",
-                        child: const Icon(Icons.storage_rounded, size: 60.0),
+                        child: const Icon(Icons.storage_rounded, size: 85.0),
                         onTap: () {
                           Get.to(() => StockArticle(
                                 boutique: widget.boutique,

@@ -1,4 +1,4 @@
-import 'package:ams/models/article_modes.dart';
+import 'package:ams/models/article_model.dart';
 import 'package:ams/models/boutique_model.dart';
 import 'package:ams/models/facture_client_model.dart';
 import 'package:ams/services/services_auth.dart';

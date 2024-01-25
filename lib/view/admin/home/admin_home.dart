@@ -107,8 +107,7 @@ class _AdminHomeState extends State<AdminHome> {
                 setState(() {});
               }),
               const ListTile(
-                title: CustomText(data: "Liste des Boutiques", fontSize: 18),
-              ),
+                  title: CustomText(data: "Liste des Boutiques", fontSize: 18)),
               StreamBuilder(
                 stream: locator
                     .get<ServiceAuth>()

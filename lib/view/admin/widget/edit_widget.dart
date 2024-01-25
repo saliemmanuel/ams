@@ -1,4 +1,4 @@
-import 'package:ams/models/article_modes.dart';
+import 'package:ams/models/article_model.dart';
 import 'package:ams/services/service_locator.dart';
 import 'package:ams/services/services_auth.dart';
 import 'package:flutter/material.dart';

@@ -20,7 +20,6 @@ class HomeCardWidget extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            height: 160.0,
             width: 160.0,
             alignment: Alignment.center,
             margin: const EdgeInsets.all(15.0),

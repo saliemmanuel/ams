@@ -5,17 +5,11 @@ import 'package:ams/services/services_auth.dart';
 import 'package:ams/storage/local_storage/local_storage.dart';
 import 'package:ams/view/login/login.dart';
 import 'package:ams/view/onboarding/onboarding.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:panara_dialogs/panara_dialogs.dart';
 
 import '../../auth/firebase_auth.dart';
-import '../../messaging/messaging.dart';
 import '../widgets/custom_dialogue_card.dart';
 import '../../services/service_locator.dart';
 import 'package:get/get.dart';
@@ -28,47 +22,11 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
-  StreamSubscription? subscription;
-  bool isDeviceConnected = false;
-  bool isAlertSet = false;
-
   @override
   void initState() {
     FlutterNativeSplash.remove();
-    if (kIsWeb) {
-      initNextPage();
-    } else {
-      checkConnexoion();
-    }
+    initNextPage();
     super.initState();
-  }
-
-  checkConnexoion() {
-    subscription = Connectivity()
-        .onConnectivityChanged
-        .listen((ConnectivityResult result) {
-      subscription = InternetConnectionChecker().onStatusChange.listen((event) {
-        isDeviceConnected = event == InternetConnectionStatus.connected;
-        if (isDeviceConnected) {
-          init();
-          initNextPage();
-        } else {
-          showDialogBox();
-        }
-      });
-    });
-  }
-
-  init() async {
-    try {
-      await FirebaseMessaging.instance.getInitialMessage();
-      await FireMessageging().getTokenDeviceToken();
-      // await FireMessageging.initializeLocalNotifications();
-      // FireMessageging().onMessageListen();
-      FireMessageging().requestPermission();
-    } catch (e) {
-      debugPrint(e.toString());
-    }
   }
 
   // initialiation de la page suivante
@@ -119,21 +77,4 @@ class _SplashState extends State<Splash> {
       ),
     );
   }
-
-  @override
-  void dispose() {
-    subscription?.cancel();
-    super.dispose();
-  }
-
-  showDialogBox() => dialogueAndonTapDismiss(
-        panaraDialogType: PanaraDialogType.warning,
-        context: context,
-        title: "Pas de connection",
-        message: "Veuillez vérifier votre connectivité Internet",
-        onTapDismiss: () {
-          Get.back();
-          checkConnexoion();
-        },
-      );
 }

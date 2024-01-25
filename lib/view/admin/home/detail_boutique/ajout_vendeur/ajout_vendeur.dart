@@ -77,6 +77,7 @@ class _AjoutVendeurState extends State<AjoutVendeur> {
                         controller: nom,
                         prefixIcon: IconlyBold.profile,
                         child: 'Nom',
+                        keyboardType: TextInputType.emailAddress,
                         obscureText: false),
                     CustumTextField(
                         controller: prenom,

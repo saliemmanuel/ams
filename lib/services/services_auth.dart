@@ -1,8 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:collection';
 import 'dart:math';
 
-import 'package:ams/models/article_modes.dart';
+import 'package:ams/models/article_model.dart';
 import 'package:ams/models/boutique_model.dart';
 import 'package:ams/models/vendeur_model.dart';
 import 'package:ams/view/admin/admin.dart';
@@ -217,6 +218,64 @@ class ServiceAuth {
             title: "Succès",
             message: "L'article a été ajouter avec succès");
       });
+    } catch (e) {
+      Get.back();
+      dialogue(
+          panaraDialogType: PanaraDialogType.error,
+          context: context,
+          title: "Erreur",
+          message: e.toString());
+    }
+  }
+
+  // transfert des articles dans une autre boutique
+
+  saveArticleDataMultiple(
+      {HashSet<ArticleModels>? multipleSelection,
+      required String newIdBoutique,
+      BuildContext? context}) async {
+    try {
+      simpleDialogueCardSansTitle("Enregistrement...", context!);
+      int currentIndex = 0;
+
+      for (var element in multipleSelection!) {
+        var codeEnregistrement = "Produit${Random().nextInt(15500)}";
+
+        currentIndex++;
+        ArticleModels? article = ArticleModels(
+          codeEnregistrement: element.codeEnregistrement,
+          createAt: DateTime.now().toIso8601String(),
+          designation: element.designation,
+          id: "${locator.get<HomeProvider>().user.id}$codeEnregistrement",
+          idAdmin: element.idAdmin,
+          idBoutique: newIdBoutique,
+          nomBoutique: element.nomBoutique,
+          prixAchat: element.prixAchat,
+          prixVente: element.prixVente,
+          stockActuel: element.stockActuel,
+          stockCritique: element.stockCritique,
+          stockNormal: element.stockNormal,
+          prixNonAuto: element.prixNonAuto,
+        );
+        locator.get<FirebasesAuth>().saveArticleDatas(article: article);
+
+        if (currentIndex == multipleSelection.length) {
+          Get.back();
+          dialogueAndonTapDismiss(
+              onTapDismiss: () {
+                Get.back();
+                Provider.of<HomeProvider>(context, listen: false)
+                    .setNombreBoutique(article.idBoutique);
+                Provider.of<HomeProvider>(context, listen: false)
+                    .clearMultipleSelection();
+                Get.back();
+              },
+              panaraDialogType: PanaraDialogType.success,
+              context: context,
+              title: "Transfère",
+              message: "Article(s) transféré avec succès.");
+        }
+      }
     } catch (e) {
       Get.back();
       dialogue(
@@ -554,6 +613,43 @@ class ServiceAuth {
     });
   }
 
+  deleteArticle({String? idArticle, var context}) {
+    Get.back();
+    simpleDialogueCardSansTitle("Suppréssion...", context!);
+    locator
+        .get<FirebasesAuth>()
+        .removeArticleBoutique(idArticle: idArticle)
+        .then((value) {
+      Get.back();
+    });
+  }
+
+  deleteMultipleArticle(
+      {HashSet<ArticleModels>? multipleSelection, var context}) {
+    Get.back();
+    int currentIndex = 0;
+    simpleDialogueCardSansTitle("Suppréssion...", context!);
+    for (var element in multipleSelection!) {
+      currentIndex++;
+      locator
+          .get<FirebasesAuth>()
+          .removeSingleArticleBoutiqueAction(idArticle: element.id);
+      if (currentIndex == multipleSelection.length) {
+        Get.back();
+        dialogueAndonTapDismiss(
+            onTapDismiss: () {
+              Get.back();
+              Provider.of<HomeProvider>(context, listen: false)
+                  .clearMultipleSelection();
+            },
+            panaraDialogType: PanaraDialogType.success,
+            context: context,
+            title: "Suppréssion",
+            message: "Article(s) supprimé avec succès.");
+      }
+    }
+  }
+
   updateMessagingToken(
       {Users? user, BuildContext? context, required String? mes}) async {
     try {
@@ -615,7 +711,6 @@ class ServiceAuth {
         var docs = await locator
             .get<FirebasesAuth>()
             .getBoutiqueVendeurData(id: user.id);
-
         var boutique = BoutiqueModels.fromMap(docs);
         Get.offAll(() => VendeursH(users: user, boutique: boutique));
       }

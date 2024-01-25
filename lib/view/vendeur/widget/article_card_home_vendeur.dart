@@ -1,4 +1,4 @@
-import 'package:ams/models/article_modes.dart';
+import 'package:ams/models/article_model.dart';
 import 'package:ams/provider/home_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';

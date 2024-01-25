@@ -96,6 +96,7 @@ class _LoginState extends State<Login> {
                     color: Palette.primary,
                   ),
                   onPressed: () {
+                    emailMDP.text = email.text;
                     Get.bottomSheet(
                         backgroundColor: Colors.white,
                         SingleChildScrollView(

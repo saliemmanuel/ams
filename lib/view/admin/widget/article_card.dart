@@ -1,4 +1,4 @@
-import 'package:ams/models/article_modes.dart';
+import 'package:ams/models/article_model.dart';
 import 'package:ams/provider/home_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
@@ -10,14 +10,22 @@ import '../../widgets/custom_text.dart';
 class ArticleCard extends StatelessWidget {
   final ArticleModels articleModels;
   final void Function()? onTap;
-  const ArticleCard({super.key, this.onTap, required this.articleModels});
+  final Function()? onLongPress;
+  final bool isSelected;
+  const ArticleCard(
+      {super.key,
+      this.onTap,
+      required this.articleModels,
+      required this.onLongPress,
+      required this.isSelected});
 
   @override
   Widget build(BuildContext context) {
     Provider.of<HomeProvider>(context, listen: false)
         .setValeurStockBoutique(articleModels.prixVente);
     return CustomLayoutBuilder(
-      child: InkWell(
+      child: GestureDetector(
+        onLongPress: onLongPress,
         onTap: onTap,
         child: Container(
           margin: const EdgeInsets.all(6.0),
@@ -45,6 +53,8 @@ class ArticleCard extends StatelessWidget {
                 CustomText(data: "Stock Actuel : ${articleModels.stockActuel}"),
               ],
             ),
+            trailing: Visibility(
+                visible: isSelected, child: const Icon(Icons.check_box)),
           ),
         ),
       ),

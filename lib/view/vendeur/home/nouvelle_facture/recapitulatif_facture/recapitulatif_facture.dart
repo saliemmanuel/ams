@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 import 'package:panara_dialogs/panara_dialogs.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../models/article_modes.dart';
+import '../../../../../models/article_model.dart';
 import '../../../../../models/vendeur_model.dart';
 import '../../../../../provider/home_provider.dart';
 import '../../../../admin/home/detail_boutique/stock_article/detail_stock/detail_article.dart';

@@ -1,21 +1,16 @@
 import 'package:ams/models/user.dart';
 import 'package:ams/provider/home_provider.dart';
-import 'package:ams/view/widgets/create_code_user.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:panara_dialogs/panara_dialogs.dart';
 
 import '../../../services/service_locator.dart';
 import '../../../services/services_auth.dart';
+import '../../about_app/about_app.dart';
 import '../../create_account/create_account.dart';
 import '../../widgets/custom_dialogue.dart';
-import '../../widgets/custom_dialogue_card.dart';
 import '../../widgets/custom_layout_builder.dart';
 import '../../widgets/custom_text.dart';
 import '../../widgets/edite_profil.dart';
-import '../../widgets/update_code_user.dart';
-import '../../widgets/verif_ancient_code_user.dart';
 import '../widget/dialogue_ajout.dart';
 
 class AdminProfil extends StatefulWidget {
@@ -70,8 +65,8 @@ class _AdminProfilState extends State<AdminProfil> {
                                       onPressed: () {
                                         dialogueAjout2(
                                             context: context,
-                                            child:
-                                                EditeProfil(users: widget.user));
+                                            child: EditeProfil(
+                                                users: widget.user));
                                       },
                                       icon: const Icon(Icons.edit)),
                                 );
@@ -87,76 +82,20 @@ class _AdminProfilState extends State<AdminProfil> {
                   ],
                 )),
               ),
-              // StreamBuilder(
-              //   stream: locator
-              //       .get<ServiceAuth>()
-              //       .firestore
-              //       .collection("code")
-              //       .where("id", isEqualTo: widget.user.id)
-              //       .snapshots(),
-              //   builder: (context, snapshot) {
-              //     if (snapshot.hasData) {
-              //       if (snapshot.data!.docs.isNotEmpty) {
-              //         return Card(
-              //           child: ListTile(
-              //             onTap: () {
-              //               Get.back();
-              //               dialogueAjout2(
-              //                   context: context,
-              //                   child: VerificationAncientCode(
-              //                     users: widget.user,
-              //                     callBack: (value) {
-              //                       Get.back();
-              //                       if (value) {
-              //                         dialogueAjout2(
-              //                             context: context,
-              //                             child: UpdateCodeUser(
-              //                               users: widget.user,
-              //                             ));
-              //                       } else {
-              //                         dialogueAndonTapDismiss(
-              //                             onTapDismiss: () {
-              //                               Get.back();
-              //                             },
-              //                             panaraDialogType:
-              //                                 PanaraDialogType.error,
-              //                             message: "Code secret incorrect",
-              //                             title: "",
-              //                             context: context);
-              //                       }
-              //                     },
-              //                   ));
-              //             },
-              //             leading: const Icon(Icons.lock),
-              //             title: const CustomText(data: " Changer code secret"),
-              //           ),
-              //         );
-              //       } else if (snapshot.data!.docs.isEmpty) {
-              //         return Card(
-              //           child: ListTile(
-              //             onTap: () {
-              //               Get.back();
-              //               dialogueAjout2(
-              //                   context: context,
-              //                   child: CreateCodeUser(users: widget.user));
-              //             },
-              //             leading: const Icon(Icons.lock),
-              //             title: const CustomText(data: "Créer code secret"),
-              //           ),
-              //         );
-              //       }
-              //     }
-              //     return const Row(
-              //       children: [CupertinoActivityIndicator()],
-              //     );
-              //   },
-              // ),
               Card(
                   child: ListTile(
-                title: const CustomText(data: "Créer un Admin"),
+                title: const CustomText(data: "Ajouter un compte"),
                 leading: const Icon(Icons.person),
                 onTap: () {
                   Get.to(const CreateAccount());
+                },
+              )),
+              Card(
+                  child: ListTile(
+                title: const CustomText(data: "Apros de l'application"),
+                leading: const Icon(Icons.info),
+                onTap: () {
+                  Get.to(const AboutApp());
                 },
               )),
               Card(

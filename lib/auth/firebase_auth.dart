@@ -1,4 +1,4 @@
-import 'package:ams/models/article_modes.dart';
+import 'package:ams/models/article_model.dart';
 import 'package:ams/models/boutique_model.dart';
 import 'package:ams/models/facture_client_model.dart';
 import 'package:ams/models/vendeur_model.dart';
@@ -116,7 +116,6 @@ class FirebasesAuth {
         value: nouvelStock,
       );
     }
-
     return await locator
         .get<ServiceAuth>()
         .firestore
@@ -299,6 +298,25 @@ class FirebasesAuth {
     } catch (e) {
       debugPrint(e.toString());
     }
+  }
+
+  removeArticleBoutique({String? idArticle}) async {
+    return await locator
+        .get<ServiceAuth>()
+        .firestore
+        .collection("article")
+        .doc(idArticle)
+        .delete()
+        .then((value) => Get.back());
+  }
+
+  removeSingleArticleBoutiqueAction({String? idArticle}) async {
+    return await locator
+        .get<ServiceAuth>()
+        .firestore
+        .collection("article")
+        .doc(idArticle)
+        .delete();
   }
 
   sendPasswordResetEmail({String? email}) {

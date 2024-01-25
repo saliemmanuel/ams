@@ -24,18 +24,13 @@ bottomSheetExit(BuildContext context,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
-              child: Container(
-                margin: const EdgeInsets.all(16),
-                child: CustomButton(child: "Non", onPressed: onCancel),
-              ),
-            ),
+                child: FilledButton(
+                    onPressed: onCancel, child: const Text("Non"))),
+            const SizedBox(width: 20),
             Expanded(
-              child: Container(
-                margin: const EdgeInsets.all(16),
-                child: CustomButton(
-                    color: Colors.red, child: 'Oui', onPressed: onConfirm),
-              ),
-            ),
+                child: FilledButton(
+                  style: const ButtonStyle(backgroundColor: MaterialStatePropertyAll(Colors.red)),
+                    onPressed: onConfirm, child: const Text('Oui'))),
           ],
         )
       ],

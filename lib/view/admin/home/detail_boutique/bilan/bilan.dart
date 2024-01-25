@@ -42,32 +42,32 @@ class _BilanState extends State<Bilan> {
           child: Column(
             children: [
               const SizedBox(height: 25.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: CustomDetailWidget(
-                      title: "Du",
-                      nullVal: "Date",
-                      subtitle: selectedDate,
-                      onTap: () {
-                        _selectDate(context);
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 8.0),
-                  Expanded(
-                    child: CustomDetailWidget(
-                      title: "Au",
-                      nullVal: "Date",
-                      subtitle: selectedDate2,
-                      onTap: () {
-                        _selectDate2(context);
-                      },
-                    ),
-                  ),
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //   children: [
+              //     Expanded(
+              //       child: CustomDetailWidget(
+              //         title: "Du",
+              //         nullVal: "Date",
+              //         subtitle: selectedDate,
+              //         onTap: () {
+              //           _selectDate(context);
+              //         },
+              //       ),
+              //     ),
+              //     const SizedBox(width: 8.0),
+              //     Expanded(
+              //       child: CustomDetailWidget(
+              //         title: "Au",
+              //         nullVal: "Date",
+              //         subtitle: selectedDate2,
+              //         onTap: () {
+              //           _selectDate2(context);
+              //         },
+              //       ),
+              //     ),
+              //   ],
+              // ),
               CustomSearchBar(onChanged: (value) {
                 search = value;
                 setState(() {});

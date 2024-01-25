@@ -1,5 +1,7 @@
+import 'dart:collection';
+
 import 'package:ams/auth/firebase_auth.dart';
-import 'package:ams/models/article_modes.dart';
+import 'package:ams/models/article_model.dart';
 import 'package:ams/models/boutique_model.dart';
 import 'package:ams/models/facture_client_model.dart';
 import 'package:ams/services/service_locator.dart';
@@ -39,8 +41,6 @@ class HomeProvider extends ChangeNotifier {
 
   setactivePaiement(bool activePaiement) {
     _activePaiement = activePaiement;
-    print("_activePaiement");
-    print(_activePaiement);
     notifyListeners();
   }
 
@@ -149,5 +149,32 @@ class HomeProvider extends ChangeNotifier {
     } on JWTException catch (ex) {
       debugPrint(ex.message);
     }
+  }
+
+  bool _multipleSelectionIsStart = false;
+  bool get multipleSelectionIsStart => _multipleSelectionIsStart;
+  set setMultipleSelectionIsStart(bool value) {
+    _multipleSelectionIsStart = value;
+    notifyListeners();
+  }
+
+  HashSet<ArticleModels> multipleSelection = HashSet();
+  clearMultipleSelection() {
+    multipleSelection.clear();
+    print(multipleSelection);
+    _multipleSelectionIsStart = false;
+    notifyListeners();
+  }
+
+  void doMultiSelection(ArticleModels articleModels) {
+    if (multipleSelection.contains(articleModels)) {
+      multipleSelection.remove(articleModels);
+    } else {
+      multipleSelection.add(articleModels);
+    }
+    if (multipleSelection.isEmpty) {
+      clearMultipleSelection();
+    }
+    notifyListeners();
   }
 }
