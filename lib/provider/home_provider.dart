@@ -10,6 +10,7 @@ import 'package:date_formatter/date_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import '../models/bilan_facture_model.dart';
 import '../models/user.dart';
 import '../services/services_auth.dart';
 
@@ -161,12 +162,11 @@ class HomeProvider extends ChangeNotifier {
   HashSet<ArticleModels> multipleSelection = HashSet();
   clearMultipleSelection() {
     multipleSelection.clear();
-    print(multipleSelection);
     _multipleSelectionIsStart = false;
     notifyListeners();
   }
 
-  void doMultiSelection(ArticleModels articleModels) {
+  void doMultiSelection(var articleModels) {
     if (multipleSelection.contains(articleModels)) {
       multipleSelection.remove(articleModels);
     } else {
@@ -174,6 +174,33 @@ class HomeProvider extends ChangeNotifier {
     }
     if (multipleSelection.isEmpty) {
       clearMultipleSelection();
+    }
+    notifyListeners();
+  }
+
+  bool _multipleSelectionIsStartInBilan = false;
+  bool get multipleSelectionIsStartInBilan => _multipleSelectionIsStartInBilan;
+  set setMultipleSelectionIsStartInBilan(bool value) {
+    _multipleSelectionIsStartInBilan = value;
+    notifyListeners();
+  }
+
+  HashSet<BilanFactureModel> multipleSelectionInBilan = HashSet();
+
+  clearMultipleSelectionInBilan() {
+    multipleSelectionInBilan.clear();
+    _multipleSelectionIsStartInBilan = false;
+    notifyListeners();
+  }
+
+  void doMultiSelectionInBilan(BilanFactureModel bilanFactureModel) {
+    if (multipleSelectionInBilan.contains(bilanFactureModel)) {
+      multipleSelectionInBilan.remove(bilanFactureModel);
+    } else {
+      multipleSelectionInBilan.add(bilanFactureModel);
+    }
+    if (multipleSelectionInBilan.isEmpty) {
+      clearMultipleSelectionInBilan();
     }
     notifyListeners();
   }

@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:uuid/uuid.dart';
 import '../models/user.dart';
 import '../services/service_locator.dart';
 import '../services/services_auth.dart';
@@ -17,6 +18,7 @@ import '../services/services_auth.dart';
 class FirebasesAuth {
   final _firebaseAuth = FirebaseAuth.instance;
   User? get curentUser => _firebaseAuth.currentUser;
+  var uuid = const Uuid();
 
   Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
   FirebaseAuth get firebaseAuthInstance => _firebaseAuth;
@@ -116,11 +118,14 @@ class FirebasesAuth {
         value: nouvelStock,
       );
     }
+    var id = uuid.v1();
     return await locator
         .get<ServiceAuth>()
         .firestore
         .collection("facture")
-        .add({
+        .doc(id)
+        .set({
+      "id": id,
       "facture": facture.map((e) => e.toMap()),
       'nom': nom,
       "telephone": telephone,
@@ -316,6 +321,17 @@ class FirebasesAuth {
         .firestore
         .collection("article")
         .doc(idArticle)
+        .delete();
+  }
+
+  removeSingleBilanFactionAction({String? idBilanFacture}) async {
+    print(idBilanFacture);
+    return await locator
+        .get<ServiceAuth>()
+        .firestore
+        .collection("facture")
+        .doc(
+            "facture + 2024-02-05 22:51:07.747839g699885536SIMPLE MARKETboutique5072CHxl3jqpibbmNRct5PSjl5rv1Xu2")
         .delete();
   }
 

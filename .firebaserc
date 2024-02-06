@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "gsayubams123"
-  }
+    "default": "gsayubams123",
+    "ams-developpement": "ams-developpement"
+  },
+  "targets": {},
+  "etags": {}
 }

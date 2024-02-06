@@ -6,6 +6,7 @@ import 'package:ams/models/facture_client_model.dart';
 import 'package:ams/models/vendeur_model.dart';
 
 class BilanFactureModel {
+  final String id;
   final List<FactureClient> facture;
   final String idBoutique;
   final double netPayer;
@@ -14,6 +15,7 @@ class BilanFactureModel {
   final Vendeur vendeur;
   final String createAt;
   BilanFactureModel({
+    required this.id,
     required this.facture,
     required this.idBoutique,
     required this.netPayer,
@@ -24,6 +26,7 @@ class BilanFactureModel {
   });
 
   BilanFactureModel copyWith({
+    String? id,
     List<FactureClient>? facture,
     String? idBoutique,
     double? netPayer,
@@ -33,6 +36,7 @@ class BilanFactureModel {
     String? createAt,
   }) {
     return BilanFactureModel(
+      id: id ?? this.id,
       facture: facture ?? this.facture,
       idBoutique: idBoutique ?? this.idBoutique,
       netPayer: netPayer ?? this.netPayer,
@@ -45,6 +49,7 @@ class BilanFactureModel {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'id': id,
       'facture': facture.map((x) => x.toMap()).toList(),
       'idBoutique': idBoutique,
       'netPayer': netPayer,
@@ -57,6 +62,7 @@ class BilanFactureModel {
 
   factory BilanFactureModel.fromMap(Map<String, dynamic> map) {
     return BilanFactureModel(
+      id: map['id'] as String,
       facture: List<FactureClient>.from(
         (map['facture'] as List<dynamic>).map<FactureClient>(
           (x) => FactureClient.fromMap(x as Map<String, dynamic>),
@@ -78,7 +84,7 @@ class BilanFactureModel {
 
   @override
   String toString() {
-    return 'BilanFactureModel(facture: $facture, idBoutique: $idBoutique, netPayer: $netPayer, nom: $nom, telephone: $telephone, vendeur: $vendeur, createAt: $createAt)';
+    return 'BilanFactureModel(id: $id, facture: $facture, idBoutique: $idBoutique, netPayer: $netPayer, nom: $nom, telephone: $telephone, vendeur: $vendeur, createAt: $createAt)';
   }
 
   @override
@@ -96,8 +102,7 @@ class BilanFactureModel {
 
   @override
   int get hashCode {
-    return facture.hashCode ^
-        idBoutique.hashCode ^
+    return idBoutique.hashCode ^
         netPayer.hashCode ^
         nom.hashCode ^
         telephone.hashCode ^

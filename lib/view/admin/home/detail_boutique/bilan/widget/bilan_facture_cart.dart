@@ -2,21 +2,26 @@ import 'package:ams/models/bilan_facture_model.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 
-import '../../../../../../provider/home_provider.dart';
-import '../../../../../../services/service_locator.dart';
 import '../../../../../widgets/custom_layout_builder.dart';
 import '../../../../../widgets/custom_text.dart';
 
 class BilanFactureCard extends StatelessWidget {
   final BilanFactureModel bilanFactureModel;
+  final bool isSelected;
   final void Function()? onTap;
+  final Function()? onLongPress;
   const BilanFactureCard(
-      {super.key, this.onTap, required this.bilanFactureModel});
+      {super.key,
+      this.onTap,
+      required this.onLongPress,
+      required this.bilanFactureModel,
+      required this.isSelected});
 
   @override
   Widget build(BuildContext context) {
     return CustomLayoutBuilder(
-      child: InkWell(
+      child: GestureDetector(
+        onLongPress: onLongPress,
         onTap: onTap,
         child: Container(
           margin: const EdgeInsets.all(6.0),
@@ -35,11 +40,14 @@ class BilanFactureCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomText(data: "Net payer : ${bilanFactureModel.netPayer}"),
-                CustomText(
-                    data:
-                        "Le ${locator.get<HomeProvider>().formatDate(date: bilanFactureModel.createAt)}"),
+                CustomText(data: "Le ${bilanFactureModel.createAt}"),
               ],
             ),
+            trailing: Visibility(
+                visible: isSelected,
+                child: const Icon(
+                  Icons.check_box_outlined,
+                )),
           ),
         ),
       ),
