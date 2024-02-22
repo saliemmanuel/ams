@@ -195,8 +195,8 @@ class _StockArticleState extends State<StockArticle> {
                                           return ArticleCard(
                                             isSelected: value.multipleSelection
                                                     .contains(articleModels)
-                                                ? false
-                                                : true,
+                                                ? true
+                                                : false,
                                             onLongPress: () {
                                               value.doMultiSelection(
                                                   articleModels);
@@ -206,7 +206,7 @@ class _StockArticleState extends State<StockArticle> {
                                             },
                                             articleModels: articleModels,
                                             onTap: () {
-                                              if (value
+                                              if (!value
                                                   .multipleSelectionIsStart) {
                                                 Get.to(() => DetailAticle(
                                                     isVendeur: false,

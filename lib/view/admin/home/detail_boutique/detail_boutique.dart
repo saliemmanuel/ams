@@ -4,10 +4,14 @@ import 'package:ams/view/admin/home/detail_boutique/liste_vendeur/liste_vendeur.
 import 'package:ams/view/admin/home/detail_boutique/stock_article/stock_article.dart';
 import 'package:ams/view/admin/home/detail_boutique/widget/edite_boutique.dart';
 import 'package:ams/view/admin/widget/dialogue_ajout.dart';
+import 'package:ams/view/splash/splash.dart';
+import 'package:ams/view/widgets/custom_dialogue_card.dart';
 import 'package:ams/view/widgets/custom_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:get/get.dart';
+import 'package:panara_dialogs/panara_dialogs.dart';
 
 import '../../../../provider/home_provider.dart';
 import '../../../../services/service_locator.dart';
@@ -72,8 +76,10 @@ class _DetailBoutiqueState extends State<DetailBoutique> {
                             .firestore
                             .collection('boutique')
                             .where("id",
-                                isEqualTo:
-                                    locator.get<HomeProvider>().boutiqueModels.id)
+                                isEqualTo: locator
+                                    .get<HomeProvider>()
+                                    .boutiqueModels
+                                    .id)
                             .snapshots(),
                         builder: (context, snapshot) {
                           // Comptage des vendeurs
@@ -103,7 +109,8 @@ class _DetailBoutiqueState extends State<DetailBoutique> {
                               ),
                             );
                           }
-                          return const Center(child: CircularProgressIndicator());
+                          return const Center(
+                              child: CircularProgressIndicator());
                         },
                       ),
                       HomeCardWidget(
@@ -123,6 +130,14 @@ class _DetailBoutiqueState extends State<DetailBoutique> {
                           Get.to(() => Bilan(boutique: widget.boutique));
                         },
                       ),
+                      // HomeCardWidget(
+                      //   label: "Supprimer",
+                      //   child: const Icon(Icons.delete_forever_outlined,
+                      //       size: 60.0),
+                      //   onTap: () {
+                      //     deleteMultiple(idBoutique: widget.boutique.id);
+                      //   },
+                      // ),
                     ],
                   ),
                 )),
@@ -130,5 +145,21 @@ class _DetailBoutiqueState extends State<DetailBoutique> {
         ),
       ),
     );
+  }
+
+  deleteMultiple({idBoutique}) {
+    confirmDialogue(
+        panaraDialogType: PanaraDialogType.error,
+        title: "Suppression",
+        message: "Voulez-vous vraiment supprimer?",
+        context: context,
+        onTapConfirm: () {
+          Get.to(() => const Splash());
+          locator
+              .get<ServiceAuth>()
+              .deleteBoutique(context: context, idBoutique: idBoutique);
+          locator.get<ServiceAuth>().showToast("Supprimé",
+              context: context, position: FlutterToastr.bottom);
+        });
   }
 }

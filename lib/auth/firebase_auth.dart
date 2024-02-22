@@ -10,10 +10,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:panara_dialogs/panara_dialogs.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import '../models/user.dart';
 import '../services/service_locator.dart';
 import '../services/services_auth.dart';
+import '../view/widgets/custom_dialogue_card.dart';
 
 class FirebasesAuth {
   final _firebaseAuth = FirebaseAuth.instance;
@@ -324,14 +327,32 @@ class FirebasesAuth {
         .delete();
   }
 
+  deleteBoutique(idBoutique, context) {
+    return locator
+        .get<ServiceAuth>()
+        .firestore
+        .collection("boutique")
+        .doc(idBoutique)
+        .delete()
+        .then((value) {
+      Get.back();
+      dialogueAndonTapDismiss(
+          onTapDismiss: () {
+            Get.back();
+          },
+          panaraDialogType: PanaraDialogType.success,
+          context: context,
+          title: "Suppréssion",
+          message: "Boutique supprimé avec succès.");
+    });
+  }
+
   removeSingleBilanFactionAction({String? idBilanFacture}) async {
-    print(idBilanFacture);
     return await locator
         .get<ServiceAuth>()
         .firestore
         .collection("facture")
-        .doc(
-            "facture + 2024-02-05 22:51:07.747839g699885536SIMPLE MARKETboutique5072CHxl3jqpibbmNRct5PSjl5rv1Xu2")
+        .doc(idBilanFacture)
         .delete();
   }
 

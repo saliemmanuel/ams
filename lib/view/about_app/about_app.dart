@@ -10,7 +10,7 @@ class AboutApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const CustomText(data: "Profil")),
+      appBar: AppBar(title: const CustomText(data: "Apropos")),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(15.0),

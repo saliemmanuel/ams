@@ -651,36 +651,35 @@ class ServiceAuth {
     }
   }
 
+  deleteBoutique({idBoutique, var context}) {
+    Get.back();
+    simpleDialogueCardSansTitle("Suppréssion...", context!);
+    locator.get<FirebasesAuth>().deleteBoutique(idBoutique, context);
+  }
+
   deleteMultipleInBilan(
       {HashSet<BilanFactureModel>? multipleSelection, var context}) {
     Get.back();
     int currentIndex = 0;
     simpleDialogueCardSansTitle("Suppréssion...", context!);
-    print(multipleSelection);
     for (var element in multipleSelection!) {
       currentIndex++;
-      print(element.id);
       locator
-          .get<ServiceAuth>()
-          ._firestore
-          .doc("2024-02-06 07:08:07.880070CHxl3jqpibbmNRct5PSjl5rv1Xu2")
-          .delete();
-      // locator
-      //     .get<FirebasesAuth>()
-      //     .removeSingleBilanFactionAction(idBilanFacture: element.id);
-      // if (currentIndex == multipleSelection.length) {
-      //   Get.back();
-      //   dialogueAndonTapDismiss(
-      //       onTapDismiss: () {
-      //         Get.back();
-      //         Provider.of<HomeProvider>(context, listen: false)
-      //             .clearMultipleSelectionInBilan();
-      //       },
-      //       panaraDialogType: PanaraDialogType.success,
-      //       context: context,
-      //       title: "Suppréssion",
-      //       message: "Facture(s) supprimé avec succès.");
-      // }
+          .get<FirebasesAuth>()
+          .removeSingleBilanFactionAction(idBilanFacture: element.id);
+      if (currentIndex == multipleSelection.length) {
+        Get.back();
+        dialogueAndonTapDismiss(
+            onTapDismiss: () {
+              Get.back();
+              Provider.of<HomeProvider>(context, listen: false)
+                  .clearMultipleSelectionInBilan();
+            },
+            panaraDialogType: PanaraDialogType.success,
+            context: context,
+            title: "Suppréssion",
+            message: "Facture(s) supprimé avec succès.");
+      }
     }
   }
 
