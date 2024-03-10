@@ -61,7 +61,7 @@ class _ListDetailFactureState extends State<ListDetailFacture> {
                                 context: context,
                                 "Supprimé",
                                 position: FlutterToastr.bottom);
-    
+
                             HapticFeedback.mediumImpact();
                             setState(() {});
                           },
@@ -75,8 +75,8 @@ class _ListDetailFactureState extends State<ListDetailFacture> {
                           Text.rich(TextSpan(
                             children: [
                               TextSpan(
-                                  text:
-                                      value.listArticleVente![index].designation!,
+                                  text: value
+                                      .listArticleVente![index].designation!,
                                   style: const TextStyle(
                                       fontSize: 18.0,
                                       fontWeight: FontWeight.bold)),
@@ -92,7 +92,8 @@ class _ListDetailFactureState extends State<ListDetailFacture> {
                                       fontSize: 18.0,
                                       fontWeight: FontWeight.bold)),
                               TextSpan(
-                                  text: value.listArticleVente![index].stockActuel
+                                  text: value
+                                      .listArticleVente![index].stockActuel
                                       .toString(),
                                   style: const TextStyle(fontSize: 18.0)),
                             ],
@@ -400,7 +401,8 @@ class _PrixEtQuantiteState extends State<PrixEtQuantite> {
     prixTotal = ((double.parse(
                 widget.listArticleVente![widget.index].prixVente.toString()) *
             int.parse(quantite.text.isEmpty ? "1" : quantite.text)) -
-        double.parse(remise.text.isEmpty ? "0" : remise.text));
+        (double.parse(remise.text.isEmpty ? "0" : remise.text) *
+            int.parse(quantite.text.isEmpty ? "1" : quantite.text)));
 
     // je dois update la Qté et le prixTotal
     // de la liste globale des facture
@@ -412,8 +414,9 @@ class _PrixEtQuantiteState extends State<PrixEtQuantite> {
       "prixTotal": prixTotal,
       "quantite": int.parse(quantite.text.isEmpty ? "1" : quantite.text),
       "articleModels": widget.listArticleVente![widget.index].toMap(),
-      "createAt": formatDate(date: date,enableHour: false),
-      "remise": (double.parse(remise.text.isEmpty ? "0" : remise.text)),
+      "createAt": formatDate(date: date, enableHour: false),
+      "remise": (double.parse(remise.text.isEmpty ? "0" : remise.text) *
+          int.parse(quantite.text.isEmpty ? "1" : quantite.text)),
       "idBoutique": widget.boutiqueModels.id
     });
     // je la remove

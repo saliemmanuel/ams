@@ -62,7 +62,7 @@ class BilanFactureModel {
 
   factory BilanFactureModel.fromMap(Map<String, dynamic> map) {
     return BilanFactureModel(
-      id: map['id'] as String,
+      id: map['id'] == null ? "" : map['id'] as String ,
       facture: List<FactureClient>.from(
         (map['facture'] as List<dynamic>).map<FactureClient>(
           (x) => FactureClient.fromMap(x as Map<String, dynamic>),

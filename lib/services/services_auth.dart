@@ -44,13 +44,23 @@ class ServiceAuth {
           .sigInWithEmail(email: email, password: pass);
       Stream<User?> response = locator.get<FirebasesAuth>().authStateChanges;
       var isConnected = await response.any((element) => element!.email != null);
+      print(isConnected);
       if (isConnected) {
         dynamic docs = await locator
             .get<FirebasesAuth>()
             .getUserData(id: locator.get<FirebasesAuth>().curentUser!.uid);
         Map<String, dynamic>? data = docs?.data();
         // je verifie si l'utilisateur est déjà enregistré dans la bd
-        redirectionUtil(context: context, data: data);
+        if (data == null) {
+          Get.back();
+          dialogue(
+              panaraDialogType: PanaraDialogType.error,
+              context: context,
+              title: "Erreur",
+              message: "Une erreur s'est produite");
+        } else {
+          redirectionUtil(context: context, data: data);
+        }
       }
     } on FirebaseAuthException catch (e) {
       Get.back();

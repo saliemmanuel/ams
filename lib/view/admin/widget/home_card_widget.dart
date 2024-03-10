@@ -37,11 +37,13 @@ class HomeCardWidget extends StatelessWidget {
               ],
             ),
           ),
-          CustomText(
-            data: label,
-            fontSize: 18.0,
-            fontWeight: FontWeight.bold,
-          ),
+          Expanded(
+            child: CustomText(
+              data: label,
+              fontSize: 15.0,
+              fontWeight: FontWeight.bold,
+            ),
+          )
         ],
       ),
     );

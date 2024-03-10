@@ -85,12 +85,6 @@ class _DetailBilanVendeuxState extends State<DetailBilanVendeux> {
                       ),
                       DataColumn(
                         label: CustomText(
-                          data: "Béné./Articl.",
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      DataColumn(
-                        label: CustomText(
                           data: "Prix T./Articl.",
                           fontWeight: FontWeight.bold,
                         ),
@@ -108,16 +102,14 @@ class _DetailBilanVendeuxState extends State<DetailBilanVendeux> {
                               DataCell(CustomText(
                                   data: ele.articleModels!.designation!)),
                               DataCell(CustomText(
-                                  data: ele.articleModels!.prixVente.toString())),
+                                  data:
+                                      ele.articleModels!.prixVente.toString())),
                               DataCell(CustomText(
-                                  data: ele.articleModels!.prixAchat.toString())),
-                              DataCell(CustomText(data: ele.quantite.toString())),
+                                  data:
+                                      ele.articleModels!.prixAchat.toString())),
+                              DataCell(
+                                  CustomText(data: ele.quantite.toString())),
                               DataCell(CustomText(data: ele.remise.toString())),
-                              DataCell(CustomText(
-                                  data: ((ele.articleModels!.prixVente! -
-                                              ele.articleModels!.prixAchat!) *
-                                          ele.quantite!)
-                                      .toString())),
                               DataCell(
                                   CustomText(data: ele.prixTotal.toString())),
                             ]);

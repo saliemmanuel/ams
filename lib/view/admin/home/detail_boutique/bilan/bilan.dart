@@ -4,6 +4,7 @@ import 'package:ams/models/bilan_facture_model.dart';
 import 'package:ams/models/boutique_model.dart';
 import 'package:ams/provider/home_provider.dart';
 import 'package:ams/view/admin/home/detail_boutique/bilan/widget/bilan_facture_cart.dart';
+import 'package:ams/view/admin/home/detail_boutique/bilan/widget/detail_benefice.dart';
 import 'package:ams/view/widgets/custom_text.dart';
 import 'package:animated_digit/animated_digit.dart';
 import 'package:flutter/material.dart';
@@ -31,12 +32,9 @@ class Bilan extends StatefulWidget {
 class _BilanState extends State<Bilan> {
   @override
   void initState() {
-    buildBenefice();
     super.initState();
   }
 
-  int nombrePiduit = 0;
-  double valeurStock = 0.0;
   String search = "";
   @override
   Widget build(BuildContext context) {
@@ -149,6 +147,11 @@ class _BilanState extends State<Bilan> {
                                         .toLowerCase()
                                         .contains(search.toLowerCase())) {
                                       return BilanFactureCard(
+                                        isSelected: value
+                                                .multipleSelectionInBilan
+                                                .contains(bilanFactureModel)
+                                            ? true
+                                            : false,
                                         onLongPress: () {
                                           value.doMultiSelectionInBilan(
                                               bilanFactureModel);
@@ -156,14 +159,9 @@ class _BilanState extends State<Bilan> {
                                               true;
                                           HapticFeedback.mediumImpact();
                                         },
-                                        isSelected: !value
-                                                .multipleSelectionInBilan
-                                                .contains(bilanFactureModel)
-                                            ? true
-                                            : false,
                                         bilanFactureModel: bilanFactureModel,
                                         onTap: () {
-                                          if (value
+                                          if (!value
                                               .multipleSelectionIsStartInBilan) {
                                             Get.to(() => DetailBilan(
                                                 bilanFactureModel:
@@ -197,24 +195,11 @@ class _BilanState extends State<Bilan> {
               ],
             ),
           ),
-          bottomNavigationBar: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                child: DataTable(showBottomBorder: true, columns: const [
-                  DataColumn(
-                      label: CustomText(
-                          data: "Bénéfice", fontWeight: FontWeight.bold))
-                ], rows: [
-                  DataRow(cells: [
-                    DataCell(Text(
-                      beneficeT.toString(),
-                      style: const TextStyle(fontSize: 22.0),
-                    ))
-                  ])
-                ]),
-              ),
-            ],
+          floatingActionButton: FloatingActionButton.extended(
+            onPressed: () {
+              Get.to(() => DetailBenefice(boutique: widget.boutique));
+            },
+            label: const Text("Plus de détail"),
           ),
         ),
       ),
@@ -260,29 +245,6 @@ class _BilanState extends State<Bilan> {
       setState(() {
         selectedDate2 = '${picked.day}-${picked.month}-${picked.year} ';
       });
-    }
-  }
-
-  final _controller = AnimatedDigitController(0);
-
-  double beneficeT = 0.0;
-  buildBenefice() async {
-    var data = await locator
-        .get<ServiceAuth>()
-        .firestore
-        .collection("facture")
-        .where("idBoutique", isEqualTo: widget.boutique.id)
-        .get();
-
-    for (var value in data.docs) {
-      var bilanFactureModel = BilanFactureModel.fromMap(value.data());
-      for (var ele in bilanFactureModel.facture) {
-        beneficeT +=
-            ((ele.articleModels!.prixVente! - ele.articleModels!.prixAchat!) *
-                ele.quantite!);
-      }
-      _controller.value = beneficeT;
-      setState(() {});
     }
   }
 }
