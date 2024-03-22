@@ -95,6 +95,8 @@ Future simpleDialogueCard(String title, String msg, BuildContext context) {
       });
 }
 
+
+
 Future simpleDialogueCardSansTitle(String msg, BuildContext context) {
   return showDialog(
       barrierDismissible: false,

@@ -135,12 +135,15 @@ class _AjoutVendeurState extends State<AjoutVendeur> {
                             messagingToken: "vide",
                             idAdmin: locator.get<HomeProvider>().user.id,
                           );
-    
-                          locator.get<ServiceAuth>().addNewVendeurDataInBoutiques(
-                              context: context,
-                              boutiqueModels:
-                                  locator.get<HomeProvider>().boutiqueModels,
-                              vendeur: vendeur);
+
+                          locator
+                              .get<ServiceAuth>()
+                              .addNewVendeurDataInBoutiques(
+                                  context: context,
+                                  boutiqueModels: locator
+                                      .get<HomeProvider>()
+                                      .boutiqueModels,
+                                  vendeur: vendeur);
                         }
                       },
                       color: Colors.white,

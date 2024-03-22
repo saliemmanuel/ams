@@ -98,9 +98,11 @@ class _DetailBilanState extends State<DetailBilan> {
                     ],
                     rows: widget.bilanFactureModel.facture.map(
                       (ele) {
-                        beneficeT += ((ele.articleModels!.prixVente! -
-                                ele.articleModels!.prixAchat!) *
-                            ele.quantite!);
+                        var remise = ele.remise;
+                        beneficeT += (((ele.articleModels!.prixVente! -
+                                    ele.articleModels!.prixAchat!) *
+                                ele.quantite!) -
+                            remise!);
                         return DataRow(
                             color:
                                 MaterialStateProperty.all(Colors.grey.shade200),
@@ -108,10 +110,13 @@ class _DetailBilanState extends State<DetailBilan> {
                               DataCell(CustomText(
                                   data: ele.articleModels!.designation!)),
                               DataCell(CustomText(
-                                  data: ele.articleModels!.prixVente.toString())),
+                                  data:
+                                      ele.articleModels!.prixVente.toString())),
                               DataCell(CustomText(
-                                  data: ele.articleModels!.prixAchat.toString())),
-                              DataCell(CustomText(data: ele.quantite.toString())),
+                                  data:
+                                      ele.articleModels!.prixAchat.toString())),
+                              DataCell(
+                                  CustomText(data: ele.quantite.toString())),
                               DataCell(CustomText(data: ele.remise.toString())),
                               DataCell(CustomText(
                                   data: ((ele.articleModels!.prixVente! -

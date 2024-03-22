@@ -80,7 +80,6 @@ class _DetailBeneficeState extends State<DetailBenefice> {
   }
 
   buildBeneficeFacture() async {
-    print("object");
     var data = await locator
         .get<ServiceAuth>()
         .firestore
@@ -92,9 +91,11 @@ class _DetailBeneficeState extends State<DetailBenefice> {
       var bilanFactureModel = BilanFactureModel.fromMap(value.data());
       totalVentes += bilanFactureModel.netPayer;
       for (var ele in bilanFactureModel.facture) {
+        var remise = ele.remise;
         beneficeT +=
-            ((ele.articleModels!.prixVente! - ele.articleModels!.prixAchat!) *
-                ele.quantite!);
+            (((ele.articleModels!.prixVente! - ele.articleModels!.prixAchat!) *
+                    ele.quantite!) -
+                remise!);
       }
       if (mounted) {
         setState(() {});

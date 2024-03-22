@@ -67,12 +67,6 @@ class _DetailBilanVendeuxState extends State<DetailBilanVendeux> {
                       ),
                       DataColumn(
                         label: CustomText(
-                          data: "Prix A.",
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      DataColumn(
-                        label: CustomText(
                           data: "Qté",
                           fontWeight: FontWeight.bold,
                         ),
@@ -104,9 +98,6 @@ class _DetailBilanVendeuxState extends State<DetailBilanVendeux> {
                               DataCell(CustomText(
                                   data:
                                       ele.articleModels!.prixVente.toString())),
-                              DataCell(CustomText(
-                                  data:
-                                      ele.articleModels!.prixAchat.toString())),
                               DataCell(
                                   CustomText(data: ele.quantite.toString())),
                               DataCell(CustomText(data: ele.remise.toString())),

@@ -18,7 +18,7 @@ class AboutApp extends StatelessWidget {
             children: [
               const Text(
                   textAlign: TextAlign.justify,
-                  """Bienvenue sur l'application de gestion des stocks AMS ! 🚀
+                  """Bienvenue sur l'application de gestion des stocks AMS (v1.1.6) ! 🚀
         
         Notre application a été conçue pour simplifier et optimiser la gestion des stocks, offrant une solution efficace et conviviale pour les entreprises multi-boutiques. Que vous soyez propriétaire d'une petite entreprise ou d'une chaîne de magasins, notre application vous permet de gérer facilement vos stocks avec précision et simplicité.
         
