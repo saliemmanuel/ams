@@ -1,4 +1,3 @@
-import 'package:animated_digit/animated_digit.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../../models/bilan_facture_model.dart';

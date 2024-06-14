@@ -6,7 +6,6 @@ import 'package:ams/provider/home_provider.dart';
 import 'package:ams/view/admin/home/detail_boutique/bilan/widget/bilan_facture_cart.dart';
 import 'package:ams/view/admin/home/detail_boutique/bilan/widget/detail_benefice.dart';
 import 'package:ams/view/widgets/custom_text.dart';
-import 'package:animated_digit/animated_digit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_toastr/flutter_toastr.dart';
@@ -48,6 +47,15 @@ class _BilanState extends State<Bilan> {
                 visible: value.multipleSelectionIsStartInBilan,
                 child: Row(
                   children: [
+                    FilledButton(
+                      style: ButtonStyle(
+                          backgroundColor:
+                              WidgetStateProperty.all(Colors.green)),
+                      child: const Icon(Icons.print),
+                      onPressed: () {
+                        value.printPdf(value.multipleSelectionInBilan);
+                      },
+                    ),
                     const SizedBox(width: 10.0),
                     FilledButton(
                       onPressed: () {
@@ -59,7 +67,7 @@ class _BilanState extends State<Bilan> {
                     FilledButton(
                       style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all(Colors.redAccent)),
+                              WidgetStateProperty.all(Colors.redAccent)),
                       onPressed: () {
                         value.clearMultipleSelectionInBilan();
                       },

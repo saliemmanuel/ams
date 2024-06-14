@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:collection';
 
 import 'package:ams/auth/firebase_auth.dart';
@@ -8,11 +10,15 @@ import 'package:ams/services/service_locator.dart';
 import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:date_formatter/date_formatter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../models/bilan_facture_model.dart';
 import '../models/user.dart';
 import '../services/services_auth.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 class HomeProvider extends ChangeNotifier {
   Users? _user;
@@ -203,5 +209,227 @@ class HomeProvider extends ChangeNotifier {
       clearMultipleSelectionInBilan();
     }
     notifyListeners();
+  }
+
+  printPdf(HashSet<BilanFactureModel> multipleSelectionInBilan) async {
+    final pdf = pw.Document();
+    final img = await rootBundle.load('assets/images/logo.png');
+    final imageBytes = img.buffer.asUint8List();
+    pw.Image image1 = pw.Image(pw.MemoryImage(imageBytes));
+
+    for (var bilan in multipleSelectionInBilan) {
+      pdf.addPage(
+        pw.Page(
+          pageFormat: PdfPageFormat.a4,
+          margin: const pw.EdgeInsets.all(32),
+          build: (pw.Context context) {
+            double beneficeT = 0.0;
+            return pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Row(
+                      children: [
+                        pw.Container(
+                          alignment: pw.Alignment.center,
+                          height: 90,
+                          child: image1,
+                        ),
+                        pw.SizedBox(width: 20),
+                        pw.Text(
+                          "Bilan de Vente",
+                          style: pw.TextStyle(
+                            fontSize: 24,
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    pw.SizedBox(height: 20),
+                  ],
+                ),
+                pw.Text(bilan.nom,
+                    style: pw.TextStyle(
+                        fontSize: 22, fontWeight: pw.FontWeight.bold)),
+                pw.SizedBox(height: 10),
+                pw.Text(bilan.telephone,
+                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                pw.SizedBox(height: 20),
+                pw.Text("Factures:"),
+                pw.Table.fromTextArray(
+                  border: null,
+                  headers: [
+                    "Désignation",
+                    "Prix V.",
+                    "Prix A.",
+                    "Qté",
+                    "Remise",
+                    "Béné./Articl.",
+                    "Prix T./Articl."
+                  ],
+                  cellStyle: const pw.TextStyle(
+                    color: PdfColors.black,
+                  ),
+                  headerStyle: pw.TextStyle(
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                  data: bilan.facture.map((ele) {
+                    double benefice = ((ele.articleModels!.prixVente! -
+                                ele.articleModels!.prixAchat!) *
+                            ele.quantite!) -
+                        (ele.remise ?? 0);
+                    beneficeT += benefice;
+                    return [
+                      ele.articleModels!.designation ?? 'N/A',
+                      ele.articleModels!.prixVente?.toString() ?? 'N/A',
+                      ele.articleModels!.prixAchat?.toString() ?? 'N/A',
+                      ele.quantite?.toString() ?? 'N/A',
+                      ele.remise?.toString() ?? 'N/A',
+                      benefice.toStringAsFixed(2),
+                      ele.prixTotal?.toString() ?? 'N/A'
+                    ];
+                  }).toList(),
+                ),
+                pw.SizedBox(height: 20),
+                pw.Table.fromTextArray(
+                  border: null,
+                  headers: ["", ""],
+                  cellStyle: const pw.TextStyle(
+                    color: PdfColors.black,
+                  ),
+                  headerStyle: pw.TextStyle(
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                  data: [
+                    ["Date", bilan.createAt],
+                    ["Net Payer", bilan.netPayer.toString()],
+                    ["Bénéfice", beneficeT.toStringAsFixed(2)]
+                  ],
+                ),
+                pw.SizedBox(height: 20),
+                pw.Text("Vendeur: ${bilan.vendeur.nom ?? 'N/A'}"),
+              ],
+            );
+          },
+        ),
+      );
+    }
+    await Printing.layoutPdf(
+      name: 'Bilan de Vente du ${DateTime.now()}.pdf',
+      onLayout: (PdfPageFormat format) async => pdf.save(),
+    );
+  }
+
+  printPdfSinglePage(BilanFactureModel bilan, bool isAdmin) async {
+    final pdf = pw.Document();
+    final img = await rootBundle.load('assets/images/logo.png');
+    final imageBytes = img.buffer.asUint8List();
+    pw.Image image1 = pw.Image(pw.MemoryImage(imageBytes));
+
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(32),
+        build: (pw.Context context) {
+          double beneficeT = 0.0;
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Row(
+                    children: [
+                      pw.Container(
+                        alignment: pw.Alignment.center,
+                        height: 90,
+                        child: image1,
+                      ),
+                      pw.SizedBox(width: 20),
+                      pw.Text(
+                        "Bilan de Vente",
+                        style: pw.TextStyle(
+                          fontSize: 24,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  pw.SizedBox(height: 20),
+                ],
+              ),
+              pw.Text(bilan.nom,
+                  style: pw.TextStyle(
+                      fontSize: 22, fontWeight: pw.FontWeight.bold)),
+              pw.SizedBox(height: 10),
+              pw.Text(bilan.telephone,
+                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+              pw.SizedBox(height: 20),
+              pw.Text("Factures:"),
+              pw.Table.fromTextArray(
+                border: null,
+                headers: [
+                  "Désignation",
+                  isAdmin ? "Prix V." : null,
+                  "Prix A.",
+                  "Qté",
+                  "Remise",
+                  isAdmin ? "Béné./Articl." : null,
+                  "Prix T./Articl."
+                ],
+                cellStyle: const pw.TextStyle(
+                  color: PdfColors.black,
+                ),
+                headerStyle: pw.TextStyle(
+                  fontWeight: pw.FontWeight.bold,
+                ),
+                data: bilan.facture.map((ele) {
+                  double benefice = ((ele.articleModels!.prixVente! -
+                              ele.articleModels!.prixAchat!) *
+                          ele.quantite!) -
+                      (ele.remise ?? 0);
+                  beneficeT += benefice;
+                  return [
+                    ele.articleModels!.designation ?? 'N/A',
+                    ele.articleModels!.prixVente?.toString() ?? 'N/A',
+                    isAdmin
+                        ? ele.articleModels!.prixAchat?.toString() ?? 'N/A'
+                        : null,
+                    ele.quantite?.toString() ?? 'N/A',
+                    ele.remise?.toString() ?? 'N/A',
+                    isAdmin ? benefice.toStringAsFixed(2) : null,
+                    ele.prixTotal?.toString() ?? 'N/A'
+                  ];
+                }).toList(),
+              ),
+              pw.SizedBox(height: 20),
+              pw.Table.fromTextArray(
+                border: null,
+                headers: ["", ""],
+                cellStyle: const pw.TextStyle(
+                  color: PdfColors.black,
+                ),
+                headerStyle: pw.TextStyle(
+                  fontWeight: pw.FontWeight.bold
+                ),
+                data: [
+                  ["Date", bilan.createAt],
+                  ["Net Payer", bilan.netPayer.toString()],
+                  ["Bénéfice", beneficeT.toStringAsFixed(2)]
+                ],
+              ),
+              pw.SizedBox(height: 20),
+              pw.Text("Vendeur: ${bilan.vendeur.nom ?? 'N/A'}"),
+            ],
+          );
+        },
+      ),
+    );
+    await Printing.layoutPdf(
+      name: 'Bilan de Vente du ${DateTime.now()}.pdf',
+      onLayout: (PdfPageFormat format) async => pdf.save(),
+    );
   }
 }

@@ -3,6 +3,7 @@ import 'package:ams/services/service_locator.dart';
 import 'package:data_table_plus/data_table_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../../../models/bilan_facture_model.dart';
 import '../../../../../widgets/custom_layout_builder.dart';
@@ -25,6 +26,19 @@ class _DetailBilanState extends State<DetailBilan> {
       child: Scaffold(
           appBar: AppBar(
             title: const CustomText(data: "Détail facture"),
+            actions: [
+              Consumer<HomeProvider>(builder: (context, value, child) {
+                return FilledButton(
+                  style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all(Colors.green)),
+                  child: const Icon(Icons.print),
+                  onPressed: () {
+                    value.printPdfSinglePage(widget.bilanFactureModel, true);
+                  },
+                );
+              }),
+              const SizedBox(width: 10.0),
+            ],
           ),
           body: ListView(
             shrinkWrap: true,
